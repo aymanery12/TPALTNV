@@ -40,3 +40,4 @@ target/
 
 # Docker volumes locaux
 mysql_data/
+*.idea
