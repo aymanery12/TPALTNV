@@ -1,0 +1,27 @@
+# Angular
+TPALT_FrontEnd/node_modules/
+TPALT_FrontEnd/dist/
+TPALT_FrontEnd/.angular/
+TPALT_FrontEnd/*.env
+
+# Spring Boot
+TPALT_Backend/target/
+TPALT_Backend/*.class
+TPALT_Backend/*.jar
+TPALT_Backend/.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/usage.statistics.xml
+.idea/shelf/
+*.iws
+*.suo
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Archive
+*.rar

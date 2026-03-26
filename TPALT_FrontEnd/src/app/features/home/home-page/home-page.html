@@ -1,0 +1,118 @@
+<div class="min-h-screen bg-[#0f0f1a] text-white">
+    <app-navbar></app-navbar>
+
+    <!-- Toast notification -->
+    <div *ngIf="toastVisible"
+         class="fixed bottom-6 right-6 z-50 bg-green-600 text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-3 animate-fade-in">
+        <span class="material-symbols-outlined text-lg">check_circle</span>
+        {{ toastMessage }}
+    </div>
+
+    <!-- Hero Banner -->
+    <section class="relative overflow-hidden bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#0f3460] py-12 px-4 md:px-8">
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-20 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-1/3 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"></div>
+        </div>
+        <div class="max-w-[1440px] mx-auto relative z-10">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-amber-400/20 border border-amber-400/30 rounded-full px-4 py-1.5 text-amber-400 text-xs font-semibold mb-4">
+                        <span class="material-symbols-outlined text-sm">local_fire_department</span>
+                        Nouveautés disponibles
+                    </div>
+                    <h1 class="text-3xl md:text-5xl font-bold leading-tight mb-4 text-white">
+                        Découvrez votre<br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">prochain livre</span>
+                    </h1>
+                    <p class="text-slate-400 text-lg mb-6 max-w-md">
+                        Des milliers de livres livrés à domicile. Paiement à la livraison disponible.
+                    </p>
+                    <div class="flex gap-3">
+                        <button routerLink="/catalog"
+                                class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6 py-3 rounded-xl transition-all hover:scale-105 shadow-lg shadow-amber-500/25">
+                            Explorer le catalogue
+                        </button>
+                        <button class="border border-white/20 hover:border-white/40 text-white font-medium px-6 py-3 rounded-xl transition-colors hover:bg-white/5">
+                            En savoir plus
+                        </button>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div *ngFor="let book of recommendedBooks.slice(0, 4)"
+                             class="w-24 h-32 rounded-xl overflow-hidden shadow-xl ring-1 ring-white/10 hover:scale-105 transition-transform cursor-pointer"
+                             (click)="onBookSelected(book)">
+                            <img [src]="book.imageUrl || book.coverImageUrl"
+                                 [alt]="book.title"
+                                 class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-[1440px] mx-auto p-4 md:p-8 flex gap-8">
+
+        <!-- Sidebar -->
+        <aside class="hidden xl:block w-64 shrink-0">
+            <div class="sticky top-24 space-y-6">
+                <app-sidebar-filters></app-sidebar-filters>
+            </div>
+        </aside>
+
+        <!-- Books Section -->
+        <section class="flex-1">
+
+            <!-- Section Header -->
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Recommandés pour vous</h2>
+                    <p class="text-slate-400 text-sm mt-1">{{ recommendedBooks.length }} livres disponibles</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-slate-400 text-sm hidden md:block">Trier par :</span>
+                    <select
+                            class="bg-white/10 border border-white/20 text-white rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-amber-400 cursor-pointer"
+                            [value]="selectedSort"
+                            (change)="onSortChange($event)">
+                        <option value="featured" class="bg-slate-800">En vedette</option>
+                        <option value="price-asc" class="bg-slate-800">Prix croissant</option>
+                        <option value="price-desc" class="bg-slate-800">Prix décroissant</option>
+                        <option value="rating" class="bg-slate-800">Mieux notés</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Loading state -->
+            <div *ngIf="recommendedBooks.length === 0" class="flex flex-col items-center justify-center py-24 text-slate-400">
+                <span class="material-symbols-outlined text-6xl mb-4 text-slate-600">library_books</span>
+                <p class="text-lg font-medium">Chargement des livres...</p>
+                <p class="text-sm mt-1">Connexion à l'API en cours</p>
+            </div>
+
+            <!-- Book Grid -->
+            <app-book-grid
+                    *ngIf="recommendedBooks.length > 0"
+                    [books]="recommendedBooks"
+                    [wishlistBookIds]="wishlistIds"
+                    (bookSelected)="onBookSelected($event)"
+                    (addToCart)="onAddToCart($event)"
+                    (wishlistToggled)="onWishlistToggled($event)">
+            </app-book-grid>
+
+            <!-- Pagination -->
+            <div class="mt-12 flex justify-center pt-8 pb-12">
+                <app-pagination
+                        [currentPage]="currentPage"
+                        [totalPages]="20"
+                        (pageChange)="onPageChange($event)">
+                </app-pagination>
+            </div>
+        </section>
+    </main>
+
+    <app-footer></app-footer>
+</div>

@@ -1,0 +1,17 @@
+/* Styles for User Profile Page */
+
+:host {
+  display: block;
+
+  background: var(--background-surface, #ffffff);
+}
+
+.profile-placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  border: 1px dashed var(--border-muted, #cbd5e1);
+  border-radius: 0.75rem;
+  color: var(--text-muted, #64748b);
+}

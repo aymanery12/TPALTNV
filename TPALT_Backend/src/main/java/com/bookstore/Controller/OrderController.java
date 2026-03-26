@@ -1,0 +1,61 @@
+package com.bookstore.Controller;
+
+import com.bookstore.model.Order;
+import com.bookstore.model.User;
+import com.bookstore.repository.UserRepository;
+import com.bookstore.service.OrderService;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/orders")
+@CrossOrigin("*")
+public class OrderController {
+
+    private final OrderService orderService;
+    private final UserRepository userRepository;
+
+    public OrderController(OrderService orderService, UserRepository userRepository) {
+        this.orderService = orderService;
+        this.userRepository = userRepository;
+    }
+
+    // POST /api/orders  (CLIENT authentifié)
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Order createOrder(@RequestBody Order order, Authentication authentication) {
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur introuvable"));
+        order.setUser(user);
+        return orderService.createOrder(order);
+    }
+
+    // GET /api/orders/my  (historique du client connecté)
+    @GetMapping("/my")
+    public List<Order> getMyOrders(Authentication authentication) {
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur introuvable"));
+        return orderService.getOrdersByUserId(user.getId());
+    }
+
+    // GET /api/orders/{id}
+    @GetMapping("/{id}") // CORRIGÉ : Une seule @ ici
+    public Order getOrderById(@PathVariable Long id) {
+        return orderService.getOrderById(id);
+    }
+
+    // PATCH /api/orders/{id}/status  (ADMIN seulement)
+    @PatchMapping("/{id}/status")
+    public Order updateStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String newStatus = body.get("status");
+        if (newStatus == null || newStatus.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Statut manquant");
+        }
+        return orderService.updateStatus(id, newStatus);
+    }
+}

@@ -1,0 +1,43 @@
+<div>
+  <h3 class="font-bold text-sm mb-2">Department</h3>
+  <ul class="text-sm space-y-1 text-slate-600 dark:text-slate-400">
+    <li><button class="hover:text-amber-400 transition-colors text-left w-full" (click)="goCategory('Arts')">Arts &amp; Photography</button></li>
+    <li><button class="hover:text-amber-400 transition-colors text-left w-full" (click)="goCategory('Biographies')">Biographies &amp; Memoirs</button></li>
+    <li><button class="hover:text-amber-400 transition-colors text-left w-full font-bold" (click)="goCategory('Computers')">Computers &amp; Technology</button></li>
+    <li><button class="hover:text-amber-400 transition-colors text-left w-full" (click)="goCategory('Cookbooks')">Cookbooks, Food &amp; Wine</button></li>
+    <li><button class="hover:text-amber-400 transition-colors text-left w-full" (click)="goCategory('History')">History</button></li>
+    <li><button class="hover:text-amber-400 transition-colors text-left w-full" (click)="goCategory('Science')">Science &amp; Math</button></li>
+  </ul>
+</div>
+
+<div class="border-t border-slate-200 dark:border-slate-800 pt-4">
+  <h3 class="font-bold text-sm mb-2">Customer Reviews</h3>
+  <div class="space-y-1">
+    <button class="flex items-center gap-1 group w-full" (click)="goRating(4)">
+      <span class="text-amber-400 material-symbols-outlined text-lg fill-1">star</span>
+      <span class="text-amber-400 material-symbols-outlined text-lg fill-1">star</span>
+      <span class="text-amber-400 material-symbols-outlined text-lg fill-1">star</span>
+      <span class="text-amber-400 material-symbols-outlined text-lg fill-1">star</span>
+      <span class="material-symbols-outlined text-lg text-slate-300">star</span>
+      <span class="text-xs text-slate-600 group-hover:text-amber-400 transition-colors">&amp; Up</span>
+    </button>
+    <button class="flex items-center gap-1 group w-full" (click)="goRating(3)">
+      <span class="text-amber-400 material-symbols-outlined text-lg fill-1">star</span>
+      <span class="text-amber-400 material-symbols-outlined text-lg fill-1">star</span>
+      <span class="text-amber-400 material-symbols-outlined text-lg fill-1">star</span>
+      <span class="material-symbols-outlined text-lg text-slate-300">star</span>
+      <span class="material-symbols-outlined text-lg text-slate-300">star</span>
+      <span class="text-xs text-slate-600 group-hover:text-amber-400 transition-colors">&amp; Up</span>
+    </button>
+  </div>
+</div>
+
+<div class="border-t border-slate-200 dark:border-slate-800 pt-4">
+  <h3 class="font-bold text-sm mb-2">Price</h3>
+  <ul class="text-sm space-y-1 text-slate-600 dark:text-slate-400">
+    <li><button class="hover:text-amber-400 transition-colors text-left w-full" (click)="goPrice(undefined, 10)">Under €10</button></li>
+    <li><button class="hover:text-amber-400 transition-colors text-left w-full" (click)="goPrice(10, 25)">€10 to €25</button></li>
+    <li><button class="hover:text-amber-400 transition-colors text-left w-full" (click)="goPrice(25, 50)">€25 to €50</button></li>
+    <li><button class="hover:text-amber-400 transition-colors text-left w-full" (click)="goPrice(50, 100)">€50 to €100</button></li>
+  </ul>
+</div>

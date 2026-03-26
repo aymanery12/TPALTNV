@@ -1,0 +1,69 @@
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: bookstore_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: bookstore_db
+      MYSQL_USER: bookstore_user
+      MYSQL_PASSWORD: bookstore_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - bookstore_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot1234"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Interface phpMyAdmin ───
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: bookstore_phpmyadmin
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root1234
+    ports:
+      - "8081:80"
+    networks:
+      - bookstore_network
+
+  # ─── Application Spring Boot ───
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bookstore_app
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/bookstore_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: bookstore_user
+      SPRING_DATASOURCE_PASSWORD: bookstore_pass
+      JWT_SECRET: bookstore_secret_super_longue_cle_jwt_2024_minimum_32_chars
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    ports:
+      - "8080:8080"
+    networks:
+      - bookstore_network
+
+volumes:
+  mysql_data:
+
+networks:
+  bookstore_network:
+    driver: bridge

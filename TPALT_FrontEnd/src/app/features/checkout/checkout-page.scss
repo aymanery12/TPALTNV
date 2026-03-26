@@ -1,0 +1,18 @@
+/* Styles for Checkout Page */
+
+:host {
+  display: block;
+  padding: 2rem 1.5rem;
+  background: var(--background-surface, #ffffff);
+  color: var(--text-primary, #0f172a);
+}
+
+.checkout-placeholder {
+  display: grid;
+  gap: 1.25rem;
+  padding: 2rem;
+  border: 1px dashed var(--border-muted, #cbd5e1);
+  border-radius: 0.75rem;
+  text-align: center;
+  color: var(--text-muted, #64748b);
+}

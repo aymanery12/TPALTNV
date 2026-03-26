@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================
+   LIGHT MODE  (classe "light" sur <html> + retrait de "dark")
+   ========================================================== */
+
+html.light {
+
+  /* ---- PAGE BACKGROUND ---- */
+  .bg-\[\#0f0f1a\] {
+    background-color: #f1f5f9 !important;
+  }
+  .bg-\[\#0f0f1a\].text-white {
+    color: #1e293b !important;
+  }
+
+  /* ---- HERO SECTION GRADIENT ---- */
+  .bg-gradient-to-r.from-\[\#1a1a2e\] {
+    background-image: linear-gradient(to right, #1e293b, #334155, #475569) !important;
+  }
+  section.bg-gradient-to-r .text-slate-400 { color: #cbd5e1 !important; }
+  section.bg-gradient-to-r .border-white\/20 { border-color: rgba(255,255,255,0.25) !important; }
+  section.bg-gradient-to-r .text-white { color: #ffffff !important; }
+
+  /* ---- HEADER / NAVBAR ---- */
+  header {
+    background-color: #ffffff !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1) !important;
+  }
+  header .bg-\[\#1a1a2e\] { background-color: #ffffff !important; }
+  header .bg-\[\#16213e\] { background-color: #f1f5f9 !important; }
+  header .text-white       { color: #1e293b !important; }
+  header .text-white\/80   { color: #475569 !important; }
+  header .text-slate-300   { color: #64748b !important; }
+  header .border-t { border-color: #e2e8f0 !important; }
+  header .border-white\/10 { border-color: rgba(0,0,0,0.08) !important; }
+  header a.text-white\/80  { color: #475569 !important; }
+  header a.text-white\/80:hover { color: #f59e0b !important; }
+
+  /* ---- FOOTER ---- */
+  footer {
+    background-color: #f1f5f9 !important;
+    border-color: #e2e8f0 !important;
+    color: #475569 !important;
+  }
+  footer .text-white  { color: #1e293b !important; }
+  footer .text-slate-300 { color: #64748b !important; }
+  footer .border-slate-800 { border-color: #e2e8f0 !important; }
+
+  /* ---- TEXTE DANS LE CONTENU ---- */
+  main .text-white       { color: #1e293b !important; }
+  main .text-slate-400   { color: #64748b !important; }
+  main .text-slate-300   { color: #475569 !important; }
+  main .text-slate-200   { color: #374151 !important; }
+  main .text-slate-600   { color: #64748b !important; }
+
+  /* ---- CARTES ET SURFACES ---- */
+  main .bg-slate-800\/50 {
+    background-color: #ffffff !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08) !important;
+  }
+  main .bg-slate-800 { background-color: #f8fafc !important; }
+  main .bg-slate-700 {
+    background-color: #e2e8f0 !important;
+    color: #1e293b !important;
+  }
+  main .border-slate-700 { border-color: #e2e8f0 !important; }
+  main .border-slate-600 { border-color: #cbd5e1 !important; }
+  main .border-white\/10 { border-color: rgba(0,0,0,0.08) !important; }
+  main hr.border-slate-600 { border-color: #e2e8f0 !important; }
+
+  /* ---- FORMULAIRES ---- */
+  main .bg-white\/10     { background-color: rgba(0,0,0,0.04) !important; }
+  main .border-white\/20 { border-color: rgba(0,0,0,0.15) !important; }
+
+  main input {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border-color: #cbd5e1 !important;
+  }
+  main input::placeholder { color: #94a3b8 !important; }
+
+  main textarea {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  main select {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border-color: #cbd5e1 !important;
+  }
+  main select option { background-color: #ffffff; color: #1e293b; }
+
+  /* ---- BOOK CARDS (overrides Tailwind dark: variants) ---- */
+  main app-book-card .book-card {
+    background-color: #ffffff !important;
+    border-color: #e2e8f0 !important;
+  }
+  main app-book-card h3 { color: #1e293b !important; }
+  main app-book-card p  { color: #64748b !important; }
+}

@@ -1,0 +1,14 @@
+/* Styles for Book List (Catalog) */
+:host {
+  display: block;
+  background: var(--background-surface, #ffffff);
+  color: var(--text-primary, #0f172a);
+}
+
+.placeholder {
+  padding: 2rem;
+  border: 1px dashed var(--border-muted, #cbd5e1);
+  border-radius: 0.75rem;
+  text-align: center;
+  color: var(--text-muted, #64748b);
+}

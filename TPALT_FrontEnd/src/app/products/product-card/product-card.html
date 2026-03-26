@@ -1,0 +1,93 @@
+<div class="book-card group flex flex-col h-full bg-white dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+
+    <!-- Cover image -->
+    <div class="aspect-[3/4] mb-3 overflow-hidden rounded-md bg-slate-100 dark:bg-slate-800 relative cursor-pointer group/img"
+         (click)="onCardClick()">
+        <img
+                [alt]="product.title"
+                class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300"
+                [src]="product.imageUrl"
+        />
+
+        <!-- Best Seller badge -->
+        <div *ngIf="product.badge === 'BEST_SELLER'"
+             class="absolute top-2 right-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded">
+            BEST SELLER
+        </div>
+
+        <!-- Sale badge -->
+        <div *ngIf="product.badge === 'SALE'"
+             class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+            SAVE {{ product.salePercent }}%
+        </div>
+
+        <!-- Wishlist button -->
+        <button
+                class="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1.5 shadow-md hover:bg-slate-100"
+                (click)="onWishlist(); $event.stopPropagation()"
+                title="Ajouter aux favoris">
+      <span class="material-symbols-outlined text-lg"
+            [class.text-red-500]="isInWishlist"
+            [class.text-slate-400]="!isInWishlist">
+        {{ isInWishlist ? 'favorite' : 'favorite_border' }}
+      </span>
+        </button>
+    </div>
+
+    <!-- Info -->
+    <div class="flex-1 flex flex-col">
+
+        <!-- Title -->
+        <h3 class="text-sm font-bold leading-snug line-clamp-2 hover:text-primary cursor-pointer mb-1"
+            (click)="onCardClick()">
+            {{ product.title }}
+        </h3>
+
+        <!-- Author -->
+        <p class="text-xs text-slate-500 mb-1">par {{ product.author }}</p>
+
+        <!-- Stars -->
+        <div class="flex items-center gap-1 mb-2">
+            <div class="flex text-amber-400">
+        <span *ngFor="let i of starsArray"
+              class="material-symbols-outlined text-sm"
+              [class.fill-1]="i <= fullStars"
+              style="font-variation-settings: 'FILL' 1"
+              [style.color]="i <= fullStars || (i === fullStars + 1 && hasHalfStar) ? '#f59e0b' : '#cbd5e1'">
+          {{ i <= fullStars ? 'star' : (i === fullStars + 1 && hasHalfStar ? 'star_half' : 'star_border') }}
+        </span>
+            </div>
+            <span class="text-[11px] text-primary hover:underline ml-1 cursor-pointer">
+        {{ product.ratingsCount }}
+      </span>
+        </div>
+
+        <!-- Price -->
+        <div class="mt-auto">
+            <div class="flex items-baseline gap-0.5"
+                 [class.text-red-600]="product.badge === 'SALE'">
+                <span class="text-xs font-bold self-start mt-1">€</span>
+                <span class="text-xl font-bold">{{ priceInt }}</span>
+                <span class="text-xs font-bold">{{ priceCentsStr }}</span>
+            </div>
+
+            <!-- Original price crossed out -->
+            <p *ngIf="product.badge === 'SALE' && product.listPrice"
+               class="text-[10px] text-slate-500 line-through mb-1">
+                Was: €{{ product.listPrice }}
+            </p>
+
+            <!-- Subtitle (e.g. "FREE Delivery Tomorrow") -->
+            <p *ngIf="product.subtitle" class="text-[10px] text-slate-500 mb-3">
+                {{ product.subtitle }}
+            </p>
+
+            <!-- Add to Cart -->
+            <button
+                    class="w-full bg-amber-400 hover:bg-amber-500 active:bg-amber-600 text-slate-900 text-xs font-bold py-1.5 rounded-full transition-colors shadow-sm"
+                    (click)="onAddToCart()">
+                Add to Cart
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,183 @@
+<header class="sticky top-0 z-50 bg-[#1a1a2e] shadow-lg">
+    <div class="px-4 md:px-8 py-3">
+        <div class="max-w-[1440px] mx-auto flex items-center gap-4">
+
+            <!-- Logo -->
+            <a routerLink="/home" class="flex items-center gap-2 shrink-0 group">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+                    <span class="material-symbols-outlined text-white text-xl">menu_book</span>
+                </div>
+                <span class="text-white font-bold text-xl tracking-tight hidden md:block">
+                    Book<span class="text-amber-400">Store</span>
+                </span>
+            </a>
+
+            <!-- Search Bar -->
+            <div class="flex-1 flex items-center max-w-2xl mx-auto">
+                <div class="flex w-full h-10 rounded-lg overflow-hidden shadow-inner border border-slate-600 focus-within:border-amber-400 transition-colors">
+                    <input
+                            class="flex-1 bg-white text-slate-900 px-4 text-sm outline-none"
+                            placeholder="Rechercher un titre, auteur, catégorie..."
+                            type="text"
+                            [(ngModel)]="searchQuery"
+                            (keydown)="onSearchKeydown($event)"
+                    />
+                    <button
+                            class="bg-amber-400 hover:bg-amber-500 px-4 flex items-center justify-center transition-colors"
+                            (click)="onSearch()">
+                        <span class="material-symbols-outlined text-slate-900 text-xl">search</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Theme Toggle -->
+            <button (click)="themeService.toggle()"
+                    class="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-white/10 transition-colors shrink-0"
+                    [title]="themeService.isDark() ? 'Passer en mode clair' : 'Passer en mode sombre'">
+              <span class="material-symbols-outlined text-amber-400 text-xl">
+                {{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}
+              </span>
+            </button>
+
+            <!-- Nav Actions -->
+            <nav class="flex items-center gap-2 shrink-0">
+
+                <!-- Non connecté -->
+                <ng-container *ngIf="!isLoggedIn">
+                    <a routerLink="/login"
+                       class="flex flex-col items-center px-3 py-1 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
+                        <span class="text-xs text-slate-300">Bonjour,</span>
+                        <span class="text-sm font-bold text-white flex items-center gap-0.5">
+                            Connexion
+                            <span class="material-symbols-outlined text-xs">arrow_drop_down</span>
+                        </span>
+                    </a>
+                </ng-container>
+
+                <!-- Connecté -->
+                <ng-container *ngIf="isLoggedIn">
+                    <div class="relative">
+                        <button
+                                class="flex flex-col items-center px-3 py-1 rounded-lg hover:bg-white/10 transition-colors"
+                                (click)="toggleUserMenu()">
+                            <span class="text-xs text-amber-400">Bonjour !</span>
+                            <span class="text-sm font-bold text-white flex items-center gap-0.5">
+                                Mon compte
+                                <span class="material-symbols-outlined text-xs">arrow_drop_down</span>
+                            </span>
+                        </button>
+
+                        <!-- Dropdown menu -->
+                        <div *ngIf="showUserMenu"
+                             class="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden z-50">
+
+                            <!-- Dashboard Admin -->
+                            <a *ngIf="isAdmin" routerLink="/admin"
+                               class="flex items-center gap-3 px-4 py-3 text-sm font-bold text-amber-600 hover:bg-amber-50 transition-colors"
+                               (click)="showUserMenu = false">
+                                <span class="material-symbols-outlined text-amber-500 text-lg">dashboard</span>
+                                Dashboard Admin
+                            </a>
+                            <hr *ngIf="isAdmin" class="border-slate-100">
+
+                            <!-- Mon profil -->
+                            <a routerLink="/profile"
+                               class="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                               (click)="showUserMenu = false">
+                                <span class="material-symbols-outlined text-blue-400 text-lg">account_circle</span>
+                                Mon profil
+                            </a>
+
+                            <!-- Ma wishlist -->
+                            <a routerLink="/profile/wishlist"
+                               class="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                               (click)="showUserMenu = false">
+                                <span class="material-symbols-outlined text-pink-400 text-lg">favorite</span>
+                                Ma wishlist
+                            </a>
+
+                            <!-- Mes commandes -->
+                            <a routerLink="/orders"
+                               class="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                               (click)="showUserMenu = false">
+                                <span class="material-symbols-outlined text-amber-400 text-lg">package_2</span>
+                                Mes commandes
+                            </a>
+
+                            <hr class="border-slate-100">
+
+                            <!-- Se déconnecter -->
+                            <button
+                                    class="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                    (click)="logout()">
+                                <span class="material-symbols-outlined text-red-400 text-lg">logout</span>
+                                Se déconnecter
+                            </button>
+                        </div>
+                    </div>
+                </ng-container>
+
+                <!-- Retours & Commandes -->
+                <a routerLink="/orders"
+                   class="flex flex-col items-center px-3 py-1 rounded-lg hover:bg-white/10 transition-colors hidden md:flex">
+                    <span class="text-xs text-slate-300">Retours</span>
+                    <span class="text-sm font-bold text-white">& Commandes</span>
+                </a>
+
+                <!-- Cart -->
+                <a routerLink="/cart"
+                   class="relative flex items-center gap-1 px-3 py-1 rounded-lg hover:bg-white/10 transition-colors">
+                    <div class="relative">
+                        <span class="material-symbols-outlined text-white text-3xl">shopping_cart</span>
+                        <span class="absolute -top-1 -right-1 bg-amber-400 text-slate-900 text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                            {{ cartCount }}
+                        </span>
+                    </div>
+                    <span class="text-sm font-bold text-white hidden md:block">Panier</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Category nav -->
+    <div class="bg-[#16213e] border-t border-white/10 px-4 md:px-8 py-2 text-sm">
+        <div class="max-w-[1440px] mx-auto flex items-center gap-5 overflow-x-auto whitespace-nowrap scrollbar-hide">
+            <a class="text-white/80 hover:text-amber-400 transition-colors font-medium"
+               routerLink="/home"
+               routerLinkActive="text-amber-400">Accueil</a>
+
+            <a class="text-white/80 hover:text-amber-400 transition-colors"
+               routerLink="/catalog"
+               [queryParams]="{sort: 'rating'}"
+               routerLinkActive="text-amber-400">Meilleures ventes</a>
+
+            <a class="text-white/80 hover:text-amber-400 transition-colors"
+               routerLink="/catalog"
+               [queryParams]="{sort: 'newest'}"
+               routerLinkActive="text-amber-400">Nouveautés</a>
+
+            <a class="text-white/80 hover:text-amber-400 transition-colors"
+               routerLink="/catalog"
+               [queryParams]="{category: 'Fantasy'}"
+               routerLinkActive="text-amber-400">Fantasy</a>
+
+            <a class="text-white/80 hover:text-amber-400 transition-colors"
+               routerLink="/catalog"
+               [queryParams]="{category: 'Science-Fiction'}"
+               routerLinkActive="text-amber-400">Science-Fiction</a>
+
+            <a class="text-white/80 hover:text-amber-400 transition-colors"
+               routerLink="/catalog"
+               [queryParams]="{category: 'Romans'}"
+               routerLinkActive="text-amber-400">Romans</a>
+
+            <a class="text-white/80 hover:text-amber-400 transition-colors"
+               routerLink="/catalog"
+               [queryParams]="{category: 'Classiques'}"
+               routerLinkActive="text-amber-400">Classiques</a>
+
+            <a class="text-amber-400 font-semibold hover:text-amber-300 transition-colors"
+               routerLink="/catalog"
+               [queryParams]="{sort: 'price-asc'}">Offres du jour 🔥</a>
+        </div>
+    </div>
+</header>

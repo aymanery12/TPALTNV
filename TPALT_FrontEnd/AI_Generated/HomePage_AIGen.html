@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bookstore | Your Online Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#136dec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101822",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .book-card:hover { transform: translateY(-2px); transition: transform 0.2s ease; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Global Header -->
+<header class="sticky top-0 z-50 bg-slate-900 text-white px-4 md:px-8 py-2">
+<div class="max-w-[1440px] mx-auto flex items-center gap-6">
+<!-- Logo -->
+<a class="flex items-center gap-2 shrink-0" href="#">
+<span class="material-symbols-outlined text-primary text-3xl">menu_book</span>
+<h1 class="text-xl font-bold tracking-tight hidden lg:block">Bookstore</h1>
+</a>
+<!-- Expansive Search Bar -->
+<div class="flex-1 flex items-center">
+<div class="flex w-full h-10 rounded overflow-hidden">
+<button class="bg-slate-200 text-slate-700 px-4 text-sm font-medium border-r border-slate-300 hover:bg-slate-300 transition-colors flex items-center gap-1">
+                        All <span class="material-symbols-outlined text-xs">arrow_drop_down</span>
+</button>
+<input class="flex-1 border-none focus:ring-0 text-slate-900 px-4 text-sm" placeholder="Search for titles, authors, or ISBNs..." type="text"/>
+<button class="bg-primary hover:bg-primary/90 px-5 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-white">search</span>
+</button>
+</div>
+</div>
+<!-- Utility Icons -->
+<nav class="flex items-center gap-6 shrink-0">
+<a class="flex flex-col items-center group" href="#">
+<span class="text-xs text-slate-300 group-hover:text-white">Hello, Sign in</span>
+<span class="text-sm font-bold flex items-center">Account &amp; Lists <span class="material-symbols-outlined text-xs">arrow_drop_down</span></span>
+</a>
+<a class="flex flex-col items-center group" href="#">
+<span class="text-xs text-slate-300 group-hover:text-white">Returns</span>
+<span class="text-sm font-bold">&amp; Orders</span>
+</a>
+<a class="relative flex items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-3xl">shopping_cart</span>
+<span class="absolute -top-1 left-4 bg-primary text-[10px] font-bold px-1.5 rounded-full border-2 border-background-dark">3</span>
+<span class="text-sm font-bold self-end mb-1">Cart</span>
+</a>
+</nav>
+</div>
+</header>
+<!-- Category Navigation Bar -->
+<nav class="bg-slate-800 text-white px-4 md:px-8 py-2 text-sm border-t border-slate-700">
+<div class="max-w-[1440px] mx-auto flex items-center gap-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
+<a class="flex items-center gap-1 font-bold hover:underline underline-offset-4" href="#">
+<span class="material-symbols-outlined text-lg">menu</span> All
+            </a>
+<a class="hover:underline underline-offset-4" href="#">Best Sellers</a>
+<a class="hover:underline underline-offset-4" href="#">New Releases</a>
+<a class="hover:underline underline-offset-4" href="#">Computers &amp; Tech</a>
+<a class="hover:underline underline-offset-4" href="#">Literature &amp; Fiction</a>
+<a class="hover:underline underline-offset-4" href="#">Children's Books</a>
+<a class="hover:underline underline-offset-4" href="#">Medical Books</a>
+<a class="hover:underline underline-offset-4" href="#">Textbooks</a>
+<a class="hover:underline underline-offset-4 text-primary font-semibold" href="#">Today's Deals</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="max-w-[1440px] mx-auto p-4 md:p-6 lg:p-8 flex gap-8">
+<!-- Sidebar Filters -->
+<aside class="hidden xl:block w-64 shrink-0 space-y-6">
+<div>
+<h3 class="font-bold text-sm mb-2">Department</h3>
+<ul class="text-sm space-y-1 text-slate-600 dark:text-slate-400">
+<li><a class="hover:text-primary" href="#">Arts &amp; Photography</a></li>
+<li><a class="hover:text-primary" href="#">Biographies &amp; Memoirs</a></li>
+<li><a class="hover:text-primary font-bold text-slate-900" href="#">Computers &amp; Technology</a></li>
+<li><a class="hover:text-primary" href="#">Cookbooks, Food &amp; Wine</a></li>
+<li><a class="hover:text-primary" href="#">History</a></li>
+<li><a class="hover:text-primary" href="#">Science &amp; Math</a></li>
+</ul>
+</div>
+<div class="border-t border-slate-200 dark:border-slate-800 pt-4">
+<h3 class="font-bold text-sm mb-2">Customer Reviews</h3>
+<div class="space-y-1">
+<a class="flex items-center gap-1 group" href="#">
+<span class="text-amber-400 material-symbols-outlined text-lg fill-1">star</span>
+<span class="text-amber-400 material-symbols-outlined text-lg fill-1">star</span>
+<span class="text-amber-400 material-symbols-outlined text-lg fill-1">star</span>
+<span class="text-amber-400 material-symbols-outlined text-lg fill-1">star</span>
+<span class="material-symbols-outlined text-lg text-slate-300">star</span>
+<span class="text-xs text-slate-600 group-hover:text-primary">&amp; Up</span>
+</a>
+<a class="flex items-center gap-1 group" href="#">
+<span class="text-amber-400 material-symbols-outlined text-lg fill-1">star</span>
+<span class="text-amber-400 material-symbols-outlined text-lg fill-1">star</span>
+<span class="text-amber-400 material-symbols-outlined text-lg fill-1">star</span>
+<span class="material-symbols-outlined text-lg text-slate-300">star</span>
+<span class="material-symbols-outlined text-lg text-slate-300">star</span>
+<span class="text-xs text-slate-600 group-hover:text-primary">&amp; Up</span>
+</a>
+</div>
+</div>
+<div class="border-t border-slate-200 dark:border-slate-800 pt-4">
+<h3 class="font-bold text-sm mb-2">Price</h3>
+<ul class="text-sm space-y-1 text-slate-600 dark:text-slate-400">
+<li><a class="hover:text-primary" href="#">Under $10</a></li>
+<li><a class="hover:text-primary" href="#">$10 to $25</a></li>
+<li><a class="hover:text-primary" href="#">$25 to $50</a></li>
+<li><a class="hover:text-primary" href="#">$50 to $100</a></li>
+</ul>
+</div>
+</aside>
+<!-- Product Grid Section -->
+<section class="flex-1">
+<!-- Hero Promo -->
+<div class="mb-8 rounded-lg overflow-hidden bg-gradient-to-r from-primary to-blue-400 p-8 flex items-center justify-between shadow-sm" data-alt="Vibrant blue gradient background pattern">
+<div class="max-w-md text-white">
+<h2 class="text-3xl font-extrabold mb-2">Summer Reading Event</h2>
+<p class="text-lg opacity-90 mb-4">Discover this season's top-rated tech and design titles at up to 40% off.</p>
+<button class="bg-white text-primary font-bold px-6 py-2 rounded shadow-lg hover:bg-slate-50 transition-colors">Shop the Sale</button>
+</div>
+<div class="hidden md:block w-48 h-64 bg-white/20 rounded-md backdrop-blur-sm border border-white/30 transform rotate-6" data-alt="Stacked books aesthetic placeholder image"></div>
+</div>
+<!-- Grid Header -->
+<div class="flex items-center justify-between mb-6 border-b border-slate-200 dark:border-slate-800 pb-2">
+<h2 class="text-xl font-bold">Recommended for You</h2>
+<div class="text-sm">
+<span class="text-slate-500">Sort by:</span>
+<select class="bg-transparent border-none focus:ring-0 font-bold text-slate-900 dark:text-slate-100 py-0 cursor-pointer">
+<option>Featured</option>
+<option>Price: Low to High</option>
+<option>Price: High to Low</option>
+<option>Avg. Customer Review</option>
+</select>
+</div>
+</div>
+<!-- Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+<!-- Book Card 1 -->
+<div class="book-card group flex flex-col h-full bg-white dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="aspect-[3/4] mb-3 overflow-hidden rounded-md bg-slate-100 dark:bg-slate-800 relative">
+<img alt="Book Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Modern minimalist book cover featuring a landscape" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAa_R2Q56I8XysoUfDHMGwVThWAPB-Fx1aU32rozeuXKFjdwtIgZcm4wa8xEApyM4qk0qAjFWUBysPJjNRMRkrIqFj6ExlaO3_rCuH5mf2qxXHAkYE8y_MpGSxGzrKDNgM8wPO5OBlqlfU-ryIMXa47jaXfFKly5h02CAUp_t4ECEhVyxgxbX3SLbYaTQRXuK4Y5LJ26Y6f9Mj7hiSzpoBvt3v7XMHk9LM1e6lAZWmdMkcD7sqqwOQ-5F8ItdOv07j9OOpN5qGugKRY"/>
+<div class="absolute top-2 right-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded">BEST SELLER</div>
+</div>
+<div class="flex-1 flex flex-col">
+<h3 class="text-sm font-bold leading-snug line-clamp-2 hover:text-primary cursor-pointer mb-1">The Art of UI Design: Principles for Modern Interfaces</h3>
+<p class="text-xs text-slate-500 mb-1">by Elena Rodriguez</p>
+<div class="flex items-center mb-2">
+<div class="flex text-amber-400">
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[0.5]">star_half</span>
+</div>
+<span class="text-[11px] text-primary hover:underline ml-1 cursor-pointer">1,248</span>
+</div>
+<div class="mt-auto">
+<div class="flex items-baseline gap-1">
+<span class="text-xs font-bold self-start mt-1">$</span>
+<span class="text-xl font-bold">29</span>
+<span class="text-xs font-bold">99</span>
+</div>
+<p class="text-[10px] text-slate-500 mb-3">FREE Delivery Tomorrow</p>
+<button class="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold py-1.5 rounded-full transition-colors shadow-sm">Add to Cart</button>
+</div>
+</div>
+</div>
+<!-- Book Card 2 -->
+<div class="book-card group flex flex-col h-full bg-white dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="aspect-[3/4] mb-3 overflow-hidden rounded-md bg-slate-100 dark:bg-slate-800">
+<img alt="Book Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Vintage style book cover with gold lettering" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4uZerAw-HSK9imeNnixr8zuIvVOWTFyT7xfoBcQUNG1wp-5S7m4X8rWOoYjwiLliEsiYxFPaL2KqaYXdk7Oabv6NPccx4wMX7drzMrifU4LcrVsathbzy9UpYz15wjdf2Dz_CVGOCWKwgDVYSeDbtQWlCwTSrZRmEJcq6fcn09Q9YjBN1iaf-PWIhTfP6XegrihedFhBXyqVJg_KxVcUptvKXhjW-cljTL_wM8g4tbfL0y_SaV5jHpmv6uVpkW0wAnuxxDF0KW-2L"/>
+</div>
+<div class="flex-1 flex flex-col">
+<h3 class="text-sm font-bold leading-snug line-clamp-2 hover:text-primary cursor-pointer mb-1">Modern Web Architecture: From Monoliths to Microservices</h3>
+<p class="text-xs text-slate-500 mb-1">by David Chen</p>
+<div class="flex items-center mb-2">
+<div class="flex text-amber-400">
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+</div>
+<span class="text-[11px] text-primary hover:underline ml-1 cursor-pointer">852</span>
+</div>
+<div class="mt-auto">
+<div class="flex items-baseline gap-1">
+<span class="text-xs font-bold self-start mt-1">$</span>
+<span class="text-xl font-bold">34</span>
+<span class="text-xs font-bold">50</span>
+</div>
+<p class="text-[10px] text-slate-500 mb-3">Prime Member Deal</p>
+<button class="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold py-1.5 rounded-full transition-colors shadow-sm">Add to Cart</button>
+</div>
+</div>
+</div>
+<!-- Book Card 3 -->
+<div class="book-card group flex flex-col h-full bg-white dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="aspect-[3/4] mb-3 overflow-hidden rounded-md bg-slate-100 dark:bg-slate-800">
+<img alt="Book Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Classic leather bound book close up" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyKa0yJrP-ApcsSRPAR6G79BxdF1J6rnOHkdO6vYUyuj0V47V48ETbY6D-eZO6g-uTaGN1Eq9tEGoLyChZssJusBDTGjjAZQBI1hOZdruC19hvl7DFBjq_f5_bAy7ww38ea2FtdQr1D_prtI6q4c5PnE4Tjt1B7S34aGO48_-QXJ2r1fILD5grg_V5PnmZ6SpW69iV6rtM-eDy3vw_kgVNUZ-YkC6BVim3gVnldtZMSlccc0RzG58vhEf81IFTfeMDRMopZww30qIr"/>
+</div>
+<div class="flex-1 flex flex-col">
+<h3 class="text-sm font-bold leading-snug line-clamp-2 hover:text-primary cursor-pointer mb-1">Classic Literature Vol. 1: The Essential Collection</h3>
+<p class="text-xs text-slate-500 mb-1">by Various Authors</p>
+<div class="flex items-center mb-2">
+<div class="flex text-amber-400">
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[0]">star</span>
+</div>
+<span class="text-[11px] text-primary hover:underline ml-1 cursor-pointer">2,105</span>
+</div>
+<div class="mt-auto">
+<div class="flex items-baseline gap-1">
+<span class="text-xs font-bold self-start mt-1">$</span>
+<span class="text-xl font-bold">19</span>
+<span class="text-xs font-bold">00</span>
+</div>
+<p class="text-[10px] text-slate-500 mb-3">List: <span class="line-through">$24.99</span></p>
+<button class="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold py-1.5 rounded-full transition-colors shadow-sm">Add to Cart</button>
+</div>
+</div>
+</div>
+<!-- Book Card 4 -->
+<div class="book-card group flex flex-col h-full bg-white dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="aspect-[3/4] mb-3 overflow-hidden rounded-md bg-slate-100 dark:bg-slate-800 relative">
+<img alt="Book Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Technical handbook with clean white cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYKpXcEPZAQRj8sDLzlwaE97lFuVVCaC5iVIsrGxdZuj64r4zErp4nKdejQWGSrXEWJGzKdi-OGLgS0bwpznqd70PJqocYQImadFz_wC5vYb1e7vkrQksC3lhHVuGhT8izRonAxw3ojx0ZVAnnCPnPtWTSF6PJ4KinlF2x-XKB9EBPfaSb4hav5sjjApHgFnCeKEs-6FvCN-Qq_8ueDuS_TjHBFUt30mHpundLbP0yB8T_nkA2VG2QDnZBofy2jL5ghhXGG4bYLrGt"/>
+<div class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">SAVE 20%</div>
+</div>
+<div class="flex-1 flex flex-col">
+<h3 class="text-sm font-bold leading-snug line-clamp-2 hover:text-primary cursor-pointer mb-1">Data Science Essentials with Python and SQL</h3>
+<p class="text-xs text-slate-500 mb-1">by Dr. Sarah J. Miller</p>
+<div class="flex items-center mb-2">
+<div class="flex text-amber-400">
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[0]">star</span>
+</div>
+<span class="text-[11px] text-primary hover:underline ml-1 cursor-pointer">452</span>
+</div>
+<div class="mt-auto">
+<div class="flex items-baseline gap-1 text-red-600">
+<span class="text-xs font-bold self-start mt-1">$</span>
+<span class="text-xl font-bold">42</span>
+<span class="text-xs font-bold">00</span>
+</div>
+<p class="text-[10px] text-slate-500 mb-3">Was: $52.50</p>
+<button class="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold py-1.5 rounded-full transition-colors shadow-sm">Add to Cart</button>
+</div>
+</div>
+</div>
+<!-- Book Card 5 -->
+<div class="book-card group flex flex-col h-full bg-white dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="aspect-[3/4] mb-3 overflow-hidden rounded-md bg-slate-100 dark:bg-slate-800">
+<img alt="Book Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Handwritten journal on a wooden desk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzneJPLw1BXYEVmnXrz3fZv5-GVySPuAxQYAqHOceI8dXQwCqtbhtO9cWNDn8Yt5-wJ3O5sTQgM2kmDuaSYe14a3dULdRl71DQmLy_klg1H5llzkceuk6FWsIscMZjiD9y_5YaJPz1vfrTma4vDB5e2FsgoJikgNSZm_e6Sg3Ha9Lq7LBamx2QDxND6Z2FE0iCcq35Sufpi2QU9daFMhpPgLwwFjqjwRhlS1SBof4_odVZYAiaVlLwUu__JGyrr4hKduU5G_8CabbP"/>
+</div>
+<div class="flex-1 flex flex-col">
+<h3 class="text-sm font-bold leading-snug line-clamp-2 hover:text-primary cursor-pointer mb-1">The History of Computing: A Visual Timeline</h3>
+<p class="text-xs text-slate-500 mb-1">by Marcus Thorne</p>
+<div class="flex items-center mb-2">
+<div class="flex text-amber-400">
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+</div>
+<span class="text-[11px] text-primary hover:underline ml-1 cursor-pointer">310</span>
+</div>
+<div class="mt-auto">
+<div class="flex items-baseline gap-1">
+<span class="text-xs font-bold self-start mt-1">$</span>
+<span class="text-xl font-bold">25</span>
+<span class="text-xs font-bold">99</span>
+</div>
+<p class="text-[10px] text-slate-500 mb-3">Hardcover Edition</p>
+<button class="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold py-1.5 rounded-full transition-colors shadow-sm">Add to Cart</button>
+</div>
+</div>
+</div>
+<!-- Repeat for high density layout -->
+<!-- Book Card 6 -->
+<div class="book-card group flex flex-col h-full bg-white dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="aspect-[3/4] mb-3 overflow-hidden rounded-md bg-slate-100 dark:bg-slate-800">
+<img alt="Book Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A collection of diverse books on a shelf" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGUj1xAZhX_4quKlpeZ0D_rSk4C_D0UA9WhqLcaBL3KEoeelY2T57xxPk5yu-OXpVQfn79vBtVsqTT5pgQEnkkQX7ckYomdoKpbcexsClaRE2tc6QW4NK7L_46f-UJVKBOLGBNA7RSR6Cq3lJIvITx9XWW0tt6zfa0BKIqEvkEEHGhejGz6fNREgE18MsQeka5NKC7pEunxhs9k7dOQR96tSJ4UWAjMuE-OdoQSAL-ofs29oOBvsBCAv0jgYekhq6frGo8FG4QX6hu"/>
+</div>
+<div class="flex-1 flex flex-col">
+<h3 class="text-sm font-bold leading-snug line-clamp-2 hover:text-primary cursor-pointer mb-1">Creative Writing Guide: Unlock Your Inner Author</h3>
+<p class="text-xs text-slate-500 mb-1">by Julianne West</p>
+<div class="flex items-center mb-2">
+<div class="flex text-amber-400">
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[1]">star</span>
+<span class="material-symbols-outlined text-sm fill-[0]">star</span>
+</div>
+<span class="text-[11px] text-primary hover:underline ml-1 cursor-pointer">154</span>
+</div>
+<div class="mt-auto">
+<div class="flex items-baseline gap-1">
+<span class="text-xs font-bold self-start mt-1">$</span>
+<span class="text-xl font-bold">15</span>
+<span class="text-xs font-bold">00</span>
+</div>
+<p class="text-[10px] text-slate-500 mb-3">Kindle Available</p>
+<button class="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold py-1.5 rounded-full transition-colors shadow-sm">Add to Cart</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination/Footer of grid -->
+<div class="mt-12 flex justify-center border-t border-slate-200 dark:border-slate-800 pt-8 pb-12">
+<nav class="flex items-center gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-slate-300 hover:bg-slate-100 transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-primary bg-primary text-white font-bold text-sm">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-slate-300 hover:bg-slate-100 transition-colors text-sm">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-slate-300 hover:bg-slate-100 transition-colors text-sm">3</button>
+<span class="px-2 text-slate-400">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-slate-300 hover:bg-slate-100 transition-colors text-sm">20</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-slate-300 hover:bg-slate-100 transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</nav>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-slate-900 text-slate-300 py-12 px-4 border-t border-slate-800">
+<div class="max-w-[1440px] mx-auto grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
+<div class="col-span-2">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary text-3xl">menu_book</span>
+<h1 class="text-xl font-bold text-white tracking-tight">Bookstore</h1>
+</div>
+<p class="text-sm max-w-xs leading-relaxed">Your ultimate destination for discovering new worlds and mastering new skills through the power of books since 1999.</p>
+</div>
+<div>
+<h4 class="font-bold text-white mb-4">Get to Know Us</h4>
+<ul class="text-sm space-y-2">
+<li><a class="hover:underline" href="#">Careers</a></li>
+<li><a class="hover:underline" href="#">Blog</a></li>
+<li><a class="hover:underline" href="#">About Bookstore</a></li>
+<li><a class="hover:underline" href="#">Investor Relations</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-white mb-4">Shop with Us</h4>
+<ul class="text-sm space-y-2">
+<li><a class="hover:underline" href="#">Your Account</a></li>
+<li><a class="hover:underline" href="#">Your Orders</a></li>
+<li><a class="hover:underline" href="#">Shipping Rates</a></li>
+<li><a class="hover:underline" href="#">Returns &amp; Replacements</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-white mb-4">Contact Us</h4>
+<ul class="text-sm space-y-2">
+<li><a class="hover:underline" href="#">Help Center</a></li>
+<li><a class="hover:underline" href="#">Seller Support</a></li>
+<li><a class="hover:underline" href="#">Gift Cards</a></li>
+<li><a class="hover:underline" href="#">Community Guidelines</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-white mb-4">Follow Us</h4>
+<div class="flex gap-4">
+<a class="hover:text-white" href="#"><span class="material-symbols-outlined">public</span></a>
+<a class="hover:text-white" href="#"><span class="material-symbols-outlined">alternate_email</span></a>
+<a class="hover:text-white" href="#"><span class="material-symbols-outlined">share</span></a>
+</div>
+</div>
+</div>
+<div class="max-w-[1440px] mx-auto mt-12 pt-8 border-t border-slate-800 text-center text-xs opacity-60">
+<p>© 2024 Bookstore, Inc. or its affiliates. All rights reserved.</p>
+<div class="flex justify-center gap-4 mt-2">
+<a class="hover:underline" href="#">Conditions of Use</a>
+<a class="hover:underline" href="#">Privacy Notice</a>
+<a class="hover:underline" href="#">Interest-Based Ads</a>
+</div>
+</div>
+</footer>
+</body></html>

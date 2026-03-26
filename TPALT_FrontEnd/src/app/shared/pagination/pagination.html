@@ -1,0 +1,29 @@
+<nav class="flex items-center gap-1">
+    <!-- Précédent -->
+    <button
+            class="w-8 h-8 flex items-center justify-center rounded border transition-colors"
+            [ngClass]="currentPage === 1
+      ? 'border-slate-600 text-slate-600 cursor-not-allowed opacity-50'
+      : 'border-slate-500 text-slate-300 hover:border-amber-400 hover:text-amber-400'"
+            (click)="goTo(currentPage - 1)"
+            [disabled]="currentPage === 1"
+    >
+        <span class="material-symbols-outlined text-sm">chevron_left</span>
+    </button>
+
+    <ng-container *ngFor="let page of pages">
+        <!-- Ellipse -->
+        <span *ngIf="!isNumber(page)" class="px-2 text-slate-400 select-none">...</span>
+
+        <!-- Numéro de page -->
+        <button
+                *ngIf="isNumber(page)"
+                class="w-8 h-8 flex items-center justify-center rounded border text-sm font-medium transition-colors"
+                [ngClass]="page === currentPage
+        ? 'border-amber-400 bg-amber-400 text-slate-900 font-bold'
+        : 'border-slate-500 text-slate-300 hover:border-amber-400 hover:text-amber-400'"
+                (click)="goTo(page)"
+        >
+            {{ page }}
+        </button>
+    </ng-container>
