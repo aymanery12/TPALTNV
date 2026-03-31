@@ -12,19 +12,21 @@ import { AuthService } from '../../../core/services/auth.service';
     styleUrl: './login-page.scss'
 })
 export class LoginPage {
-    mode: 'login' | 'signup' = 'login';
+    // 'login' | 'signup' | 'verify-signup'
+    mode: 'login' | 'signup' | 'verify-signup' = 'login';
 
-    loginData = { username: '', password: '' };
+    loginData  = { username: '', password: '' };
     signupData = { username: '', email: '', password: '', confirm: '' };
 
+    verificationCode = '';
+
     isLoading = false;
-    errorMsg = '';
+    errorMsg  = '';
     successMsg = '';
 
     errors: Record<string, string> = {};
 
-    // Correction des Regex (suppression des caractères \r\n invisibles et des doubles anti-slashs)
-    private readonly EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    private readonly EMAIL_REGEX    = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     private readonly PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&_\-.])[A-Za-z\d@$!%*#?&_\-.]{8,}$/;
 
     constructor(
@@ -33,7 +35,6 @@ export class LoginPage {
         private cdr: ChangeDetectorRef
     ) {}
 
-    // Ajout de la propriété manquante pour la barre de force du mot de passe
     get passwordStrength() {
         const pass = this.signupData.password || '';
         if (!pass) return { level: 0, label: 'Très faible', color: 'bg-slate-700' };
@@ -47,18 +48,17 @@ export class LoginPage {
 
         const levels = [
             { label: 'Très faible', color: 'bg-red-500' },
-            { label: 'Faible', color: 'bg-red-400' },
-            { label: 'Moyen', color: 'bg-orange-400' },
-            { label: 'Bon', color: 'bg-yellow-400' },
-            { label: 'Fort', color: 'bg-green-400' },
-            { label: 'Excellent', color: 'bg-emerald-400' }
+            { label: 'Faible',      color: 'bg-red-400' },
+            { label: 'Moyen',       color: 'bg-orange-400' },
+            { label: 'Bon',         color: 'bg-yellow-400' },
+            { label: 'Fort',        color: 'bg-green-400' },
+            { label: 'Excellent',   color: 'bg-emerald-400' }
         ];
 
-        return {
-            level: points,
-            ...levels[points]
-        };
+        return { level: points, ...levels[points] };
     }
+
+    // ── CONNEXION ─────────────────────────────────────────────────────────────
 
     onLogin(): void {
         this.errorMsg = '';
@@ -69,7 +69,6 @@ export class LoginPage {
             next: (res: any) => {
                 this.isLoading = false;
                 this.cdr.detectChanges();
-
                 if (res.role === 'ADMIN') {
                     this.router.navigate(['/admin']);
                 } else {
@@ -81,46 +80,92 @@ export class LoginPage {
                 this.cdr.detectChanges();
                 this.errorMsg = err?.status === 401
                     ? 'Identifiants incorrects.'
-                    : 'Erreur de connexion serveur.';
+                    : (err?.error?.error || 'Erreur de connexion serveur.');
             }
         });
     }
+
+    // ── INSCRIPTION ───────────────────────────────────────────────────────────
 
     onSignup(): void {
         this.errorMsg = '';
         if (!this.validateSignup()) return;
 
         this.isLoading = true;
-        this.authService.register({
-            username: this.signupData.username,
-            email: this.signupData.email,
-            password: this.signupData.password
-        }).subscribe({
-            next: () => {
+        this.authService.sendSignupCode(this.signupData.email, this.signupData.username).subscribe({
+            next: (res: any) => {
                 this.isLoading = false;
-                this.successMsg = 'Compte créé ! Redirection...';
+                this.verificationCode = '';
+                this.successMsg = res.message;
+                this.mode = 'verify-signup';
                 this.cdr.detectChanges();
-                setTimeout(() => this.switchMode('login'), 1500);
             },
             error: (err) => {
                 this.isLoading = false;
                 this.cdr.detectChanges();
                 if (err?.status === 409) {
                     this.errorMsg = 'Nom d\'utilisateur déjà pris.';
-                } else if (err?.status === 400) {
-                    this.errorMsg = err?.error?.error || 'Données invalides.';
                 } else {
-                    this.errorMsg = 'Erreur serveur. Réessayez.';
+                    this.errorMsg = err?.error?.error || 'Erreur lors de l\'envoi du code.';
                 }
             }
         });
     }
 
-    switchMode(newMode: 'login' | 'signup'): void {
-        this.mode = newMode;
+    onVerifySignup(): void {
         this.errorMsg = '';
+        if (!this.verificationCode || this.verificationCode.length !== 6) {
+            this.errorMsg = 'Le code doit contenir 6 chiffres.';
+            return;
+        }
+
+        this.isLoading = true;
+        this.authService.verifySignup({
+            username: this.signupData.username,
+            email:    this.signupData.email,
+            password: this.signupData.password,
+            code:     this.verificationCode
+        }).subscribe({
+            next: () => {
+                this.isLoading  = false;
+                this.successMsg = 'Compte créé avec succès ! Redirection...';
+                this.cdr.detectChanges();
+                setTimeout(() => this.router.navigate(['/home']), 1000);
+            },
+            error: (err) => {
+                this.isLoading = false;
+                this.cdr.detectChanges();
+                this.errorMsg = err?.error?.error || 'Code incorrect ou expiré.';
+            }
+        });
+    }
+
+    resendSignupCode(): void {
+        this.errorMsg  = '';
+        this.isLoading = true;
+        this.authService.sendSignupCode(this.signupData.email, this.signupData.username).subscribe({
+            next: (res: any) => {
+                this.isLoading  = false;
+                this.successMsg = res.message;
+                this.verificationCode = '';
+                this.cdr.detectChanges();
+            },
+            error: () => {
+                this.isLoading = false;
+                this.errorMsg  = 'Impossible de renvoyer le code.';
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    // ── Utilitaires ───────────────────────────────────────────────────────────
+
+    switchMode(newMode: 'login' | 'signup' | 'verify-signup'): void {
+        this.mode  = newMode;
+        this.errorMsg   = '';
         this.successMsg = '';
-        this.errors = {};
+        this.errors     = {};
+        this.verificationCode = '';
         this.cdr.detectChanges();
     }
 

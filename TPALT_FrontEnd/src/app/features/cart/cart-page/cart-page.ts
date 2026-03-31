@@ -40,6 +40,8 @@ import { CartItem } from '../../../shared/models/cart.model';
                  class="flex gap-4 bg-slate-800/50 rounded-xl p-4 border border-slate-700">
               <img [src]="item.book.coverImageUrl || item.book.imageUrl"
                    [alt]="item.book.title"
+                   referrerpolicy="no-referrer"
+                   (error)="$any($event.target).src='book-placeholder.svg'"
                    class="w-20 h-28 object-cover rounded-lg shrink-0">
               <div class="flex-1">
                 <h3 class="font-bold text-white mb-1">{{ item.book.title }}</h3>

@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterOutlet, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { ChatbotComponent } from './shared/components/chatbot/chatbot';
 import { LoaderComponent } from './shared/components/loader/loader';
+import { LoadingService } from './core/services/loading.service';
 
 @Component({
   selector: 'app-root',
@@ -13,4 +15,23 @@ import { LoaderComponent } from './shared/components/loader/loader';
     <app-chatbot></app-chatbot>
   `
 })
-export class App {}
+export class App implements OnInit {
+  constructor(private router: Router, private loadingService: LoadingService) {}
+
+  ngOnInit(): void {
+    this.router.events.pipe(
+      filter(e =>
+        e instanceof NavigationStart ||
+        e instanceof NavigationEnd ||
+        e instanceof NavigationCancel ||
+        e instanceof NavigationError
+      )
+    ).subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.loadingService.show();
+      } else {
+        this.loadingService.hide();
+      }
+    });
+  }
+}

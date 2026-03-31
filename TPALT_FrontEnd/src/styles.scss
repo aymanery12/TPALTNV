@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Spacer so page content is not hidden under the fixed navbar (~96px tall) */
+app-navbar {
+  display: block;
+  height: 96px;
+}
+
+/* Material Symbols — étoile pleine */
+.star-filled {
+  font-variation-settings: 'FILL' 1;
+}
+
+/* Cacher la scrollbar du carousel tout en gardant le scroll */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
 /* ==========================================================
    LIGHT MODE  (classe "light" sur <html> + retrait de "dark")
    ========================================================== */
@@ -12,7 +30,8 @@ html.light {
   .bg-\[\#0f0f1a\] {
     background-color: #f1f5f9 !important;
   }
-  .bg-\[\#0f0f1a\].text-white {
+  .bg-\[\#0f0f1a\].text-white,
+  .min-h-screen.bg-\[\#0f0f1a\].text-white {
     color: #1e293b !important;
   }
 
@@ -23,6 +42,24 @@ html.light {
   section.bg-gradient-to-r .text-slate-400 { color: #cbd5e1 !important; }
   section.bg-gradient-to-r .border-white\/20 { border-color: rgba(255,255,255,0.25) !important; }
   section.bg-gradient-to-r .text-white { color: #ffffff !important; }
+
+  /* ---- HOME HERO (bg-gradient-to-br dark → light override) ---- */
+  section.bg-gradient-to-br {
+    background-image: none !important;
+    background-color: #34495e !important;
+  }
+
+  /* ---- AI RECOMMENDATIONS SECTION ---- */
+  section.w-full.py-10 {
+    background-color: #f8fafc !important;
+  }
+  section.w-full.py-10 h2.text-white          { color: #1e293b !important; }
+  section.w-full.py-10 .text-slate-400        { color: #64748b !important; }
+  section.w-full.py-10 p.text-white           { color: #1e293b !important; }
+  section.w-full.py-10 .border-white\/10      { border-color: #e2e8f0 !important; }
+  section.w-full.py-10 .ring-white\/10        { --tw-ring-color: rgba(0,0,0,0.08) !important; }
+  section.w-full.py-10 .bg-white\/10          { background-color: #e2e8f0 !important; }
+  section.w-full.py-10 .border-t.border-white\/10 { border-color: #e2e8f0 !important; }
 
   /* ---- HEADER / NAVBAR ---- */
   header {
@@ -102,4 +139,229 @@ html.light {
   }
   main app-book-card h3 { color: #1e293b !important; }
   main app-book-card p  { color: #64748b !important; }
+}
+
+/* ==========================================================
+   LOGIN PAGE — LIGHT MODE
+   ========================================================== */
+
+html.light app-login-page {
+
+  /* Page background */
+  .bg-\[\#0f0f1a\] {
+    background-color: #f1f5f9 !important;
+    /* Redéfinir les blobs pour mode clair */
+  }
+
+  /* Logo text */
+  .text-white { color: #1e293b !important; }
+
+  /* Card principal */
+  .bg-white\/5 {
+    background-color: #ffffff !important;
+    border-color: #e2e8f0 !important;
+  }
+
+  /* Conteneur des onglets */
+  .flex.rounded-2xl.bg-white\/5 {
+    background-color: #f1f5f9 !important;
+  }
+
+  /* Onglet inactif */
+  button.text-white { color: #64748b !important; }
+  button.text-white:hover { color: #1e293b !important; }
+
+  /* Labels de formulaire */
+  .text-slate-300 { color: #475569 !important; }
+
+  /* Texte secondaire / hints */
+  .text-slate-400 { color: #64748b !important; }
+  .text-slate-500 { color: #94a3b8 !important; }
+
+  /* Inputs */
+  .bg-white\/10 {
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    color: #1e293b !important;
+  }
+  .bg-white\/10:focus,
+  .focus\:bg-white\/15:focus {
+    background-color: #f8fafc !important;
+    border-color: #f59e0b !important;
+  }
+
+  /* Icônes dans les inputs */
+  .text-slate-400.material-symbols-outlined { color: #94a3b8 !important; }
+
+  /* Bordure normale des inputs */
+  .border-white\/20 { border-color: #cbd5e1 !important; }
+
+  /* Barre de force du mot de passe — barres vides */
+  .bg-slate-700 { background-color: #e2e8f0 !important; }
+
+  /* Lien retour à l'accueil */
+  a.text-slate-400 { color: #64748b !important; }
+  a.text-slate-400:hover { color: #1e293b !important; }
+  a.hover\:text-white:hover { color: #1e293b !important; }
+
+  /* Lien switch (S'inscrire / Se connecter) */
+  p.text-slate-400 { color: #64748b !important; }
+
+  /* Texte de fond du message succès / erreur déjà adapté en alpha */
+}
+
+/* ==========================================================
+   ADMIN DASHBOARD — LIGHT MODE
+   (global car ViewEncapsulation bloque html.light dans le composant)
+   ========================================================== */
+
+html.light {
+  /* ─── Variables locales ─── */
+  $a-bg:      #f1f5f9;
+  $a-surface: #ffffff;
+  $a-surface2:#f8fafc;
+  $a-border:  #e2e8f0;
+  $a-text:    #1e293b;
+  $a-muted:   #64748b;
+  $a-accent:  #f59e0b;
+  $a-red:     #ef4444;
+  $a-green:   #10b981;
+  $a-blue:    #3b82f6;
+
+  /* Shell */
+  .admin-shell            { background: $a-bg !important; color: $a-text !important; }
+
+  /* Sidebar */
+  .sidebar                { background: $a-surface !important; border-right-color: $a-border !important; }
+  .sidebar-header         { border-bottom-color: $a-border !important; }
+  .logo-text              { color: $a-text !important; }
+  .logo-text strong       { color: $a-accent !important; }
+  .collapse-btn           { color: $a-muted !important; }
+  .collapse-btn:hover     { background: $a-bg !important; color: $a-text !important; }
+  .nav-item               { color: $a-muted !important; }
+  .nav-item:hover         { background: $a-bg !important; color: $a-text !important; }
+  .nav-item.active        { background: rgba(245,158,11,0.12) !important; color: $a-accent !important; }
+  .nav-icon               { color: inherit !important; }
+  .sidebar-footer         { border-top-color: $a-border !important; }
+  .back-btn               { color: $a-muted !important; }
+  .back-btn:hover         { color: $a-accent !important; }
+
+  /* Topbar */
+  .topbar                 { background: $a-surface !important; border-bottom-color: $a-border !important; }
+  .view-title             { color: $a-text !important; }
+  .today                  { color: $a-muted !important; }
+  .avatar-chip            { background: $a-bg !important; color: $a-text !important; }
+  .avatar-dot             { background: rgba(245,158,11,0.15) !important; color: $a-accent !important; }
+  .avatar-label           { color: $a-text !important; }
+  .theme-toggle-btn       { background: $a-bg !important; border-color: $a-border !important; color: $a-muted !important; }
+  .theme-toggle-btn:hover { background: rgba(245,158,11,0.1) !important; border-color: rgba(245,158,11,0.3) !important; color: $a-accent !important; }
+
+  /* Messages */
+  .msg-banner.success     { background: rgba(16,185,129,0.1) !important; color: #059669 !important; border-color: rgba(16,185,129,0.3) !important; }
+  .msg-banner.error       { background: rgba(239,68,68,0.08) !important; color: #dc2626 !important; border-color: rgba(239,68,68,0.25) !important; }
+
+  /* KPI cards */
+  .kpi                    { background: $a-surface !important; border-color: $a-border !important; }
+  .kpi-body               { color: $a-text !important; }
+  .kpi-label              { color: $a-muted !important; }
+  .kpi-value              { color: $a-text !important; }
+  .kpi.amber  .kpi-value  { color: #d97706 !important; }
+  .kpi.green  .kpi-value  { color: #059669 !important; }
+  .kpi.blue   .kpi-value  { color: #2563eb !important; }
+  .kpi.purple .kpi-value  { color: #7c3aed !important; }
+  .kpi.red    .kpi-value  { color: #dc2626 !important; }
+  .kpi.teal   .kpi-value  { color: #0d9488 !important; }
+  .kpi.orange .kpi-value  { color: #ea580c !important; }
+  .kpi.indigo .kpi-value  { color: #4f46e5 !important; }
+
+  /* Charts / cards */
+  .chart-card,
+  .card                   { background: $a-surface !important; border-color: $a-border !important; }
+  .card-header            { border-bottom-color: $a-border !important; color: $a-text !important; }
+  .card-title             { color: $a-text !important; }
+  .section-header         { color: $a-text !important; }
+  .results-count          { color: $a-muted !important; }
+  .leg                    { color: $a-muted !important; }
+
+  /* Tables */
+  .table-wrap             { background: $a-surface !important; border-color: $a-border !important; }
+  .data-table th          { background: $a-bg !important; color: $a-muted !important; border-bottom-color: $a-border !important; }
+  .data-table td          { color: $a-text !important; border-bottom-color: $a-border !important; }
+  .data-table tr:hover td { background: $a-bg !important; }
+
+  /* Toolbar */
+  .toolbar                { background: $a-surface !important; border-bottom-color: $a-border !important; }
+  .search-input           { background: $a-bg !important; border-color: $a-border !important; color: $a-text !important; }
+  .search-input::placeholder { color: $a-muted !important; }
+  .search-icon            { color: $a-muted !important; }
+  .filter-select select   { background: $a-bg !important; border-color: $a-border !important; color: $a-text !important; }
+
+  /* Buttons */
+  .btn-secondary          { background: $a-bg !important; border-color: $a-border !important; color: $a-text !important; }
+  .btn-secondary:hover    { border-color: $a-accent !important; color: $a-accent !important; }
+  .icon-btn               { color: $a-muted !important; }
+  .icon-btn:hover         { background: $a-bg !important; color: $a-text !important; }
+  .icon-btn.delete:hover  { background: rgba(239,68,68,0.08) !important; color: $a-red !important; }
+  .page-btn               { background: $a-bg !important; border-color: $a-border !important; color: $a-muted !important; }
+  .page-btn.active        { background: $a-accent !important; color: #fff !important; border-color: $a-accent !important; }
+  .page-btn:hover         { border-color: $a-accent !important; color: $a-accent !important; }
+  .status-select          { background: $a-bg !important; border-color: $a-border !important; color: $a-text !important; }
+
+  /* Misc text / cells */
+  .muted                  { color: $a-muted !important; }
+  .book-title-cell        { color: $a-text !important; }
+  .book-author-cell       { color: $a-muted !important; }
+  .category-tag           { background: rgba(59,130,246,0.1) !important; color: #1d4ed8 !important; }
+  .mono                   { color: $a-muted !important; }
+  .stock-cell             { color: $a-text !important; }
+  .old-price              { color: $a-muted !important; }
+  .discount-input         { background: $a-bg !important; border-color: $a-border !important; color: $a-text !important; }
+  .empty-state            { color: $a-muted !important; }
+
+  /* Stock page */
+  .books-stock-list       { border-color: $a-border !important; }
+  .stock-row              { background: $a-surface !important; border-color: $a-border !important; }
+  .stock-row:hover        { background: $a-bg !important; }
+  .stock-row-title        { color: $a-text !important; }
+  .stock-row-cat          { color: $a-muted !important; }
+  .mv-title               { color: $a-text !important; }
+  .mv-qty                 { color: $a-muted !important; }
+  .movements-list         { border-color: $a-border !important; }
+  .movement-row           { border-bottom-color: $a-border !important; }
+
+  /* Modals */
+  .modal                  { background: $a-surface !important; border-color: $a-border !important; color: $a-text !important; }
+  .modal-header           { background: $a-surface !important; border-bottom-color: $a-border !important; color: $a-text !important; }
+  .modal-header h3        { color: $a-text !important; }
+  .modal-header .close-btn { color: $a-muted !important; }
+  .modal-header .close-btn:hover { background: $a-bg !important; color: $a-text !important; }
+  .modal-body             { color: $a-text !important; }
+  .modal-footer           { border-top-color: $a-border !important; }
+
+  /* Forms */
+  .form-group label       { color: $a-muted !important; }
+  .form-group input,
+  .form-group select,
+  .form-group textarea    { background: $a-bg !important; border-color: $a-border !important; color: $a-text !important; }
+  .form-group input::placeholder,
+  .form-group textarea::placeholder { color: $a-muted !important; }
+  .selected-book-info     { background: $a-bg !important; color: $a-text !important; }
+
+  /* Order modal */
+  .order-modal-header     { background: linear-gradient(135deg, $a-surface 0%, rgba(245,158,11,0.05) 100%) !important; border-bottom-color: rgba(245,158,11,0.15) !important; }
+  .order-modal-id         { color: $a-text !important; }
+  .order-modal-date       { color: $a-muted !important; }
+  .order-summary-banner   { background: $a-bg !important; border-color: $a-border !important; }
+  .order-summary-amount   { color: $a-text !important; }
+  .order-summary-label    { color: $a-muted !important; }
+  .detail-card            { background: $a-bg !important; border-color: $a-border !important; }
+  .detail-label           { color: $a-muted !important; }
+  .detail-value           { color: $a-text !important; }
+  .order-items h4         { color: $a-muted !important; }
+  .order-item-row:hover   { background: $a-bg !important; }
+  .item-title             { color: $a-text !important; }
+  .item-qty               { color: $a-muted !important; }
+
+  /* Promo */
+  .promo-info             { background: rgba(245,158,11,0.06) !important; border-color: rgba(245,158,11,0.2) !important; }
 }

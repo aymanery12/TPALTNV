@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ChatService } from '../../../core/services/chat.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { ThemeService } from '../../../core/services/theme.service';
 import { timeout } from 'rxjs/operators';
 
 interface ChatMessage {
@@ -16,6 +17,17 @@ interface ChatMessage {
     standalone: true,
     imports: [CommonModule, FormsModule, RouterModule],
     template: `
+        <!-- Bouton mode sombre (toujours au-dessus du chatbot) -->
+        <button
+                (click)="themeService.toggle()"
+                class="fixed bottom-24 right-6 z-50 w-14 h-14 rounded-full bg-slate-700 hover:bg-slate-600 text-white shadow-2xl flex items-center justify-center transition-all hover:scale-110"
+                [title]="themeService.isDark() ? 'Passer en mode clair' : 'Passer en mode sombre'">
+            <span class="material-symbols-outlined text-2xl">
+                {{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}
+            </span>
+        </button>
+
+        <!-- Bouton chatbot -->
         <button
                 (click)="toggleChat()"
                 class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-amber-400 hover:bg-amber-500 text-slate-900 shadow-2xl flex items-center justify-center transition-all hover:scale-110"
@@ -26,7 +38,7 @@ interface ChatMessage {
         </button>
 
         <div *ngIf="isOpen"
-             class="fixed bottom-24 right-6 z-50 w-80 md:w-96 h-[520px] flex flex-col bg-[#1a1a2e] border border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
+             class="fixed bottom-[88px] right-6 z-50 w-80 md:w-96 h-[520px] flex flex-col bg-[#1a1a2e] border border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
 
             <div class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-500 shrink-0">
                 <div class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center">
@@ -151,7 +163,8 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
     constructor(
         private chatService: ChatService,
         private authService: AuthService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        public themeService: ThemeService
     ) {}
 
     ngOnInit(): void {

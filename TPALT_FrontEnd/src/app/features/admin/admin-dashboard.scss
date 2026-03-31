@@ -153,7 +153,8 @@ $sidebar-collapsed: 64px;
   top: 0;
   z-index: 10;
 
-  .topbar-left { display: flex; flex-direction: column; gap: 2px; }
+  .topbar-left  { display: flex; flex-direction: column; gap: 2px; }
+  .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
   .view-title { font-size: 1rem; font-weight: 600; color: $text; }
   .today { font-size: 0.75rem; color: $muted; }
 
@@ -530,6 +531,7 @@ $sidebar-collapsed: 64px;
 
 .modal {
   background: $surface;
+  color: $text;
   border: 1px solid $border;
   border-radius: 14px;
   width: 90%;
@@ -546,7 +548,8 @@ $sidebar-collapsed: 64px;
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid $border;
-  h3 { font-size: 1rem; }
+  color: $text;
+  h3 { font-size: 1rem; color: $text; }
   .close-btn {
     background: none;
     border: none;
@@ -559,13 +562,135 @@ $sidebar-collapsed: 64px;
   }
 }
 
-.modal-body { padding: 1.5rem; overflow-y: auto; flex: 1; }
+.modal-body { padding: 1.5rem; overflow-y: auto; flex: 1; color: $text; }
 .modal-footer {
   padding: 1rem 1.5rem;
   border-top: 1px solid $border;
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
+}
+
+// ─── Order modal ──────────────────────────────────────────────────────────────
+.order-modal { max-width: 560px; }
+
+.order-modal-header {
+  background: linear-gradient(135deg, $surface 0%, rgba($accent, 0.08) 100%);
+  border-bottom: 1px solid rgba($accent, 0.15) !important;
+  padding: 1.25rem 1.5rem;
+}
+
+.order-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.order-receipt-icon {
+  font-size: 2rem;
+  color: $accent;
+  background: rgba($accent, 0.12);
+  border-radius: 10px;
+  padding: 6px;
+  flex-shrink: 0;
+}
+
+.order-modal-id {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $text;
+}
+
+.order-modal-date {
+  font-size: 0.75rem;
+  color: $muted;
+  margin-top: 2px;
+}
+
+.order-modal-body { padding: 1.25rem 1.5rem; }
+
+.order-summary-banner {
+  background: $surface2;
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .order-summary-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: $muted;
+    margin-bottom: 4px;
+  }
+  .order-summary-amount {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: $text;
+    letter-spacing: -0.02em;
+  }
+}
+
+// Order detail grid — card style
+.order-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+  .span2 { grid-column: span 2; }
+}
+
+.detail-card {
+  background: $surface2;
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 0.65rem 0.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.detail-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: $muted;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  .detail-icon { font-size: 12px; }
+}
+
+.detail-value {
+  color: $text;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.order-items {
+  h4 {
+    margin-bottom: 0.6rem;
+    font-size: 0.78rem;
+    color: $muted;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+}
+
+.order-item-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.55rem 0.75rem;
+  border-radius: 7px;
+  background: transparent;
+  transition: background 0.15s;
+  &:hover { background: $surface2; }
+  .item-title { flex: 1; color: $text; font-size: 0.875rem; }
+  .item-qty   { color: $muted; font-size: 0.8rem; min-width: 32px; }
+  .item-price { color: $accent; font-weight: 600; font-size: 0.875rem; min-width: 70px; text-align: right; }
 }
 
 // ─── Forms ────────────────────────────────────────────────────────────────────
@@ -624,25 +749,25 @@ $sidebar-collapsed: 64px;
   font-size: 0.875rem;
 }
 
-// Order detail
-.order-detail-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
-  .span2 { grid-column: span 2; }
-  .detail-label { color: $muted; font-size: 0.75rem; margin-right: 6px; }
-}
-
-.order-items h4 { margin-bottom: 0.5rem; font-size: 0.85rem; color: $muted; }
-.order-item-row {
+// ─── Theme toggle button ──────────────────────────────────────────────────────
+.theme-toggle-btn {
   display: flex;
-  gap: 1rem;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid $border;
-  font-size: 0.875rem;
-  &:last-child { border: none; }
-  span:first-child { flex: 1; }
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid $border;
+  background: $surface2;
+  color: $muted;
+  cursor: pointer;
+  transition: all 0.2s;
+  .material-symbols-outlined { font-size: 18px; }
+  &:hover {
+    background: rgba($accent, 0.12);
+    border-color: rgba($accent, 0.3);
+    color: $accent;
+  }
 }
 
 // ─── Responsive ───────────────────────────────────────────────────────────────

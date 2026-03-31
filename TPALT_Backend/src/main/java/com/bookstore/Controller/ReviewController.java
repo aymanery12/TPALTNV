@@ -51,6 +51,15 @@ public class ReviewController {
 
         review.setBook(book);
         review.setUser(user);
-        return reviewRepository.save(review);
+        Review saved = reviewRepository.save(review);
+
+        // Recalculer la note moyenne et le nombre d'avis du livre
+        List<Review> allReviews = reviewRepository.findByBookId(bookId);
+        double avg = allReviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
+        book.setRating(Math.round(avg * 10.0) / 10.0);
+        book.setReviewCount(allReviews.size());
+        bookRepository.save(book);
+
+        return saved;
     }
 }

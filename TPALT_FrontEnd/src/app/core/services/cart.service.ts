@@ -3,13 +3,24 @@ import { BehaviorSubject, Observable, map } from 'rxjs';
 import { Cart, CartItem } from '../../shared/models/cart.model';
 import { Book } from '../../shared/models/book.model';
 
-const CART_KEY = 'bookstore_cart';
-
 @Injectable({ providedIn: 'root' })
 export class CartService {
+  private currentUsername: string | null = localStorage.getItem('auth_username');
   private items$ = new BehaviorSubject<CartItem[]>(this.loadFromStorage());
 
   constructor() {}
+
+  private getKey(): string {
+    return this.currentUsername
+      ? `bookstore_cart_${this.currentUsername}`
+      : 'bookstore_cart_guest';
+  }
+
+  /** Appelé à la connexion/inscription/déconnexion pour charger le bon panier */
+  switchUser(username: string | null): void {
+    this.currentUsername = username;
+    this.items$.next(this.loadFromStorage());
+  }
 
   // ── Observables ─────────────────────────────────────────────────────────────
 
@@ -57,12 +68,12 @@ export class CartService {
 
   private update(items: CartItem[]): void {
     this.items$.next(items);
-    localStorage.setItem(CART_KEY, JSON.stringify(items));
+    localStorage.setItem(this.getKey(), JSON.stringify(items));
   }
 
   private loadFromStorage(): CartItem[] {
     try {
-      const raw = localStorage.getItem(CART_KEY);
+      const raw = localStorage.getItem(this.getKey());
       return raw ? JSON.parse(raw) : [];
     } catch {
       return [];

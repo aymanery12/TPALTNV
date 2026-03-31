@@ -20,9 +20,12 @@ public class StockMovement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "book_id", nullable = false)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "author"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "author", "description",
+            "publisher", "isbn", "pages", "language", "createdAt", "updatedAt",
+            "reviewCount", "soldCount", "featured", "discount", "finalPrice",
+            "stockAlert", "status"})
     private Book book;
 
     @Enumerated(EnumType.STRING)

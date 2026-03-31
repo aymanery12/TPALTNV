@@ -17,7 +17,6 @@ import { Footer } from '../../layout/footer/footer';
   imports: [CommonModule, RouterModule, FormsModule, Navbar, Footer],
   template: `
     <div class="min-h-screen bg-[#0f0f1a] text-white flex flex-col">
-      <app-navbar></app-navbar>
 
       <!-- Toast -->
       <div *ngIf="toastVisible"
@@ -54,6 +53,8 @@ import { Footer } from '../../layout/footer/footer';
               <div class="w-56 h-80 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 mx-auto md:mx-0">
                 <img [src]="book.imageUrl || book.coverImageUrl"
                      [alt]="book.title"
+                     referrerpolicy="no-referrer"
+                     (error)="$any($event.target).src='book-placeholder.svg'"
                      class="w-full h-full object-cover">
               </div>
             </div>
@@ -78,17 +79,17 @@ import { Footer } from '../../layout/footer/footer';
                   <span *ngFor="let i of [1,2,3,4,5]"
                         class="material-symbols-outlined text-xl"
                         [class.text-amber-400]="i <= bookRating"
-                        [class.text-slate-600]="i > bookRating">star</span>
+                        [class.text-slate-600]="i > bookRating"
+                        [class.star-filled]="i <= bookRating">star</span>
                 </div>
-                <!-- ✅ FIX: utiliser bookRating (number) au lieu de book.rating?.toFixed() -->
                 <span class="text-slate-400 text-sm">{{ bookRatingLabel }}/5</span>
                 <span class="text-slate-500 text-sm">({{ reviews.length }} avis)</span>
               </div>
 
               <!-- Price -->
               <div class="flex items-baseline gap-1 mb-6">
-                <span class="text-sm font-bold text-amber-400 self-start mt-1">€</span>
                 <span class="text-4xl font-bold text-amber-400">{{ book.price | number:'1.2-2' }}</span>
+                <span class="text-sm font-bold text-amber-400 self-start mt-1">€</span>
               </div>
 
               <!-- Description -->
@@ -150,9 +151,12 @@ import { Footer } from '../../layout/footer/footer';
               <div class="flex gap-1 mb-4">
                 <button *ngFor="let i of [1,2,3,4,5]"
                         (click)="newReview.rating = i"
-                        class="material-symbols-outlined text-2xl transition-colors"
+                        class="text-2xl transition-colors leading-none bg-transparent border-0 p-0 cursor-pointer"
                         [class.text-amber-400]="i <= newReview.rating"
-                        [class.text-slate-600]="i > newReview.rating">star</button>
+                        [class.text-slate-600]="i > newReview.rating">
+                  <span class="material-symbols-outlined"
+                        [class.star-filled]="i <= newReview.rating">star</span>
+                </button>
               </div>
 
               <textarea [(ngModel)]="newReview.comment"
@@ -192,7 +196,8 @@ import { Footer } from '../../layout/footer/footer';
                   <span *ngFor="let i of [1,2,3,4,5]"
                         class="material-symbols-outlined text-sm"
                         [class.text-amber-400]="i <= r.rating"
-                        [class.text-slate-600]="i > r.rating">star</span>
+                        [class.text-slate-600]="i > r.rating"
+                        [class.star-filled]="i <= r.rating">star</span>
                 </div>
               </div>
               <p class="text-slate-300 text-sm">{{ r.comment }}</p>
@@ -304,6 +309,11 @@ export class BookDetailsComponent implements OnInit {
     }).subscribe({
       next: (review) => {
         this.reviews.unshift(review);
+        // Recalculer la note moyenne localement
+        if (this.book) {
+          const total = this.reviews.reduce((sum, r) => sum + r.rating, 0);
+          this.book.rating = Math.round((total / this.reviews.length) * 10) / 10;
+        }
         this.newReview = { rating: 0, comment: '' };
         this.reviewLoading = false;
         this.showToast('Avis publié avec succès !');

@@ -6,45 +6,48 @@
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
-                <span class="logo-icon">📚</span>
+                <span class="material-symbols-outlined logo-icon">menu_book</span>
                 <span class="logo-text" *ngIf="!sidebarCollapsed">Book<strong>Store</strong></span>
             </div>
             <button class="collapse-btn" (click)="sidebarCollapsed = !sidebarCollapsed">
-                <span>{{ sidebarCollapsed ? '›' : '‹' }}</span>
+                <span class="material-symbols-outlined">{{ sidebarCollapsed ? 'chevron_right' : 'chevron_left' }}</span>
             </button>
         </div>
 
         <nav class="sidebar-nav">
             <button class="nav-item" [class.active]="activeView === 'dashboard'" (click)="loadView('dashboard')">
-                <span class="nav-icon">📊</span>
+                <span class="material-symbols-outlined nav-icon">dashboard</span>
                 <span class="nav-label" *ngIf="!sidebarCollapsed">Dashboard</span>
             </button>
             <button class="nav-item" [class.active]="activeView === 'books'" (click)="loadView('books')">
-                <span class="nav-icon">📖</span>
+                <span class="material-symbols-outlined nav-icon">auto_stories</span>
                 <span class="nav-label" *ngIf="!sidebarCollapsed">Catalogue</span>
             </button>
             <button class="nav-item" [class.active]="activeView === 'stock'" (click)="loadView('stock')">
-                <span class="nav-icon">📦</span>
+                <span class="material-symbols-outlined nav-icon">inventory_2</span>
                 <span class="nav-label" *ngIf="!sidebarCollapsed">Stock</span>
                 <span class="badge-alert" *ngIf="stats.lowStockCount > 0 && !sidebarCollapsed">{{ stats.lowStockCount }}</span>
             </button>
             <button class="nav-item" [class.active]="activeView === 'orders'" (click)="loadView('orders')">
-                <span class="nav-icon">🛒</span>
+                <span class="material-symbols-outlined nav-icon">shopping_cart</span>
                 <span class="nav-label" *ngIf="!sidebarCollapsed">Commandes</span>
                 <span class="badge-alert" *ngIf="stats.enPreparation > 0 && !sidebarCollapsed">{{ stats.enPreparation }}</span>
             </button>
             <button class="nav-item" [class.active]="activeView === 'users'" (click)="loadView('users')">
-                <span class="nav-icon">👥</span>
+                <span class="material-symbols-outlined nav-icon">group</span>
                 <span class="nav-label" *ngIf="!sidebarCollapsed">Utilisateurs</span>
             </button>
             <button class="nav-item" [class.active]="activeView === 'promotions'" (click)="loadView('promotions')">
-                <span class="nav-icon">🏷️</span>
+                <span class="material-symbols-outlined nav-icon">sell</span>
                 <span class="nav-label" *ngIf="!sidebarCollapsed">Promotions</span>
             </button>
         </nav>
 
         <div class="sidebar-footer" *ngIf="!sidebarCollapsed">
-            <a routerLink="/home" class="back-btn">← Retour au site</a>
+            <a routerLink="/home" class="back-btn">
+                <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle">arrow_back</span>
+                Retour au site
+            </a>
         </div>
     </aside>
 
@@ -56,17 +59,20 @@
             <div class="topbar-left">
                 <h2 class="view-title">
                     <ng-container [ngSwitch]="activeView">
-                        <span *ngSwitchCase="'dashboard'">📊 Dashboard</span>
-                        <span *ngSwitchCase="'books'">📖 Catalogue des livres</span>
-                        <span *ngSwitchCase="'stock'">📦 Gestion des stocks</span>
-                        <span *ngSwitchCase="'orders'">🛒 Commandes</span>
-                        <span *ngSwitchCase="'users'">👥 Utilisateurs</span>
-                        <span *ngSwitchCase="'promotions'">🏷️ Promotions & Remises</span>
+                        <span *ngSwitchCase="'dashboard'"><span class="material-symbols-outlined" style="vertical-align:middle;margin-right:6px">dashboard</span>Dashboard</span>
+                        <span *ngSwitchCase="'books'"><span class="material-symbols-outlined" style="vertical-align:middle;margin-right:6px">auto_stories</span>Catalogue des livres</span>
+                        <span *ngSwitchCase="'stock'"><span class="material-symbols-outlined" style="vertical-align:middle;margin-right:6px">inventory_2</span>Gestion des stocks</span>
+                        <span *ngSwitchCase="'orders'"><span class="material-symbols-outlined" style="vertical-align:middle;margin-right:6px">shopping_cart</span>Commandes</span>
+                        <span *ngSwitchCase="'users'"><span class="material-symbols-outlined" style="vertical-align:middle;margin-right:6px">group</span>Utilisateurs</span>
+                        <span *ngSwitchCase="'promotions'"><span class="material-symbols-outlined" style="vertical-align:middle;margin-right:6px">sell</span>Promotions & Remises</span>
                     </ng-container>
                 </h2>
                 <span class="today">{{ getTodayDate() }}</span>
             </div>
             <div class="topbar-right">
+                <button class="theme-toggle-btn" (click)="toggleTheme()" [title]="isDark ? 'Passer en mode clair' : 'Passer en mode sombre'">
+                    <span class="material-symbols-outlined">{{ isDark ? 'light_mode' : 'dark_mode' }}</span>
+                </button>
                 <div class="avatar-chip">
                     <span class="avatar-dot">AD</span>
                     <span class="avatar-label">Admin</span>
@@ -75,11 +81,12 @@
         </header>
 
         <!-- Messages -->
-        <div *ngIf="successMsg" class="msg-banner success" (click)="closeMsg()">✅ {{ successMsg }}</div>
-        <div *ngIf="errorMsg"   class="msg-banner error"   (click)="closeMsg()">❌ {{ errorMsg }}</div>
-
-        <!-- Loading -->
-
+        <div *ngIf="successMsg" class="msg-banner success" (click)="closeMsg()">
+            <span class="material-symbols-outlined">check_circle</span> {{ successMsg }}
+        </div>
+        <div *ngIf="errorMsg" class="msg-banner error" (click)="closeMsg()">
+            <span class="material-symbols-outlined">cancel</span> {{ errorMsg }}
+        </div>
 
         <!-- ════════════════ DASHBOARD ════════════════ -->
         <section *ngIf="activeView === 'dashboard'" class="view-content">
@@ -87,56 +94,56 @@
             <!-- KPI Grid -->
             <div class="kpi-grid">
                 <div class="kpi amber">
-                    <div class="kpi-icon">💰</div>
+                    <div class="kpi-icon"><span class="material-symbols-outlined">payments</span></div>
                     <div class="kpi-body">
                         <div class="kpi-label">Profit total</div>
                         <div class="kpi-value">{{ formatCurrency(stats.totalProfit) }}</div>
                     </div>
                 </div>
                 <div class="kpi green">
-                    <div class="kpi-icon">🛒</div>
+                    <div class="kpi-icon"><span class="material-symbols-outlined">shopping_cart</span></div>
                     <div class="kpi-body">
                         <div class="kpi-label">Commandes</div>
                         <div class="kpi-value">{{ formatNumber(stats.totalAchats) }}</div>
                     </div>
                 </div>
                 <div class="kpi blue">
-                    <div class="kpi-icon">📚</div>
+                    <div class="kpi-icon"><span class="material-symbols-outlined">library_books</span></div>
                     <div class="kpi-body">
                         <div class="kpi-label">Livres en stock</div>
                         <div class="kpi-value">{{ formatNumber(stats.totalStock) }}</div>
                     </div>
                 </div>
                 <div class="kpi purple">
-                    <div class="kpi-icon">🔖</div>
+                    <div class="kpi-icon"><span class="material-symbols-outlined">bookmark</span></div>
                     <div class="kpi-body">
                         <div class="kpi-label">Références</div>
                         <div class="kpi-value">{{ formatNumber(stats.totalBooks) }}</div>
                     </div>
                 </div>
                 <div class="kpi red">
-                    <div class="kpi-icon">⚠️</div>
+                    <div class="kpi-icon"><span class="material-symbols-outlined">warning</span></div>
                     <div class="kpi-body">
                         <div class="kpi-label">Alertes stock</div>
                         <div class="kpi-value">{{ stats.lowStockCount }}</div>
                     </div>
                 </div>
                 <div class="kpi teal">
-                    <div class="kpi-icon">👥</div>
+                    <div class="kpi-icon"><span class="material-symbols-outlined">group</span></div>
                     <div class="kpi-body">
                         <div class="kpi-label">Utilisateurs</div>
                         <div class="kpi-value">{{ formatNumber(stats.totalUsers) }}</div>
                     </div>
                 </div>
                 <div class="kpi orange">
-                    <div class="kpi-icon">🚚</div>
+                    <div class="kpi-icon"><span class="material-symbols-outlined">local_shipping</span></div>
                     <div class="kpi-body">
                         <div class="kpi-label">En livraison</div>
                         <div class="kpi-value">{{ stats.enLivraison }}</div>
                     </div>
                 </div>
                 <div class="kpi indigo">
-                    <div class="kpi-icon">🏪</div>
+                    <div class="kpi-icon"><span class="material-symbols-outlined">store</span></div>
                     <div class="kpi-body">
                         <div class="kpi-label">Valeur stock</div>
                         <div class="kpi-value">{{ formatCurrency(stats.totalStockValue) }}</div>
@@ -164,7 +171,7 @@
                 </div>
             </div>
 
-            <!-- Bottom row: recent orders + stock movements -->
+            <!-- Bottom row -->
             <div class="bottom-row">
                 <div class="card">
                     <div class="card-header">
@@ -195,8 +202,8 @@
                             <span class="mv-badge" [ngClass]="getMovementClass(mv.type)">{{ getMovementLabel(mv.type) }}</span>
                             <span class="mv-title">{{ mv.book?.title ?? '—' }}</span>
                             <span class="mv-qty" [class.positive]="mv.quantity > 0" [class.negative]="mv.quantity < 0">
-                {{ mv.quantity > 0 ? '+' : '' }}{{ mv.quantity }}
-              </span>
+                                {{ mv.quantity > 0 ? '+' : '' }}{{ mv.quantity }}
+                            </span>
                             <span class="mv-after">→ {{ mv.stockAfter }}</span>
                         </div>
                     </div>
@@ -208,11 +215,13 @@
         <!-- ════════════════ CATALOGUE ════════════════ -->
         <section *ngIf="activeView === 'books'" class="view-content">
 
-            <!-- Toolbar -->
             <div class="toolbar">
                 <div class="toolbar-left">
-                    <input class="search-input" [(ngModel)]="bookSearch" (ngModelChange)="applyBookFilters()"
-                           placeholder="🔍 Rechercher un livre..." />
+                    <div class="search-wrapper">
+                        <span class="material-symbols-outlined search-icon">search</span>
+                        <input class="search-input" [(ngModel)]="bookSearch" (ngModelChange)="applyBookFilters()"
+                               placeholder="Rechercher un livre..." />
+                    </div>
                     <select class="filter-select" [(ngModel)]="bookCategoryFilter" (ngModelChange)="applyBookFilters()">
                         <option value="">Toutes catégories</option>
                         <option *ngFor="let cat of uniqueCategories" [value]="cat">{{ cat }}</option>
@@ -225,12 +234,13 @@
                         <option value="COMING_SOON">À paraître</option>
                     </select>
                 </div>
-                <button class="btn-primary" (click)="openAddBook()">+ Ajouter un livre</button>
+                <button class="btn-primary" (click)="openAddBook()">
+                    <span class="material-symbols-outlined">add</span> Ajouter un livre
+                </button>
             </div>
 
             <div class="results-count">{{ filteredBooks.length }} livre(s) trouvé(s)</div>
 
-            <!-- Books table -->
             <div class="card">
                 <table class="data-table books-table">
                     <thead>
@@ -243,8 +253,10 @@
                     <tr *ngFor="let book of filteredBooks">
                         <td>
                             <div class="book-cell">
-                                <img *ngIf="book.imageUrl" [src]="book.imageUrl" class="book-thumb" alt="" />
-                                <div *ngIf="!book.imageUrl" class="book-thumb-placeholder">📚</div>
+                                <img *ngIf="book.imageUrl" [src]="book.imageUrl" class="book-thumb" alt="" referrerpolicy="no-referrer" (error)="$any($event.target).src='book-placeholder.svg'" />
+                                <div *ngIf="!book.imageUrl" class="book-thumb-placeholder">
+                                    <span class="material-symbols-outlined">menu_book</span>
+                                </div>
                                 <div>
                                     <div class="book-title-cell">{{ book.title }}</div>
                                     <div class="book-author-cell">{{ (book.author || []).join(', ') }}</div>
@@ -269,7 +281,7 @@
                         <td><span class="pill" [ngClass]="getBookStatusClass(book.status)">{{ getBookStatusLabel(book.status) }}</span></td>
                         <td>
                             <button class="icon-btn" (click)="toggleFeatured(book)" [title]="book.featured ? 'Retirer' : 'Mettre en avant'">
-                                {{ book.featured ? '⭐' : '☆' }}
+                                <span class="material-symbols-outlined" [class.text-amber]="book.featured">{{ book.featured ? 'star' : 'star_border' }}</span>
                             </button>
                         </td>
                         <td>
@@ -281,9 +293,15 @@
                         </td>
                         <td>
                             <div class="action-btns">
-                                <button class="icon-btn edit" (click)="openEditBook(book)" title="Modifier">✏️</button>
-                                <button class="icon-btn stock" (click)="openStockModal(book)" title="Ajuster stock">📦</button>
-                                <button class="icon-btn delete" (click)="deleteBook(book)" title="Supprimer">🗑️</button>
+                                <button class="icon-btn edit" (click)="openEditBook(book)" title="Modifier">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="icon-btn stock" (click)="openStockModal(book)" title="Ajuster stock">
+                                    <span class="material-symbols-outlined">inventory</span>
+                                </button>
+                                <button class="icon-btn delete" (click)="deleteBook(book)" title="Supprimer">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -301,9 +319,15 @@
                 <!-- Stock critique -->
                 <div class="card">
                     <div class="card-header">
-                        <span class="card-title">⚠️ Stock critique ({{ lowStockBooks.length }})</span>
+                        <span class="card-title">
+                            <span class="material-symbols-outlined" style="vertical-align:middle;color:#f59e0b">warning</span>
+                            Stock critique ({{ lowStockBooks.length }})
+                        </span>
                     </div>
-                    <div *ngIf="lowStockBooks.length === 0" class="empty-state">✅ Tous les stocks sont suffisants</div>
+                    <div *ngIf="lowStockBooks.length === 0" class="empty-state">
+                        <span class="material-symbols-outlined" style="color:#10b981">check_circle</span>
+                        Tous les stocks sont suffisants
+                    </div>
                     <div class="books-stock-list">
                         <div *ngFor="let book of lowStockBooks" class="stock-row">
                             <div class="stock-row-info">
@@ -325,9 +349,15 @@
                 <!-- Rupture de stock -->
                 <div class="card">
                     <div class="card-header">
-                        <span class="card-title">🚫 Rupture de stock ({{ outOfStockBooks.length }})</span>
+                        <span class="card-title">
+                            <span class="material-symbols-outlined" style="vertical-align:middle;color:#ef4444">block</span>
+                            Rupture de stock ({{ outOfStockBooks.length }})
+                        </span>
                     </div>
-                    <div *ngIf="outOfStockBooks.length === 0" class="empty-state">✅ Aucune rupture</div>
+                    <div *ngIf="outOfStockBooks.length === 0" class="empty-state">
+                        <span class="material-symbols-outlined" style="color:#10b981">check_circle</span>
+                        Aucune rupture
+                    </div>
                     <div class="books-stock-list">
                         <div *ngFor="let book of outOfStockBooks" class="stock-row">
                             <div class="stock-row-info">
@@ -345,8 +375,14 @@
             <!-- Historique mouvements -->
             <div class="card" style="margin-top:1.5rem">
                 <div class="card-header">
-                    <span class="card-title">📋 Historique des mouvements récents</span>
-                    <button class="btn-sm" (click)="loadStock()">🔄 Rafraîchir</button>
+                    <span class="card-title">
+                        <span class="material-symbols-outlined" style="vertical-align:middle;margin-right:4px">receipt_long</span>
+                        Historique des mouvements récents
+                    </span>
+                    <button class="btn-sm" (click)="loadStock()">
+                        <span class="material-symbols-outlined" style="font-size:15px;vertical-align:middle">refresh</span>
+                        Rafraîchir
+                    </button>
                 </div>
                 <table class="data-table">
                     <thead>
@@ -408,7 +444,9 @@
                             </select>
                         </td>
                         <td>
-                            <button class="icon-btn" (click)="viewOrder(order)" title="Détails">🔍</button>
+                            <button class="icon-btn" (click)="viewOrder(order)" title="Détails">
+                                <span class="material-symbols-outlined">visibility</span>
+                            </button>
                         </td>
                     </tr>
                     </tbody>
@@ -422,8 +460,14 @@
 
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title">👥 {{ users.length }} utilisateur(s)</span>
-                    <button class="btn-sm" (click)="loadUsers()">🔄 Rafraîchir</button>
+                    <span class="card-title">
+                        <span class="material-symbols-outlined" style="vertical-align:middle;margin-right:4px">group</span>
+                        {{ users.length }} utilisateur(s)
+                    </span>
+                    <button class="btn-sm" (click)="loadUsers()">
+                        <span class="material-symbols-outlined" style="font-size:15px;vertical-align:middle">refresh</span>
+                        Rafraîchir
+                    </button>
                 </div>
                 <table class="data-table">
                     <thead>
@@ -441,7 +485,9 @@
                             </select>
                         </td>
                         <td>
-                            <button class="icon-btn delete" (click)="deleteUser(user)" title="Supprimer">🗑️</button>
+                            <button class="icon-btn delete" (click)="deleteUser(user)" title="Supprimer">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
                         </td>
                     </tr>
                     </tbody>
@@ -454,7 +500,7 @@
         <section *ngIf="activeView === 'promotions'" class="view-content">
 
             <div class="promo-info">
-                <h3>🏷️ Gestion des remises</h3>
+                <h3><span class="material-symbols-outlined" style="vertical-align:middle;margin-right:6px">sell</span>Gestion des remises</h3>
                 <p>Appliquez des remises en pourcentage sur vos livres. La remise est visible côté client avec le prix barré.</p>
             </div>
 
@@ -467,8 +513,10 @@
                     <tr *ngFor="let book of books">
                         <td>
                             <div class="book-cell">
-                                <div *ngIf="!book.imageUrl" class="book-thumb-placeholder">📚</div>
-                                <img *ngIf="book.imageUrl" [src]="book.imageUrl" class="book-thumb" alt="" />
+                                <div *ngIf="!book.imageUrl" class="book-thumb-placeholder">
+                                    <span class="material-symbols-outlined">menu_book</span>
+                                </div>
+                                <img *ngIf="book.imageUrl" [src]="book.imageUrl" class="book-thumb" alt="" referrerpolicy="no-referrer" (error)="$any($event.target).src='book-placeholder.svg'" />
                                 <span class="book-title-cell">{{ book.title }}</span>
                             </div>
                         </td>
@@ -484,7 +532,9 @@
                             {{ formatCurrency((book.price || 0) * (1 - (book.discount || 0) / 100)) }}
                         </td>
                         <td>
-                            <button class="icon-btn" (click)="toggleFeatured(book)">{{ book.featured ? '⭐' : '☆' }}</button>
+                            <button class="icon-btn" (click)="toggleFeatured(book)">
+                                <span class="material-symbols-outlined" [class.text-amber]="book.featured">{{ book.featured ? 'star' : 'star_border' }}</span>
+                            </button>
                         </td>
                     </tr>
                     </tbody>
@@ -500,14 +550,23 @@
 <div *ngIf="showBookForm" class="modal-overlay" (click)="dismissModal()">
     <div class="modal" (click)="$event.stopPropagation()">
         <div class="modal-header">
-            <h3>{{ editingBook ? '✏️ Modifier le livre' : '➕ Ajouter un livre' }}</h3>
-            <button class="close-btn" (click)="dismissModal()">✕</button>
+            <h3>
+                <span class="material-symbols-outlined" style="vertical-align:middle;margin-right:6px">{{ editingBook ? 'edit' : 'add' }}</span>
+                {{ editingBook ? 'Modifier le livre' : 'Ajouter un livre' }}
+            </h3>
+            <button class="close-btn" (click)="dismissModal()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
         </div>
         <div class="modal-body">
             <div class="form-grid">
                 <div class="form-group span2">
                     <label>Titre *</label>
                     <input type="text" [(ngModel)]="bookForm.title" placeholder="Titre du livre" />
+                </div>
+                <div class="form-group span2">
+                    <label>Auteur(s)</label>
+                    <input type="text" [(ngModel)]="authorInput" placeholder="Nom Prénom (séparer par virgule si plusieurs)" />
                 </div>
                 <div class="form-group">
                     <label>Prix (€) *</label>
@@ -574,8 +633,13 @@
 <div *ngIf="showStockModal" class="modal-overlay" (click)="dismissModal()">
     <div class="modal modal-sm" (click)="$event.stopPropagation()">
         <div class="modal-header">
-            <h3>📦 Ajuster le stock</h3>
-            <button class="close-btn" (click)="dismissModal()">✕</button>
+            <h3>
+                <span class="material-symbols-outlined" style="vertical-align:middle;margin-right:6px">inventory</span>
+                Ajuster le stock
+            </h3>
+            <button class="close-btn" (click)="dismissModal()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
         </div>
         <div class="modal-body">
             <div *ngIf="selectedStockBook" class="selected-book-info">
@@ -611,26 +675,61 @@
 
 <!-- ══ MODAL : Détail commande ══ -->
 <div *ngIf="showOrderModal && selectedOrder" class="modal-overlay" (click)="dismissModal()">
-    <div class="modal" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <h3>🛒 Commande #{{ selectedOrder.id }}</h3>
-            <button class="close-btn" (click)="dismissModal()">✕</button>
-        </div>
-        <div class="modal-body">
-            <div class="order-detail-grid">
-                <div><span class="detail-label">Client</span> {{ selectedOrder.user?.username ?? selectedOrder.username }}</div>
-                <div><span class="detail-label">Date</span> {{ selectedOrder.orderDate | date:'dd/MM/yyyy HH:mm' }}</div>
-                <div><span class="detail-label">Statut</span> <span class="pill" [ngClass]="getStatusClass(selectedOrder.status)">{{ getStatusLabel(selectedOrder.status) }}</span></div>
-                <div><span class="detail-label">Montant</span> <strong>{{ formatCurrency(selectedOrder.totalAmount) }}</strong></div>
-                <div *ngIf="selectedOrder.shippingAddress" class="span2"><span class="detail-label">Adresse</span> {{ selectedOrder.shippingAddress }}</div>
-                <div *ngIf="selectedOrder.paymentMethod"><span class="detail-label">Paiement</span> {{ selectedOrder.paymentMethod }}</div>
+    <div class="modal order-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header order-modal-header">
+            <div class="order-modal-title">
+                <span class="material-symbols-outlined order-receipt-icon">receipt_long</span>
+                <div>
+                    <div class="order-modal-id">Commande #{{ selectedOrder.id }}</div>
+                    <div class="order-modal-date">{{ selectedOrder.orderDate | date:'dd MMMM yyyy, HH:mm' }}</div>
+                </div>
             </div>
+            <button class="close-btn" (click)="dismissModal()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="modal-body order-modal-body">
+            <!-- Bannière résumé -->
+            <div class="order-summary-banner">
+                <div>
+                    <div class="order-summary-label">Montant total</div>
+                    <div class="order-summary-amount">{{ formatCurrency(selectedOrder.totalAmount) }}</div>
+                </div>
+                <span class="pill" [ngClass]="getStatusClass(selectedOrder.status)">{{ getStatusLabel(selectedOrder.status) }}</span>
+            </div>
+
+            <!-- Infos détail -->
+            <div class="order-detail-grid">
+                <div class="detail-card">
+                    <span class="detail-label">
+                        <span class="material-symbols-outlined detail-icon">person</span>Client
+                    </span>
+                    <span class="detail-value">{{ selectedOrder.user?.username ?? selectedOrder.username }}</span>
+                </div>
+                <div class="detail-card" *ngIf="selectedOrder.paymentMethod">
+                    <span class="detail-label">
+                        <span class="material-symbols-outlined detail-icon">payments</span>Paiement
+                    </span>
+                    <span class="detail-value">{{ selectedOrder.paymentMethod }}</span>
+                </div>
+                <div class="detail-card span2" *ngIf="selectedOrder.shippingAddress">
+                    <span class="detail-label">
+                        <span class="material-symbols-outlined detail-icon">location_on</span>Adresse
+                    </span>
+                    <span class="detail-value">{{ selectedOrder.shippingAddress }}</span>
+                </div>
+            </div>
+
+            <!-- Articles -->
             <div *ngIf="selectedOrder.items?.length" class="order-items">
-                <h4>Articles</h4>
+                <h4>
+                    <span class="material-symbols-outlined" style="font-size:15px;vertical-align:middle;margin-right:4px">library_books</span>
+                    Articles ({{ selectedOrder.items!.length }})
+                </h4>
                 <div *ngFor="let item of selectedOrder.items" class="order-item-row">
-                    <span>{{ item.book?.title ?? 'Livre' }}</span>
-                    <span class="muted">× {{ item.quantity }}</span>
-                    <span class="bold">{{ formatCurrency(item.price * item.quantity) }}</span>
+                    <span class="item-title">{{ item.book?.title ?? 'Livre' }}</span>
+                    <span class="item-qty">× {{ item.quantity }}</span>
+                    <span class="item-price">{{ formatCurrency(item.price * item.quantity) }}</span>
                 </div>
             </div>
         </div>

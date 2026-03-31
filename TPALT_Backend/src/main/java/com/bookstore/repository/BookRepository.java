@@ -32,16 +32,16 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             "OR LOWER(b.description) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<Book> searchByKeyword(@Param("keyword") String keyword);
 
-    // Livres en stock critique (quantity <= stockAlert)
-    @Query("SELECT b FROM Book b WHERE b.quantity <= b.stockAlert AND b.quantity > 0")
+    // Livres en stock critique (quantity <= stockAlert) — COALESCE gère les NULL
+    @Query("SELECT b FROM Book b WHERE COALESCE(b.quantity, 0) > 0 AND COALESCE(b.quantity, 0) <= COALESCE(b.stockAlert, 5)")
     List<Book> findLowStockBooks();
 
-    // Livres en rupture de stock
-    @Query("SELECT b FROM Book b WHERE b.quantity = 0")
+    // Livres en rupture de stock — COALESCE traite NULL comme 0
+    @Query("SELECT b FROM Book b WHERE COALESCE(b.quantity, 0) = 0")
     List<Book> findOutOfStockBooks();
 
     // Valeur totale du stock (sum of price * quantity)
-    @Query("SELECT SUM(b.price * b.quantity) FROM Book b WHERE b.quantity > 0")
+    @Query("SELECT SUM(b.price * COALESCE(b.quantity, 0)) FROM Book b WHERE COALESCE(b.quantity, 0) > 0")
     Double getTotalStockValue();
 
     // Stats par catégorie : [category, bookCount, stockCount]

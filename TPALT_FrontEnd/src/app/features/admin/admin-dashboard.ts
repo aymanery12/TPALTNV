@@ -3,9 +3,10 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Subject, forkJoin } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, forkJoin, of } from 'rxjs';
+import { takeUntil, catchError } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
+import { ThemeService } from '../../core/services/theme.service';
 import { environment } from '../../../environments/environment';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -126,6 +127,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     showBookForm = false;
     editingBook: Book | null = null;
     bookForm: Partial<Book> = this.emptyBook();
+    authorInput = '';   // champ texte libre, converti en string[] à la sauvegarde
 
     // ── Stock ────────────────────────────────────────────────────────────────
     lowStockBooks: Book[] = [];
@@ -149,8 +151,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     constructor(
         private http: HttpClient,
         private authService: AuthService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        public themeService: ThemeService
     ) {}
+
+    get isDark(): boolean { return this.themeService.isDark(); }
+    toggleTheme(): void   { this.themeService.toggle(); }
 
     ngOnInit(): void {
         this.loadView('dashboard');
@@ -187,8 +193,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
         forkJoin({
             stats:     this.http.get<AdminStats>(`${this.base}/stats`, { headers: this.headers() }),
-            orders:    this.http.get<Order[]>(`${this.base}/orders/recent`, { headers: this.headers() }),
-            movements: this.http.get<StockMovement[]>(`${this.base}/stock/recent-movements`, { headers: this.headers() }),
+            orders:    this.http.get<Order[]>(`${this.base}/orders/recent`, { headers: this.headers() }).pipe(catchError(() => of([] as Order[]))),
+            movements: this.http.get<StockMovement[]>(`${this.base}/stock/recent-movements`, { headers: this.headers() }).pipe(catchError(() => of([] as StockMovement[]))),
         }).pipe(takeUntil(this.destroy$)).subscribe({
             next: ({ stats, orders, movements }) => {
                 this.stats = stats;
@@ -226,12 +232,14 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     openAddBook(): void {
         this.editingBook = null;
         this.bookForm = this.emptyBook();
+        this.authorInput = '';
         this.showBookForm = true;
     }
 
     openEditBook(book: Book): void {
         this.editingBook = book;
         this.bookForm = { ...book };
+        this.authorInput = (book.author || []).join(', ');
         this.showBookForm = true;
     }
 
@@ -240,6 +248,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             this.errorMsg = 'Titre et prix sont obligatoires.';
             return;
         }
+        this.bookForm.author = this.authorInput
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean);
         const req = this.editingBook
             ? this.http.put<Book>(`${this.base}/books/${this.editingBook.id}`, this.bookForm, { headers: this.headers() })
             : this.http.post<Book>(`${this.base}/books`, this.bookForm, { headers: this.headers() });
@@ -297,15 +309,14 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     loadStock(): void {
 
         forkJoin({
-            low:       this.http.get<Book[]>(`${this.base}/stock/low`, { headers: this.headers() }),
-            out:       this.http.get<Book[]>(`${this.base}/stock/out`, { headers: this.headers() }),
-            movements: this.http.get<StockMovement[]>(`${this.base}/stock/recent-movements`, { headers: this.headers() }),
+            low:       this.http.get<Book[]>(`${this.base}/stock/low`, { headers: this.headers() }).pipe(catchError(() => of([] as Book[]))),
+            out:       this.http.get<Book[]>(`${this.base}/stock/out`, { headers: this.headers() }).pipe(catchError(() => of([] as Book[]))),
+            movements: this.http.get<StockMovement[]>(`${this.base}/stock/recent-movements`, { headers: this.headers() }).pipe(catchError(() => of([] as StockMovement[]))),
         }).pipe(takeUntil(this.destroy$)).subscribe({
             next: ({ low, out, movements }) => {
                 this.lowStockBooks   = low;
                 this.outOfStockBooks = out;
                 this.stockMovements  = movements;
-
             },
             error: () => {  this.errorMsg = 'Erreur lors du chargement du stock.'; }
         });
@@ -388,7 +399,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
     // ── HELPERS ───────────────────────────────────────────────────────────────
     formatCurrency(v: number): string {
-        return '€' + (v || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        return (v || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
     }
     formatNumber(v: number): string {
         return (v || 0).toLocaleString('fr-FR');
@@ -467,10 +478,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx: any) => ctx.raw > 0 ? '€' + ctx.raw.toLocaleString('fr-FR') : 'À venir' } } },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx: any) => ctx.raw > 0 ? ctx.raw.toLocaleString('fr-FR') + ' €' : 'À venir' } } },
                     scales: {
                         x: { ticks: { color: '#64748b', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
-                        y: { ticks: { color: '#64748b', font: { size: 11 }, callback: (v: number) => v === 0 ? '' : '€' + (v/1000).toFixed(0) + 'k' }, grid: { color: 'rgba(255,255,255,0.06)' } }
+                        y: { ticks: { color: '#64748b', font: { size: 11 }, callback: (v: number) => v === 0 ? '' : (v/1000).toFixed(0) + 'k €' }, grid: { color: 'rgba(255,255,255,0.06)' } }
                     }
                 }
             });

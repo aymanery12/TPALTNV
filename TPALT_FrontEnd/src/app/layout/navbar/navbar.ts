@@ -19,6 +19,9 @@ export class Navbar implements OnInit {
   searchQuery = '';
   cartCount = 0;
   showUserMenu = false;
+  sidebarOpen = false;
+
+  toggleSidebar(): void { this.sidebarOpen = !this.sidebarOpen; }
 
   constructor(
       public authService: AuthService,

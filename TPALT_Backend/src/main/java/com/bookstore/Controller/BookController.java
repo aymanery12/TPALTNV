@@ -5,6 +5,7 @@ import com.bookstore.repository.BookRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/books")
@@ -23,11 +24,15 @@ public class BookController {
         return repository.findAll();
     }
 
-    // GET /api/books/{id}
-    @GetMapping("/{id}")
-    public Book getBookById(@PathVariable Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Livre introuvable : " + id));
+    // GET /api/books/categories  — doit être avant /{id} pour éviter la collision
+    @GetMapping("/categories")
+    public List<String> getCategories() {
+        return repository.findAll().stream()
+                .map(Book::getCategory)
+                .filter(c -> c != null && !c.isBlank())
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     // GET /api/books/search?keyword=aventure
@@ -40,6 +45,13 @@ public class BookController {
     @GetMapping("/category/{category}")
     public List<Book> getByCategory(@PathVariable String category) {
         return repository.findByCategory(category);
+    }
+
+    // GET /api/books/{id}
+    @GetMapping("/{id}")
+    public Book getBookById(@PathVariable Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Livre introuvable : " + id));
     }
 
     // POST /api/books  (ADMIN seulement - protégé dans SecurityConfig)

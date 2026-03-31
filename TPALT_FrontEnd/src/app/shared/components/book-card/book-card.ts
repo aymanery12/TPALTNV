@@ -16,6 +16,9 @@ import { RatingComponent } from '../rating/rating';
             alt="{{ book.title }}"
             class="w-full h-full object-cover group-hover/image:scale-105 transition-transform duration-300"
             [src]="book.coverImageUrl || book.imageUrl"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+            (error)="$any($event.target).src='book-placeholder.svg'"
             (click)="onBookClick()"
         />
 
@@ -33,7 +36,10 @@ import { RatingComponent } from '../rating/rating';
             (click)="onWishlistClick()"
             [class.bg-red-100]="isInWishlist"
             title="Add to wishlist">
-          <span class="material-symbols-outlined text-lg" [class.fill-1]="isInWishlist">favorite</span>
+          <span class="material-symbols-outlined text-lg"
+                [class.icon-filled]="isInWishlist"
+                [class.text-red-500]="isInWishlist"
+                [class.text-slate-400]="!isInWishlist">favorite</span>
         </button>
       </div>
 
@@ -47,8 +53,8 @@ import { RatingComponent } from '../rating/rating';
         </h3>
 
         <!-- Author(s) -->
-        <p class="text-xs text-slate-500 mb-1">
-          by {{ getAuthorsDisplay() }}
+        <p *ngIf="getAuthorsDisplay()" class="text-xs text-slate-500 mb-1">
+          {{ getAuthorsDisplay() }}
         </p>
 
         <!-- Rating -->
@@ -66,9 +72,9 @@ import { RatingComponent } from '../rating/rating';
           <div
               class="flex items-baseline gap-1"
               [ngClass]="{ 'text-red-600': book.discount }">
-            <span class="text-xs font-bold self-start mt-1">€</span>
             <span class="text-xl font-bold">{{ getDisplayPrice() | number: '1.0-0' }}</span>
             <span class="text-xs font-bold">{{ getDisplayPriceCents() }}</span>
+            <span class="text-xs font-bold self-start mt-1">€</span>
           </div>
 
           <!-- Original price if on sale -->
@@ -122,7 +128,7 @@ export class BookCardComponent implements OnInit {
     if (this.book.author && this.book.author.length > 0) {
       return this.book.author.join(', ');
     }
-    return 'Unknown';
+    return '';
   }
 
   onBookClick(): void { this.bookClicked.emit(this.book); }

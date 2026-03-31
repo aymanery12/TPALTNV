@@ -57,13 +57,15 @@ import { Order } from '../../../shared/models/order.model';
             <div class="divide-y divide-slate-700/50">
               <div *ngFor="let item of order.items"
                    class="flex items-center gap-4 px-6 py-4">
-                <img [src]="item.book?.imageUrl"
-                     [alt]="item.book?.title"
+                <img [src]="item.book.imageUrl"
+                     [alt]="item.book.title"
+                     referrerpolicy="no-referrer"
+                     (error)="$any($event.target).src='book-placeholder.svg'"
                      class="w-12 h-16 object-cover rounded-lg shrink-0 bg-slate-700">
                 <div class="flex-1 min-w-0">
-                  <p class="font-medium text-white text-sm truncate">{{ item.book?.title }}</p>
+                  <p class="font-medium text-white text-sm truncate">{{ item.book.title }}</p>
                   <p class="text-xs text-slate-400 mt-0.5">
-                    {{ item.book?.author?.[0] || '' }}
+                    {{ item.book.author?.[0] || '' }}
                   </p>
                 </div>
                 <div class="text-right shrink-0">

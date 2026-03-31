@@ -50,6 +50,8 @@
                 <div class="aspect-[3/4] overflow-hidden bg-slate-700 relative">
                     <img [src]="book.imageUrl || book.coverImageUrl"
                          [alt]="book.title"
+                         referrerpolicy="no-referrer"
+                         (error)="$any($event.target).src='book-placeholder.svg'"
                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     <!-- Remove button -->
                     <button

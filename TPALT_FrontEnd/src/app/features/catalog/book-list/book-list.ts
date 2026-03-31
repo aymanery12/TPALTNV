@@ -144,12 +144,18 @@ export class BookList implements OnInit, OnDestroy {
     });
 
     this.route.queryParams.subscribe(params => {
-      this.searchQuery      = params['search']?.trim()   || '';
-      this.selectedCategory = params['category']?.trim() || '';
+      // Reset all filters first so switching between buttons works correctly
+      this.selectedSort     = 'featured';
+      this.minRating        = 0;
+      this.minPrice         = 0;
+      this.maxPrice         = 0;
+
+      this.searchQuery      = params['search']?.trim()    || '';
+      this.selectedCategory = params['category']?.trim()  || '';
       if (params['sort'])      this.selectedSort = params['sort'];
-      if (params['minRating']) this.minRating = +params['minRating'];
-      if (params['minPrice'])  this.minPrice  = +params['minPrice'];
-      if (params['maxPrice'])  this.maxPrice  = +params['maxPrice'];
+      if (params['minRating']) this.minRating    = +params['minRating'];
+      if (params['minPrice'])  this.minPrice     = +params['minPrice'];
+      if (params['maxPrice'])  this.maxPrice     = +params['maxPrice'];
       this.loadBooks();
     });
   }

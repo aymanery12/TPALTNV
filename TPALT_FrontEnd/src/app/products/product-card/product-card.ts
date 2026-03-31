@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Product } from '../products-module';
+import { WishlistService } from '../../core/services/wishlist.service';
 
 @Component({
   selector: 'app-product-card',
@@ -10,7 +11,7 @@ import { Product } from '../products-module';
   templateUrl: './product-card.html',
   styleUrl: './product-card.scss',
 })
-export class ProductCard {
+export class ProductCard implements OnInit {
   @Input() product!: Product;
 
   @Output() addToCart     = new EventEmitter<Product>();
@@ -18,6 +19,12 @@ export class ProductCard {
   @Output() wishlistToggled = new EventEmitter<Product>();
 
   isInWishlist = false;
+
+  constructor(private wishlistService: WishlistService) {}
+
+  ngOnInit(): void {
+    this.isInWishlist = this.wishlistService.getIdsSnapshot().includes(this.product.id);
+  }
 
   // Étoiles pleines
   get fullStars(): number { return Math.floor(this.product.rating); }
@@ -46,7 +53,8 @@ export class ProductCard {
   onCardClick(): void    { this.cardClicked.emit(this.product); }
 
   onWishlist(): void {
-    this.isInWishlist = !this.isInWishlist;
+    this.wishlistService.toggle(this.product as any);
+    this.isInWishlist = this.wishlistService.getIdsSnapshot().includes(this.product.id);
     this.wishlistToggled.emit(this.product);
   }
 }

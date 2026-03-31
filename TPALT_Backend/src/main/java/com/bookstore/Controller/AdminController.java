@@ -2,6 +2,8 @@ package com.bookstore.Controller;
 
 import com.bookstore.model.*;
 import com.bookstore.repository.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequestMapping("/api/admin")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
+
+    private static final Logger log = LoggerFactory.getLogger(AdminController.class);
 
     private final BookRepository bookRepository;
     private final OrderRepository orderRepository;
@@ -141,6 +145,7 @@ public class AdminController {
             existing.setPublishedYear(bookData.getPublishedYear());
             existing.setPages(bookData.getPages());
             existing.setLanguage(bookData.getLanguage());
+            existing.setQuantity(bookData.getQuantity());
             existing.setStockAlert(bookData.getStockAlert());
             existing.setFeatured(bookData.getFeatured());
             existing.setDiscount(bookData.getDiscount());
@@ -160,6 +165,23 @@ public class AdminController {
     public ResponseEntity<Book> updateBookStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
         return bookRepository.findById(id).map(book -> {
             book.setStatus(Book.BookStatus.valueOf(body.get("status").toUpperCase()));
+            return ResponseEntity.ok(bookRepository.save(book));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/books/{id}/featured")
+    public ResponseEntity<Book> toggleFeatured(@PathVariable Long id) {
+        return bookRepository.findById(id).map(book -> {
+            book.setFeatured(book.getFeatured() == null ? true : !book.getFeatured());
+            return ResponseEntity.ok(bookRepository.save(book));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/books/{id}/discount")
+    public ResponseEntity<Book> setDiscount(@PathVariable Long id, @RequestBody Map<String, Object> body) {
+        return bookRepository.findById(id).map(book -> {
+            double discount = Double.parseDouble(body.getOrDefault("discount", "0").toString());
+            book.setDiscount(discount);
             return ResponseEntity.ok(bookRepository.save(book));
         }).orElse(ResponseEntity.notFound().build());
     }
@@ -252,9 +274,38 @@ public class AdminController {
     }
 
     @GetMapping("/stock/recent-movements")
-    @Transactional(readOnly = true)
-    public ResponseEntity<List<StockMovement>> getRecentMovements() {
-        return ResponseEntity.ok(stockMovementRepository.findTop20ByOrderByCreatedAtDesc());
+    public ResponseEntity<?> getRecentMovements() {
+        try {
+            List<Object[]> rows = stockMovementRepository.findTop20Raw();
+
+            List<Map<String, Object>> result = rows.stream().map(row -> {
+                Map<String, Object> dto = new LinkedHashMap<>();
+                dto.put("id",          row[0]);
+                dto.put("type",        row[1]);
+                dto.put("quantity",    row[2]);
+                dto.put("stockBefore", row[3]);
+                dto.put("stockAfter",  row[4]);
+                dto.put("reason",      row[5]);
+                dto.put("performedBy", row[6] != null ? row[6] : "admin");
+                dto.put("createdAt",   row[7] != null ? row[7].toString() : null);
+                if (row[8] != null) {
+                    Map<String, Object> book = new LinkedHashMap<>();
+                    book.put("id",    row[8]);
+                    book.put("title", row[9] != null ? row[9] : "—");
+                    dto.put("book", book);
+                } else {
+                    dto.put("book", null);
+                }
+                return dto;
+            }).collect(Collectors.toList());
+
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            log.error("RECENT-MOVEMENTS ERROR: {}: {}", e.getClass().getName(), e.getMessage(), e);
+            // Return 200 with empty list so the dashboard still loads
+            return ResponseEntity.ok(Collections.emptyList());
+        }
     }
 
     // ══════════════════════════════════════════════════════════════════════════

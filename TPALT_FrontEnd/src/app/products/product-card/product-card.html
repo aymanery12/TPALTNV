@@ -7,6 +7,9 @@
                 [alt]="product.title"
                 class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300"
                 [src]="product.imageUrl"
+                loading="lazy"
+                referrerpolicy="no-referrer"
+                (error)="$any($event.target).src='book-placeholder.svg'"
         />
 
         <!-- Best Seller badge -->
@@ -28,8 +31,9 @@
                 title="Ajouter aux favoris">
       <span class="material-symbols-outlined text-lg"
             [class.text-red-500]="isInWishlist"
-            [class.text-slate-400]="!isInWishlist">
-        {{ isInWishlist ? 'favorite' : 'favorite_border' }}
+            [class.text-slate-400]="!isInWishlist"
+            [class.icon-filled]="isInWishlist">
+        favorite
       </span>
         </button>
     </div>
