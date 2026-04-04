@@ -8,13 +8,12 @@ import { ChatService } from '../../core/services/chat.service';
 import { AuthService } from '../../core/services/auth.service';
 import { WishlistService } from '../../core/services/wishlist.service';
 import { Book, BookReview } from '../../shared/models/book.model';
-import { Navbar } from '../../layout/navbar/navbar';
 import { Footer } from '../../layout/footer/footer';
 
 @Component({
   selector: 'app-book-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, Navbar, Footer],
+  imports: [CommonModule, RouterModule, FormsModule, Footer],
   template: `
     <div class="min-h-screen bg-[#0f0f1a] text-white flex flex-col">
 
