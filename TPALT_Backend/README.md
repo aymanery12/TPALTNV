@@ -33,8 +33,11 @@ docker-compose up --build
 
 C'est tout ! Docker va :
 - Créer la base de données MySQL
-- Insérer les données de départ (8 livres + 1 admin)
+- Initialiser automatiquement la base avec `bookstore_db.sql` (tables + données)
 - Builder et lancer le Spring Boot
+
+> **Note :** Le script SQL ne s'exécute qu'au **premier démarrage** (volume vide).  
+> Pour repartir de zéro : `docker-compose down -v` puis `docker-compose up --build`
 
 ---
 

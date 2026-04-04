@@ -7,13 +7,13 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root1234
       MYSQL_DATABASE: bookstore_db
-      MYSQL_USER: bookstore_user
-      MYSQL_PASSWORD: bookstore_pass
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./bookstore_db.sql:/docker-entrypoint-initdb.d/bookstore_db.sql
     networks:
       - bookstore_network
     healthcheck:
@@ -50,12 +50,12 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/bookstore_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: bookstore_user
-      SPRING_DATASOURCE_PASSWORD: bookstore_pass
-      JWT_SECRET: bookstore_secret_super_longue_cle_jwt_2024_minimum_32_chars
-      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
     ports:
       - "8080:8080"
     networks:
