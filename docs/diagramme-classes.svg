@@ -1,0 +1,181 @@
+<svg width="1080" height="820" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#475569"/>
+    </marker>
+    <marker id="arr-rev" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto">
+      <polygon points="8 0,0 3,8 6" fill="#475569"/>
+    </marker>
+    <marker id="diamond" markerWidth="10" markerHeight="8" refX="0" refY="4" orient="auto">
+      <polygon points="0 4,5 0,10 4,5 8" fill="#475569"/>
+    </marker>
+    <marker id="diamond-fill" markerWidth="10" markerHeight="8" refX="0" refY="4" orient="auto">
+      <polygon points="0 4,5 0,10 4,5 8" fill="#475569" stroke="#475569"/>
+    </marker>
+  </defs>
+
+  <!-- Fond -->
+  <rect width="1080" height="820" fill="#f8fafc" rx="10"/>
+  <text x="540" y="30" text-anchor="middle" font-size="19" font-weight="bold" fill="#0f172a">Diagramme de Classes — BookStore IA</text>
+
+  <!-- ════════ USER ════════ -->
+  <!-- x=20, y=48, w=240, h=158 -->
+  <rect x="20" y="48" width="240" height="158" rx="6" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  <rect x="20" y="48" width="240" height="28" rx="6" fill="#3b82f6"/>
+  <rect x="20" y="62" width="240" height="14" fill="#3b82f6"/>
+  <text x="140" y="67" text-anchor="middle" font-size="13" font-weight="bold" fill="white">User</text>
+  <line x1="20" y1="76" x2="260" y2="76" stroke="#3b82f6" stroke-width="1"/>
+  <text x="32" y="93"  font-size="11" fill="#334155">- id : Long</text>
+  <text x="32" y="110" font-size="11" fill="#334155">- username : String</text>
+  <text x="32" y="127" font-size="11" fill="#334155">- email : String</text>
+  <text x="32" y="144" font-size="11" fill="#334155">- password : String  «@JsonIgnore»</text>
+  <text x="32" y="161" font-size="11" fill="#334155">- role : String</text>
+  <text x="32" y="178" font-size="11" fill="#334155">- addresses : List&lt;String&gt;</text>
+  <line x1="20" y1="186" x2="260" y2="186" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="32" y="200" font-size="10" fill="#64748b">+ getUsername() : String</text>
+
+  <!-- ════════ VERIFICATION CODE ════════ -->
+  <!-- x=20, y=248, w=240, h=190 -->
+  <rect x="20" y="248" width="240" height="190" rx="6" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+  <rect x="20" y="248" width="240" height="28" rx="6" fill="#8b5cf6"/>
+  <rect x="20" y="262" width="240" height="14" fill="#8b5cf6"/>
+  <text x="140" y="267" text-anchor="middle" font-size="12" font-weight="bold" fill="white">VerificationCode</text>
+  <line x1="20" y1="276" x2="260" y2="276" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="32" y="294"  font-size="11" fill="#334155">- id : Long</text>
+  <text x="32" y="311" font-size="11" fill="#334155">- email : String</text>
+  <text x="32" y="328" font-size="11" fill="#334155">- username : String</text>
+  <text x="32" y="345" font-size="11" fill="#334155">- code : String  [6 chars]</text>
+  <text x="32" y="362" font-size="11" fill="#334155">- type : String  [signup|login]</text>
+  <text x="32" y="379" font-size="11" fill="#334155">- expiresAt : LocalDateTime</text>
+  <text x="32" y="396" font-size="11" fill="#334155">- used : boolean</text>
+  <line x1="20" y1="404" x2="260" y2="404" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="32" y="430" font-size="10" fill="#64748b">+ isExpired() : boolean</text>
+
+  <!-- ════════ BOOK ════════ -->
+  <!-- x=360, y=48, w=285, h=360 -->
+  <rect x="360" y="48" width="285" height="370" rx="6" fill="white" stroke="#16a34a" stroke-width="2"/>
+  <rect x="360" y="48" width="285" height="28" rx="6" fill="#16a34a"/>
+  <rect x="360" y="62" width="285" height="14" fill="#16a34a"/>
+  <text x="502" y="67" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Book</text>
+  <line x1="360" y1="76" x2="645" y2="76" stroke="#16a34a" stroke-width="1"/>
+  <text x="372" y="93"  font-size="11" fill="#334155">- id : Long</text>
+  <text x="372" y="110" font-size="11" fill="#334155">- title : String</text>
+  <text x="372" y="127" font-size="11" fill="#334155">- author : List&lt;String&gt;</text>
+  <text x="372" y="144" font-size="11" fill="#334155">- description : String  [TEXT]</text>
+  <text x="372" y="161" font-size="11" fill="#334155">- price : Double</text>
+  <text x="372" y="178" font-size="11" fill="#334155">- imageUrl : String</text>
+  <text x="372" y="195" font-size="11" fill="#334155">- category : String</text>
+  <text x="372" y="212" font-size="11" fill="#334155">- isbn : String  «unique»</text>
+  <text x="372" y="229" font-size="11" fill="#334155">- publisher : String</text>
+  <text x="372" y="246" font-size="11" fill="#334155">- publishedYear : Integer</text>
+  <text x="372" y="263" font-size="11" fill="#334155">- rating : Double</text>
+  <text x="372" y="280" font-size="11" fill="#334155">- quantity : Integer</text>
+  <text x="372" y="297" font-size="11" fill="#334155">- status : BookStatus</text>
+  <text x="372" y="314" font-size="11" fill="#334155">- discount : Double</text>
+  <text x="372" y="331" font-size="11" fill="#334155">- featured : Boolean</text>
+  <text x="372" y="348" font-size="11" fill="#334155">- createdAt : LocalDateTime</text>
+  <line x1="360" y1="358" x2="645" y2="358" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="372" y="374" font-size="10" fill="#64748b">+ getFinalPrice() : Double</text>
+  <text x="372" y="392" font-size="10" fill="#64748b">+ isLowStock() : boolean</text>
+  <text x="372" y="408" font-size="10" fill="#64748b">«enum» BookStatus: ACTIVE | OUT_OF_STOCK | DISCONTINUED</text>
+
+  <!-- ════════ REVIEW ════════ -->
+  <!-- x=360, y=468, w=285, h=125 -->
+  <rect x="360" y="468" width="285" height="125" rx="6" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  <rect x="360" y="468" width="285" height="28" rx="6" fill="#f59e0b"/>
+  <rect x="360" y="482" width="285" height="14" fill="#f59e0b"/>
+  <text x="502" y="487" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Review</text>
+  <line x1="360" y1="496" x2="645" y2="496" stroke="#f59e0b" stroke-width="1"/>
+  <text x="372" y="513" font-size="11" fill="#334155">- id : Long</text>
+  <text x="372" y="530" font-size="11" fill="#334155">- rating : int  [1–5]</text>
+  <text x="372" y="547" font-size="11" fill="#334155">- comment : String</text>
+  <text x="372" y="564" font-size="11" fill="#334155">- book : Book  «@ManyToOne»</text>
+  <text x="372" y="581" font-size="11" fill="#334155">- user : User  «@ManyToOne»</text>
+
+  <!-- ════════ STOCK MOVEMENT ════════ -->
+  <!-- x=360, y=645, w=285, h=155 -->
+  <rect x="360" y="645" width="285" height="165" rx="6" fill="white" stroke="#64748b" stroke-width="2"/>
+  <rect x="360" y="645" width="285" height="28" rx="6" fill="#64748b"/>
+  <rect x="360" y="659" width="285" height="14" fill="#64748b"/>
+  <text x="502" y="664" text-anchor="middle" font-size="13" font-weight="bold" fill="white">StockMovement</text>
+  <line x1="360" y1="673" x2="645" y2="673" stroke="#64748b" stroke-width="1"/>
+  <text x="372" y="690" font-size="11" fill="#334155">- id : Long</text>
+  <text x="372" y="707" font-size="11" fill="#334155">- book : Book  «@ManyToOne»</text>
+  <text x="372" y="724" font-size="11" fill="#334155">- type : MovementType</text>
+  <text x="372" y="741" font-size="11" fill="#334155">- quantity : Integer</text>
+  <text x="372" y="758" font-size="11" fill="#334155">- stockBefore / stockAfter : Integer</text>
+  <text x="372" y="775" font-size="11" fill="#334155">- reason : String</text>
+  <text x="372" y="792" font-size="11" fill="#334155">- performedBy : String</text>
+  <text x="372" y="802" font-size="10" fill="#64748b">«enum» MovementType: RESTOCK | SALE | RETURN | CORRECTION</text>
+
+  <!-- ════════ ORDER ════════ -->
+  <!-- x=755, y=48, w=265, h=195 -->
+  <rect x="755" y="48" width="265" height="195" rx="6" fill="white" stroke="#ef4444" stroke-width="2"/>
+  <rect x="755" y="48" width="265" height="28" rx="6" fill="#ef4444"/>
+  <rect x="755" y="62" width="265" height="14" fill="#ef4444"/>
+  <text x="887" y="67" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Order</text>
+  <line x1="755" y1="76" x2="1020" y2="76" stroke="#ef4444" stroke-width="1"/>
+  <text x="767" y="93"  font-size="11" fill="#334155">- id : Long</text>
+  <text x="767" y="110" font-size="11" fill="#334155">- orderDate : LocalDateTime</text>
+  <text x="767" y="127" font-size="11" fill="#334155">- status : String</text>
+  <text x="767" y="144" font-size="11" fill="#334155">- totalAmount : double</text>
+  <text x="767" y="161" font-size="11" fill="#334155">- shippingAddress : String</text>
+  <text x="767" y="178" font-size="11" fill="#334155">- paymentMethod : String</text>
+  <text x="767" y="195" font-size="11" fill="#334155">- user : User  «@ManyToOne»</text>
+  <line x1="755" y1="203" x2="1020" y2="203" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="767" y="218" font-size="10" fill="#64748b">+ getUsername() : String</text>
+  <text x="767" y="234" font-size="10" fill="#64748b">«@OneToMany» items: List&lt;OrderItem&gt;</text>
+
+  <!-- ════════ ORDER ITEM ════════ -->
+  <!-- x=755, y=295, w=265, h=140 -->
+  <rect x="755" y="295" width="265" height="140" rx="6" fill="white" stroke="#f97316" stroke-width="2"/>
+  <rect x="755" y="295" width="265" height="28" rx="6" fill="#f97316"/>
+  <rect x="755" y="309" width="265" height="14" fill="#f97316"/>
+  <text x="887" y="314" text-anchor="middle" font-size="13" font-weight="bold" fill="white">OrderItem</text>
+  <line x1="755" y1="323" x2="1020" y2="323" stroke="#f97316" stroke-width="1"/>
+  <text x="767" y="340" font-size="11" fill="#334155">- id : Long</text>
+  <text x="767" y="357" font-size="11" fill="#334155">- order : Order  «@ManyToOne»</text>
+  <text x="767" y="374" font-size="11" fill="#334155">- book : Book  «@ManyToOne»</text>
+  <text x="767" y="391" font-size="11" fill="#334155">- quantity : Integer</text>
+  <text x="767" y="408" font-size="11" fill="#334155">- price : Double  (prix à la commande)</text>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- ── RELATIONS ── -->
+  <!-- ══════════════════════════════════════════ -->
+
+  <!-- User 1 ──── * VerificationCode (vertical) -->
+  <line x1="140" y1="206" x2="140" y2="246" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="145" y="220" font-size="10" fill="#475569">1</text>
+  <text x="145" y="243" font-size="10" fill="#475569">*</text>
+
+  <!-- User 1 ──── * Order (horizontal: User right → Order left) -->
+  <polyline points="260,127 700,127 700,82 753,82" stroke="#475569" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="265" y="122" font-size="10" fill="#475569">1</text>
+  <text x="740" y="78" font-size="10" fill="#475569">*</text>
+
+  <!-- User 1 ──── * Review (User right → (bend) → Review left) -->
+  <polyline points="260,157 310,157 310,530 358,530" stroke="#475569" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="265" y="153" font-size="10" fill="#475569">1</text>
+  <text x="350" y="526" font-size="10" fill="#475569">*</text>
+
+  <!-- Book 1 ──── * Review (vertical down) -->
+  <line x1="502" y1="418" x2="502" y2="466" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="507" y="435" font-size="10" fill="#475569">1</text>
+  <text x="507" y="464" font-size="10" fill="#475569">*</text>
+
+  <!-- Book 1 ──── * StockMovement (vertical down) -->
+  <line x1="502" y1="593" x2="502" y2="643" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="507" y="610" font-size="10" fill="#475569">1</text>
+  <text x="507" y="641" font-size="10" fill="#475569">*</text>
+
+  <!-- Order 1 ◆──── * OrderItem (composition, vertical) -->
+  <line x1="887" y1="243" x2="887" y2="293" stroke="#475569" stroke-width="1.5" marker-start="url(#diamond-fill)" marker-end="url(#arr)"/>
+  <text x="892" y="258" font-size="10" fill="#475569">1</text>
+  <text x="892" y="291" font-size="10" fill="#475569">*</text>
+
+  <!-- OrderItem * ──── 1 Book (OrderItem left → Book right) -->
+  <polyline points="755,365 700,365 700,240 645,240" stroke="#475569" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="740" y="361" font-size="10" fill="#475569">*</text>
+  <text x="648" y="236" font-size="10" fill="#475569">1</text>
+
+</svg>

@@ -1,0 +1,175 @@
+<svg width="960" height="730" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#334155"/>
+    </marker>
+    <marker id="arr-ret" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Fond -->
+  <rect width="960" height="730" fill="#f8fafc" rx="10"/>
+  <text x="480" y="32" text-anchor="middle" font-size="19" font-weight="bold" fill="#0f172a">Diagramme de Séquence — BookStore IA</text>
+
+  <!-- ── Participant boxes ── -->
+  <!-- Utilisateur -->
+  <rect x="15" y="50" width="120" height="44" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+  <text x="75" y="68" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d4ed8">:Utilisateur</text>
+  <text x="75" y="84" text-anchor="middle" font-size="10" fill="#3b82f6">Browser</text>
+
+  <!-- Angular -->
+  <rect x="185" y="50" width="130" height="44" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+  <text x="250" y="68" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d4ed8">:Angular</text>
+  <text x="250" y="84" text-anchor="middle" font-size="10" fill="#3b82f6">Frontend :4200</text>
+
+  <!-- Spring Boot -->
+  <rect x="375" y="50" width="150" height="44" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="450" y="68" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">:Spring Boot API</text>
+  <text x="450" y="84" text-anchor="middle" font-size="10" fill="#16a34a">Backend :8080</text>
+
+  <!-- MySQL -->
+  <rect x="580" y="50" width="120" height="44" rx="6" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+  <text x="640" y="68" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">:MySQL</text>
+  <text x="640" y="84" text-anchor="middle" font-size="10" fill="#ea580c">bookstore_db</text>
+
+  <!-- Gemini AI -->
+  <rect x="760" y="50" width="130" height="44" rx="6" fill="#fefce8" stroke="#ca8a04" stroke-width="2"/>
+  <text x="825" y="68" text-anchor="middle" font-size="11" font-weight="bold" fill="#92400e">:Gemini AI</text>
+  <text x="825" y="84" text-anchor="middle" font-size="10" fill="#ca8a04">Google API</text>
+
+  <!-- ── Lifelines ── -->
+  <line x1="75"  y1="94" x2="75"  y2="715" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,4"/>
+  <line x1="250" y1="94" x2="250" y2="715" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,4"/>
+  <line x1="450" y1="94" x2="450" y2="715" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,4"/>
+  <line x1="640" y1="94" x2="640" y2="715" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,4"/>
+  <line x1="825" y1="94" x2="825" y2="715" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,4"/>
+
+  <!-- ── GROUP 1 : Authentification ── -->
+  <rect x="10" y="108" width="940" height="185" rx="6" fill="none" stroke="#bfdbfe" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="20" y="123" font-size="11" font-weight="bold" fill="#3b82f6">1.  Authentification</text>
+
+  <!-- Activation boxes -->
+  <rect x="244" y="135" width="12" height="140" rx="2" fill="#bfdbfe"/>
+  <rect x="444" y="150" width="12" height="115" rx="2" fill="#bbf7d0"/>
+  <rect x="634" y="165" width="12" height="50" rx="2" fill="#fed7aa"/>
+
+  <!-- MSG 1 → Utilisateur → Angular -->
+  <line x1="75" y1="140" x2="243" y2="140" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="155" y="134" text-anchor="middle" font-size="10" fill="#334155">Saisit username + password</text>
+
+  <!-- MSG 2 → Angular → API -->
+  <line x1="256" y1="157" x2="443" y2="157" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="348" y="151" text-anchor="middle" font-size="10" fill="#334155">POST /api/auth/login</text>
+
+  <!-- MSG 3 → API → MySQL -->
+  <line x1="456" y1="172" x2="633" y2="172" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="543" y="166" text-anchor="middle" font-size="10" fill="#334155">SELECT user WHERE username=?</text>
+
+  <!-- MSG 4 ← MySQL → API (return) -->
+  <line x1="634" y1="192" x2="457" y2="192" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ret)"/>
+  <text x="543" y="186" text-anchor="middle" font-size="10" fill="#64748b">user + hash trouvé</text>
+
+  <!-- MSG 5 ← API → Angular (return) -->
+  <line x1="444" y1="215" x2="257" y2="215" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ret)"/>
+  <text x="348" y="209" text-anchor="middle" font-size="10" fill="#64748b">200 OK  { token: "JWT..." }</text>
+
+  <!-- MSG 6 ← Angular → Utilisateur (return) -->
+  <line x1="244" y1="238" x2="77" y2="238" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ret)"/>
+  <text x="155" y="232" text-anchor="middle" font-size="10" fill="#64748b">Stocke JWT (localStorage)</text>
+
+  <!-- ── GROUP 2 : Catalogue + Commande ── -->
+  <rect x="10" y="305" width="940" height="225" rx="6" fill="none" stroke="#bbf7d0" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="20" y="320" font-size="11" font-weight="bold" fill="#16a34a">2.  Catalogue &amp; Commande</text>
+
+  <!-- Activation boxes -->
+  <rect x="244" y="332" width="12" height="175" rx="2" fill="#bfdbfe"/>
+  <rect x="444" y="346" width="12" height="160" rx="2" fill="#bbf7d0"/>
+  <rect x="634" y="360" width="12" height="95" rx="2" fill="#fed7aa"/>
+
+  <!-- MSG 7 -->
+  <line x1="75" y1="337" x2="243" y2="337" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="155" y="331" text-anchor="middle" font-size="10" fill="#334155">Sélectionne des livres, crée panier</text>
+
+  <!-- MSG 8 -->
+  <line x1="256" y1="354" x2="443" y2="354" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="348" y="348" text-anchor="middle" font-size="10" fill="#334155">GET /api/books  (Bearer JWT)</text>
+
+  <!-- MSG 9 -->
+  <line x1="456" y1="370" x2="633" y2="370" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="543" y="364" text-anchor="middle" font-size="10" fill="#334155">SELECT * FROM book</text>
+
+  <!-- MSG 10 return -->
+  <line x1="634" y1="388" x2="457" y2="388" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ret)"/>
+  <text x="543" y="382" text-anchor="middle" font-size="10" fill="#64748b">[liste des livres]</text>
+
+  <!-- MSG 11 return -->
+  <line x1="444" y1="406" x2="257" y2="406" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ret)"/>
+  <text x="348" y="400" text-anchor="middle" font-size="10" fill="#64748b">200 OK  [books]</text>
+
+  <!-- MSG 12 -->
+  <line x1="75" y1="425" x2="243" y2="425" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="155" y="419" text-anchor="middle" font-size="10" fill="#334155">Valide le panier</text>
+
+  <!-- MSG 13 -->
+  <line x1="256" y1="442" x2="443" y2="442" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="348" y="436" text-anchor="middle" font-size="10" fill="#334155">POST /api/orders  (Bearer JWT)</text>
+
+  <!-- MSG 14 -->
+  <line x1="456" y1="458" x2="633" y2="458" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="543" y="452" text-anchor="middle" font-size="10" fill="#334155">INSERT orders + order_items, UPDATE stock</text>
+
+  <!-- MSG 15 return -->
+  <line x1="634" y1="476" x2="457" y2="476" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ret)"/>
+  <text x="543" y="470" text-anchor="middle" font-size="10" fill="#64748b">order saved (id=42)</text>
+
+  <!-- MSG 16 return -->
+  <line x1="444" y1="496" x2="257" y2="496" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ret)"/>
+  <text x="348" y="490" text-anchor="middle" font-size="10" fill="#64748b">201 Created  { orderId: 42 }</text>
+
+  <!-- ── GROUP 3 : Chatbot IA ── -->
+  <rect x="10" y="545" width="940" height="165" rx="6" fill="none" stroke="#fef08a" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="20" y="560" font-size="11" font-weight="bold" fill="#ca8a04">3.  Chatbot IA (Gemini)</text>
+
+  <!-- Activation boxes -->
+  <rect x="244" y="572" width="12" height="115" rx="2" fill="#bfdbfe"/>
+  <rect x="444" y="585" width="12" height="100" rx="2" fill="#bbf7d0"/>
+  <rect x="819" y="600" width="12" height="55" rx="2" fill="#fef08a"/>
+
+  <!-- MSG 17 -->
+  <line x1="75" y1="577" x2="243" y2="577" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="155" y="571" text-anchor="middle" font-size="10" fill="#334155">Pose une question au chatbot</text>
+
+  <!-- MSG 18 -->
+  <line x1="256" y1="594" x2="443" y2="594" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="348" y="588" text-anchor="middle" font-size="10" fill="#334155">GET /api/chat/ask?message=...</text>
+
+  <!-- MSG 19 -->
+  <line x1="456" y1="612" x2="818" y2="612" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="635" y="606" text-anchor="middle" font-size="10" fill="#334155">generateContent(prompt enrichi)</text>
+
+  <!-- MSG 20 return Gemini → API -->
+  <line x1="819" y1="632" x2="457" y2="632" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ret)"/>
+  <text x="635" y="626" text-anchor="middle" font-size="10" fill="#64748b">AI response (recommandation)</text>
+
+  <!-- MSG 21 return API → Angular -->
+  <line x1="444" y1="655" x2="257" y2="655" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ret)"/>
+  <text x="348" y="649" text-anchor="middle" font-size="10" fill="#64748b">200 OK  { response: "..." }</text>
+
+  <!-- MSG 22 return Angular → User -->
+  <line x1="244" y1="678" x2="77" y2="678" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ret)"/>
+  <text x="155" y="672" text-anchor="middle" font-size="10" fill="#64748b">Affiche la réponse IA</text>
+
+  <!-- ── Légende ── -->
+  <line x1="30" y1="710" x2="60" y2="710" stroke="#334155" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="68" y="714" font-size="10" fill="#334155">Message</text>
+  <line x1="160" y1="710" x2="190" y2="710" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ret)"/>
+  <text x="198" y="714" font-size="10" fill="#64748b">Réponse (retour)</text>
+  <rect x="310" y="703" width="12" height="14" rx="2" fill="#bfdbfe"/>
+  <text x="328" y="714" font-size="10" fill="#374151">Activation Angular</text>
+  <rect x="450" y="703" width="12" height="14" rx="2" fill="#bbf7d0"/>
+  <text x="468" y="714" font-size="10" fill="#374151">Activation API</text>
+  <rect x="580" y="703" width="12" height="14" rx="2" fill="#fed7aa"/>
+  <text x="598" y="714" font-size="10" fill="#374151">Activation MySQL</text>
+
+</svg>
