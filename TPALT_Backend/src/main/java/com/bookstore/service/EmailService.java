@@ -60,7 +60,7 @@ public class EmailService {
                           <tr>
                             <td align="center" style="padding:32px 40px 24px;background:linear-gradient(135deg,#f59e0b,#ea580c);">
                               <h1 style="margin:0;color:#0f0f1a;font-size:24px;font-weight:bold;">
-                                📚 BookStore
+                                BookStore
                               </h1>
                             </td>
                           </tr>

@@ -7,6 +7,7 @@ import { Footer } from '../../../layout/footer/footer';
 import { CartService } from '../../../core/services/cart.service';
 import { OrderService } from '../../../core/services/order.service';
 import { CartItem } from '../../../shared/models/cart.model';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-cart-page',
@@ -16,18 +17,18 @@ import { CartItem } from '../../../shared/models/cart.model';
     <div class="min-h-screen bg-[#0f0f1a] text-white flex flex-col">
       <app-navbar></app-navbar>
 
-      <main class="flex-1 max-w-[1440px] mx-auto w-full p-4 md:p-8">
-        <h1 class="text-2xl font-bold mb-6">Mon Panier</h1>
+      <main class="flex-1 max-w-[1440px] mx-auto w-full p-4 pt-10 md:p-8 md:pt-14">
+        <h1 class="text-2xl font-bold mb-6">{{ t('cart.title') }}</h1>
 
         <!-- Empty state -->
         <div *ngIf="items.length === 0"
              class="bg-slate-800/50 rounded-xl p-12 text-center text-slate-400">
           <span class="material-symbols-outlined text-6xl mb-4 block text-slate-600">shopping_cart</span>
-          <p class="text-lg font-medium">Votre panier est vide</p>
-          <p class="text-sm mt-1 mb-6">Ajoutez des livres depuis la page d'accueil.</p>
+          <p class="text-lg font-medium">{{ t('cart.emptyTitle') }}</p>
+          <p class="text-sm mt-1 mb-6">{{ t('cart.emptyHint') }}</p>
           <a routerLink="/catalog"
              class="inline-block bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors">
-            Explorer le catalogue
+            {{ t('cart.exploreCatalog') }}
           </a>
         </div>
 
@@ -57,7 +58,7 @@ import { CartItem } from '../../../shared/models/cart.model';
                             (click)="changeQty(item, 1)">+</button>
                   </div>
                   <button class="text-xs text-red-400 hover:text-red-300 transition-colors"
-                          (click)="remove(item)">Supprimer</button>
+                      (click)="remove(item)">{{ t('cart.remove') }}</button>
                 </div>
               </div>
               <div class="text-right shrink-0">
@@ -71,30 +72,30 @@ import { CartItem } from '../../../shared/models/cart.model';
           <!-- Order summary -->
           <div class="lg:w-80 shrink-0">
             <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700 sticky top-24">
-              <h2 class="font-bold text-lg mb-4">Récapitulatif</h2>
+              <h2 class="font-bold text-lg mb-4">{{ t('cart.summary') }}</h2>
               <div class="space-y-2 text-sm mb-4">
                 <div class="flex justify-between text-slate-300">
-                  <span>Sous-total ({{ totalItems }} articles)</span>
+                  <span>{{ t('cart.subtotal').replace('{{count}}', totalItems.toString()) }}</span>
                   <span>{{ total | number: '1.2-2' }} €</span>
                 </div>
                 <div class="flex justify-between text-slate-300">
-                  <span>Livraison</span>
-                  <span class="text-green-400">GRATUITE</span>
+                  <span>{{ t('cart.delivery') }}</span>
+                  <span class="text-green-400">{{ t('cart.freeDelivery') }}</span>
                 </div>
                 <hr class="border-slate-600 my-3">
                 <div class="flex justify-between font-bold text-white text-base">
-                  <span>Total</span>
+                  <span>{{ t('cart.total') }}</span>
                   <span class="text-amber-400">{{ total | number: '1.2-2' }} €</span>
                 </div>
               </div>
 
               <!-- Address form (shown when orderMode=true) -->
               <div *ngIf="orderMode" class="mb-4">
-                <label class="block text-sm font-medium text-slate-300 mb-2">Adresse de livraison</label>
+                <label class="block text-sm font-medium text-slate-300 mb-2">{{ t('cart.shippingAddress') }}</label>
                 <textarea
                   [(ngModel)]="shippingAddress"
                   rows="3"
-                  placeholder="Numéro, rue, ville, code postal..."
+                  [placeholder]="t('cart.shippingPlaceholder')"
                   class="w-full bg-slate-700 border border-slate-600 text-white text-sm rounded-xl px-3 py-2 resize-none placeholder-slate-500 focus:outline-none focus:border-amber-400 transition-colors">
                 </textarea>
                 <p *ngIf="orderError" class="text-red-400 text-xs mt-1">{{ orderError }}</p>
@@ -104,26 +105,26 @@ import { CartItem } from '../../../shared/models/cart.model';
               <button *ngIf="!orderMode"
                       class="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3 rounded-xl transition-colors shadow-lg mb-3"
                       (click)="orderMode = true">
-                Passer la commande
+                {{ t('cart.placeOrder') }}
               </button>
 
               <div *ngIf="orderMode" class="flex flex-col gap-2 mb-3">
                 <button class="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3 rounded-xl transition-colors shadow-lg disabled:opacity-50"
                         [disabled]="isOrdering || !shippingAddress.trim()"
                         (click)="placeOrder()">
-                  <span *ngIf="!isOrdering">Confirmer la commande</span>
-                  <span *ngIf="isOrdering">Traitement en cours...</span>
+                  <span *ngIf="!isOrdering">{{ t('cart.confirmOrder') }}</span>
+                  <span *ngIf="isOrdering">{{ t('cart.processing') }}</span>
                 </button>
                 <button class="w-full border border-slate-600 text-slate-300 text-sm py-2 rounded-xl transition-colors hover:border-slate-400"
                         (click)="orderMode = false; orderError = ''">
-                  Annuler
+                  {{ t('cart.cancel') }}
                 </button>
               </div>
 
               <button *ngIf="!orderMode"
                       class="w-full border border-slate-600 hover:border-slate-400 text-slate-300 text-sm py-2 rounded-xl transition-colors"
                       (click)="clearCart()">
-                Vider le panier
+                {{ t('cart.clear') }}
               </button>
             </div>
           </div>
@@ -149,7 +150,8 @@ export class CartPage implements OnInit {
     private cartService: CartService,
     private orderService: OrderService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private languageService: LanguageService
   ) {}
 
   ngOnInit(): void {
@@ -182,9 +184,13 @@ export class CartPage implements OnInit {
       },
       error: () => {
         this.isOrdering = false;
-        this.orderError = 'Erreur lors de la commande. Vérifiez que vous êtes connecté.';
+        this.orderError = this.t('cart.orderError');
       }
     });
+  }
+
+  t(key: string): string {
+    return this.languageService.t(key);
   }
 
   changeQty(item: CartItem, delta: number): void {

@@ -15,6 +15,15 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router, private cartService: CartService) {}
 
+  // Force une session propre à chaque redémarrage de l'application.
+  clearSessionOnAppStart(): void {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_role');
+    localStorage.removeItem('auth_username');
+    this.isAuthenticated$.next(false);
+    this.cartService.switchUser(null);
+  }
+
   // Connexion : vérifie identifiants + retourne JWT directement
   login(credentials: AuthRequest): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/auth/login`, credentials).pipe(
@@ -51,11 +60,7 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_role');
-    localStorage.removeItem('auth_username');
-    this.isAuthenticated$.next(false);
-    this.cartService.switchUser(null);
+    this.clearSessionOnAppStart();
     this.router.navigate(['/home']);
   }
 

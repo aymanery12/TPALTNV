@@ -1,7 +1,7 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -11,7 +11,7 @@ import { AuthService } from '../../../core/services/auth.service';
     templateUrl: './login-page.html',
     styleUrl: './login-page.scss'
 })
-export class LoginPage {
+export class LoginPage implements OnInit {
     // 'login' | 'signup' | 'verify-signup'
     mode: 'login' | 'signup' | 'verify-signup' = 'login';
 
@@ -25,6 +25,9 @@ export class LoginPage {
     successMsg = '';
 
     errors: Record<string, string> = {};
+    showLoginPassword = false;
+    showSignupPassword = false;
+    showConfirmPassword = false;
 
     private readonly EMAIL_REGEX    = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     private readonly PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&_\-.])[A-Za-z\d@$!%*#?&_\-.]{8,}$/;
@@ -32,8 +35,20 @@ export class LoginPage {
     constructor(
         private authService: AuthService,
         private router: Router,
+        private route: ActivatedRoute,
         private cdr: ChangeDetectorRef
     ) {}
+
+    ngOnInit(): void {
+        this.route.queryParamMap.subscribe(params => {
+            const requestedMode = params.get('mode');
+            const nextMode = requestedMode === 'signup' ? 'signup' : 'login';
+
+            if (this.mode !== nextMode) {
+                this.switchMode(nextMode);
+            }
+        });
+    }
 
     get passwordStrength() {
         const pass = this.signupData.password || '';
@@ -62,6 +77,7 @@ export class LoginPage {
 
     onLogin(): void {
         this.errorMsg = '';
+        this.loginData.username = (this.loginData.username || '').trim();
         if (!this.validateLogin()) return;
 
         this.isLoading = true;
@@ -72,7 +88,7 @@ export class LoginPage {
                 if (res.role === 'ADMIN') {
                     this.router.navigate(['/admin']);
                 } else {
-                    this.router.navigate(['/home']);
+                    this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') || '/home');
                 }
             },
             error: (err) => {
@@ -89,6 +105,8 @@ export class LoginPage {
 
     onSignup(): void {
         this.errorMsg = '';
+        this.signupData.username = (this.signupData.username || '').trim();
+        this.signupData.email = (this.signupData.email || '').trim().toLowerCase();
         if (!this.validateSignup()) return;
 
         this.isLoading = true;
@@ -103,10 +121,13 @@ export class LoginPage {
             error: (err) => {
                 this.isLoading = false;
                 this.cdr.detectChanges();
+                const backendMsg = (err?.error?.error || '').toString();
                 if (err?.status === 409) {
-                    this.errorMsg = 'Nom d\'utilisateur déjà pris.';
+                    this.errorMsg = backendMsg.toLowerCase().includes('email')
+                        ? 'Adresse mail déjà prise.'
+                        : 'Nom d\'utilisateur déjà pris.';
                 } else {
-                    this.errorMsg = err?.error?.error || 'Erreur lors de l\'envoi du code.';
+                    this.errorMsg = backendMsg || 'Erreur lors de l\'envoi du code.';
                 }
             }
         });
@@ -114,6 +135,8 @@ export class LoginPage {
 
     onVerifySignup(): void {
         this.errorMsg = '';
+        this.signupData.username = (this.signupData.username || '').trim();
+        this.signupData.email = (this.signupData.email || '').trim().toLowerCase();
         if (!this.verificationCode || this.verificationCode.length !== 6) {
             this.errorMsg = 'Le code doit contenir 6 chiffres.';
             return;
@@ -130,18 +153,27 @@ export class LoginPage {
                 this.isLoading  = false;
                 this.successMsg = 'Compte créé avec succès ! Redirection...';
                 this.cdr.detectChanges();
-                setTimeout(() => this.router.navigate(['/home']), 1000);
+                setTimeout(() => this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') || '/home'), 1000);
             },
             error: (err) => {
                 this.isLoading = false;
                 this.cdr.detectChanges();
-                this.errorMsg = err?.error?.error || 'Code incorrect ou expiré.';
+                const backendMsg = (err?.error?.error || '').toString();
+                if (err?.status === 409) {
+                    this.errorMsg = backendMsg.toLowerCase().includes('email')
+                        ? 'Adresse mail déjà prise.'
+                        : 'Nom d\'utilisateur déjà pris.';
+                } else {
+                    this.errorMsg = backendMsg || 'Code incorrect ou expiré.';
+                }
             }
         });
     }
 
     resendSignupCode(): void {
         this.errorMsg  = '';
+        this.signupData.username = (this.signupData.username || '').trim();
+        this.signupData.email = (this.signupData.email || '').trim().toLowerCase();
         this.isLoading = true;
         this.authService.sendSignupCode(this.signupData.email, this.signupData.username).subscribe({
             next: (res: any) => {
@@ -179,7 +211,7 @@ export class LoginPage {
     private validateSignup(): boolean {
         this.errors = {};
         if (!this.signupData.username) this.errors['username'] = 'Requis';
-        if (!this.signupData.email || !this.EMAIL_REGEX.test(this.signupData.email)) this.errors['email'] = 'Email invalide';
+        if (!this.signupData.email || !this.EMAIL_REGEX.test(this.signupData.email)) this.errors['email'] = 'Adresse mail invalide';
         if (!this.signupData.password || !this.PASSWORD_REGEX.test(this.signupData.password)) this.errors['password'] = 'Mot de passe trop faible';
         if (this.signupData.password !== this.signupData.confirm) this.errors['confirm'] = 'Les mots de passe divergent';
         return Object.keys(this.errors).length === 0;

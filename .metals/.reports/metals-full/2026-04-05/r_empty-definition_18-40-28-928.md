@@ -1,3 +1,14 @@
+error id: file://<WORKSPACE>/TPALT_Backend/src/main/java/com/bookstore/Controller/AuthController.java:java/lang/String#trim().
+file://<WORKSPACE>/TPALT_Backend/src/main/java/com/bookstore/Controller/AuthController.java
+empty definition using pc, found symbol in pc: java/lang/String#trim().
+empty definition using semanticdb
+empty definition using fallback
+non-local guesses:
+
+offset: 7309
+uri: file://<WORKSPACE>/TPALT_Backend/src/main/java/com/bookstore/Controller/AuthController.java
+text:
+```scala
 package com.bookstore.Controller;
 
 import com.bookstore.model.User;
@@ -175,7 +186,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest req) {
-        String identifier = req.getUsername() == null ? null : req.getUsername().trim();
+        String identifier = req.getUsername() == null ? null : req.getUsername().@@trim();
 
         if (identifier == null || identifier.isBlank()) {
             return ResponseEntity.badRequest().body(Map.of("error", "Identifiant manquant."));
@@ -262,3 +273,9 @@ public class AuthController {
         return local.charAt(0) + "*".repeat(local.length() - 2) + local.charAt(local.length() - 1) + "@" + domain;
     }
 }
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: java/lang/String#trim().

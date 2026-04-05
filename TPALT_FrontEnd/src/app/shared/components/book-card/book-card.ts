@@ -1,8 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Book } from '../../models/book.model';
 import { RatingComponent } from '../rating/rating';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-book-card',
@@ -53,8 +54,8 @@ import { RatingComponent } from '../rating/rating';
         </h3>
 
         <!-- Author(s) -->
-        <p *ngIf="getAuthorsDisplay()" class="text-xs text-slate-500 mb-1">
-          {{ getAuthorsDisplay() }}
+        <p *ngIf="getAuthorsDisplay()" class="text-[13px] text-slate-500 mb-1">
+          {{ t('bookCard.by') }} {{ getAuthorsDisplay() }}
         </p>
 
         <!-- Rating -->
@@ -79,19 +80,14 @@ import { RatingComponent } from '../rating/rating';
 
           <!-- Original price if on sale -->
           <p *ngIf="book.discount" class="text-[10px] text-slate-500 mb-2">
-            Was: {{ (book.price / (1 - book.discount! / 100)) | number: '1.2-2' }}
-          </p>
-
-          <!-- Delivery Info — set once in ngOnInit, no random on each CD cycle -->
-          <p class="text-[10px] text-slate-500 mb-3">
-            {{ deliveryText }}
+            Was: {{ book.price | number: '1.2-2' }}
           </p>
 
           <!-- Add to Cart Button -->
           <button
-              class="w-full bg-amber-400 hover:bg-amber-500 active:bg-amber-600 text-slate-900 text-xs font-bold py-1.5 rounded-full transition-colors shadow-sm"
+              class="w-full mt-2 bg-amber-400 hover:bg-amber-500 active:bg-amber-600 text-slate-900 text-xs font-bold py-1.5 rounded-full transition-colors shadow-sm"
               (click)="onAddToCart()">
-            Add to Cart
+            {{ t('bookCard.addToCart') }}
           </button>
         </div>
       </div>
@@ -99,7 +95,7 @@ import { RatingComponent } from '../rating/rating';
   `,
   styleUrl: './book-card.scss'
 })
-export class BookCardComponent implements OnInit {
+export class BookCardComponent {
   @Input() book!: Book;
   @Input() badge?: string;
   @Input() isInWishlist: boolean = false;
@@ -108,18 +104,7 @@ export class BookCardComponent implements OnInit {
   @Output() addToCartClicked = new EventEmitter<Book>();
   @Output() wishlistToggled = new EventEmitter<Book>();
 
-  // Computed once — no more random value on every change-detection cycle
-  deliveryText = '';
-
-  ngOnInit(): void {
-    const messages = [
-      'FREE Delivery Tomorrow',
-      'Prime Member Deal',
-      'Hardcover Edition',
-      'Kindle Available'
-    ];
-    this.deliveryText = messages[Math.floor(Math.random() * messages.length)];
-  }
+  constructor(public languageService: LanguageService) {}
 
   getAuthorsDisplay(): string {
     if (this.book.authors && this.book.authors.length > 0) {
@@ -140,19 +125,26 @@ export class BookCardComponent implements OnInit {
   }
 
   getDisplayPrice(): number {
-    return this.book.discount
-      ? Math.floor(this.book.price * (1 - this.book.discount / 100))
-      : Math.floor(this.book.price);
+    return Math.floor(this.getEffectivePrice());
   }
 
   getDisplayPriceCents(): string {
-    const cents = Math.round((this.book.price % 1) * 100);
-    return cents.toString().padStart(2, '0');
+    return this.getEffectivePrice().toFixed(2).split('.')[1];
+  }
+
+  private getEffectivePrice(): number {
+    const price = this.book.price ?? 0;
+    const discount = this.book.discount ?? 0;
+    return discount > 0 ? price * (1 - discount / 100) : price;
   }
 
   getBadgeClass(): string {
     if (this.badge?.includes('SAVE')) return 'bg-red-600';
     if (this.badge?.includes('BEST')) return 'bg-primary';
     return 'bg-slate-700';
+  }
+
+  t(key: string): string {
+    return this.languageService.t(key);
   }
 }

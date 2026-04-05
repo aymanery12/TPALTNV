@@ -29,19 +29,22 @@
                     <div class="inline-flex items-center gap-2 bg-amber-400/20 border border-amber-400/30
                                 rounded-full px-4 py-1.5 text-amber-400 text-xs font-semibold mb-6">
                         <span class="material-symbols-outlined text-sm">local_fire_department</span>
-                        Nouveautés disponibles
+                        {{ t('home.badge') }}
                     </div>
 
                     <h1 class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight mb-6">
-                        Découvrez votre<br>
+                        <span *ngIf="greetingLabel" class="block text-amber-400 text-2xl sm:text-3xl lg:text-4xl mb-2">
+                            {{ greetingLabel }}
+                        </span>
+                        {{ t('home.title.line1') }}<br>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">
-                            prochain livre
+                            {{ t('home.title.line2') }}
                         </span>
                     </h1>
 
                     <p class="text-slate-400 text-lg lg:text-xl mb-8 max-w-lg leading-relaxed">
-                        Des milliers de livres livrés à domicile.<br>
-                        Paiement à la livraison disponible.
+                        {{ t('home.heroText1') }}<br>
+                        {{ t('home.heroText2') }}
                     </p>
 
                     <div class="flex flex-wrap gap-4">
@@ -50,12 +53,12 @@
                                        rounded-2xl transition-all hover:scale-105 shadow-lg shadow-amber-500/25
                                        text-base flex items-center gap-2">
                             <span class="material-symbols-outlined text-lg">explore</span>
-                            Explorer le catalogue
+                            {{ t('home.explore') }}
                         </button>
                         <button (click)="scrollToBooks()"
                                 class="border border-white/20 hover:border-amber-400/50 text-white font-medium
                                        px-8 py-4 rounded-2xl transition-all hover:bg-white/5 flex items-center gap-2 text-base">
-                            Parcourir
+                            {{ t('home.browse') }}
                             <span class="material-symbols-outlined text-base">expand_more</span>
                         </button>
                     </div>
@@ -63,16 +66,16 @@
                     <!-- Stats rapides -->
                     <div class="flex gap-8 mt-12">
                         <div>
-                            <p class="text-2xl font-bold text-white">10 000+</p>
-                            <p class="text-slate-400 text-sm">Livres disponibles</p>
+                            <p class="text-2xl font-bold text-white">{{ booksAvailableLabel }}</p>
+                            <p class="text-slate-400 text-sm">{{ t('home.booksAvailable') }}</p>
                         </div>
                         <div class="border-l border-white/10 pl-8">
-                            <p class="text-2xl font-bold text-white">4.8 ★</p>
-                            <p class="text-slate-400 text-sm">Note moyenne</p>
+                            <p class="text-2xl font-bold text-white">{{ averageReviewLabel }}</p>
+                            <p class="text-slate-400 text-sm">{{ t('home.noteMoyenne') }}</p>
                         </div>
                         <div class="border-l border-white/10 pl-8 hidden sm:block">
                             <p class="text-2xl font-bold text-white">24h</p>
-                            <p class="text-slate-400 text-sm">Livraison express</p>
+                            <p class="text-slate-400 text-sm">{{ t('home.delivery') }}</p>
                         </div>
                     </div>
                 </div>
@@ -112,18 +115,26 @@
 
         <!-- Header -->
         <div class="flex items-center gap-3 mb-6">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600
-                        flex items-center justify-center shadow-lg shadow-purple-500/30 shrink-0">
-                <span class="material-symbols-outlined text-white">smart_toy</span>
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br
+                        flex items-center justify-center shadow-lg shrink-0"
+                 [class.from-violet-500]="aiRecommendationType === 'personalized'"
+                 [class.to-purple-600]="aiRecommendationType === 'personalized'"
+                 [class.shadow-purple-500/30]="aiRecommendationType === 'personalized'"
+                 [class.from-amber-500]="aiRecommendationType === 'cold_start'"
+                 [class.to-orange-600]="aiRecommendationType === 'cold_start'"
+                 [class.shadow-amber-500/30]="aiRecommendationType === 'cold_start'">
+                <span class="material-symbols-outlined text-white">
+                    {{ aiRecommendationType === 'personalized' ? 'smart_toy' : 'local_fire_department' }}
+                </span>
             </div>
             <div class="flex-1 min-w-0">
                 <h2 class="text-white font-bold text-xl leading-tight">
-                    {{ aiRecommendationType === 'personalized' ? 'Recommandé pour vous' : 'Tendances du moment' }}
+                    {{ aiRecommendationType === 'personalized' ? t('home.reco.personalized') : t('home.reco.trending') }}
                 </h2>
                 <p class="text-slate-400 text-xs mt-0.5 truncate">
                     {{ aiRecommendationType === 'personalized'
-                        ? 'Sélectionné par Gemini AI selon votre historique d\'achats'
-                        : 'Les livres les mieux notés de la semaine' }}
+                        ? t('home.reco.subtitle.personalized')
+                        : t('home.reco.subtitle.trending') }}
                 </p>
             </div>
             <span class="shrink-0 text-[10px] font-bold px-3 py-1.5 rounded-full border"
@@ -133,7 +144,7 @@
                   [class.bg-amber-500/15]="aiRecommendationType === 'cold_start'"
                   [class.border-amber-500/30]="aiRecommendationType === 'cold_start'"
                   [class.text-amber-400]="aiRecommendationType === 'cold_start'">
-                {{ aiRecommendationType === 'personalized' ? '✦ IA Personnalisé' : '★ Top Livres' }}
+                {{ aiRecommendationType === 'personalized' ? t('home.reco.badge.personalized') : t('home.reco.badge.trending') }}
             </span>
         </div>
 
@@ -173,9 +184,18 @@
                            group-hover:text-amber-400 transition-colors">
                     {{ book.title }}
                 </p>
-                <div class="flex items-center justify-between">
-                    <span class="text-amber-400 text-sm font-bold">{{ book.price | number:'1.2-2' }} €</span>
-                    <div class="flex items-center gap-0.5">
+                <div class="flex items-start justify-between gap-2">
+                    <div>
+                        <span class="text-sm font-bold"
+                              [class.text-red-400]="hasDiscount(book)"
+                              [class.text-amber-400]="!hasDiscount(book)">
+                            {{ getDisplayPrice(book) | number:'1.2-2' }} €
+                        </span>
+                        <p *ngIf="hasDiscount(book)" class="text-[11px] text-slate-500 line-through leading-tight">
+                            {{ book.price | number:'1.2-2' }} €
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-0.5 mt-0.5">
                         <span class="material-symbols-outlined text-amber-400 star-filled" style="font-size:12px">star</span>
                         <span class="text-slate-400 text-xs">{{ book.rating.toFixed(1) }}</span>
                     </div>
@@ -208,27 +228,50 @@
                     <div class="flex items-center gap-3">
                         <div>
                             <h2 class="text-2xl font-bold text-white">{{ sectionTitle }}</h2>
-                            <p class="text-slate-400 text-sm mt-1">{{ recommendedBooks.length }} livre(s) trouvé(s)</p>
+                            <p class="text-slate-400 text-sm mt-1">{{ booksFoundLabel }}</p>
                         </div>
                         <button *ngIf="isFiltered"
                                 (click)="clearFilters()"
                                 class="flex items-center gap-1 text-xs bg-amber-400/15 border border-amber-400/30
                                        text-amber-400 px-3 py-1.5 rounded-full hover:bg-amber-400/25 transition-colors">
                             <span class="material-symbols-outlined text-sm">close</span>
-                            Effacer
+                            {{ t('home.clearFilters') }}
                         </button>
                     </div>
                     <div class="flex items-center gap-3">
-                        <span class="text-slate-400 text-sm hidden md:block">Trier par :</span>
-                        <select class="bg-white/10 border border-white/20 text-white rounded-xl px-4 py-2
-                                       text-sm focus:outline-none focus:border-amber-400 cursor-pointer"
-                                [value]="selectedSort"
-                                (change)="onSortChange($event)">
-                            <option value="featured"   class="bg-slate-800">En vedette</option>
-                            <option value="price-asc"  class="bg-slate-800">Prix croissant</option>
-                            <option value="price-desc" class="bg-slate-800">Prix décroissant</option>
-                            <option value="rating"     class="bg-slate-800">Mieux notés</option>
-                        </select>
+                        <span class="text-slate-400 text-sm hidden md:block">{{ t('home.sortBy') }}</span>
+                        <div class="relative" (click)="$event.stopPropagation()">
+                            <button
+                                type="button"
+                                class="bg-slate-900/70 border border-amber-400/30 text-white rounded-xl pl-3 pr-10 py-2 text-sm
+                                       focus:outline-none focus:border-amber-400 hover:border-amber-400/60 transition-colors min-w-[150px] text-left"
+                                (click)="toggleSortMenu()">
+                                {{ translateSort(selectedSort) }}
+                                <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-amber-300 text-lg pointer-events-none">
+                                    expand_more
+                                </span>
+                            </button>
+
+                            <div *ngIf="sortMenuOpen"
+                                   class="absolute left-0 mt-2 w-full rounded-xl border border-amber-400/30 bg-[#121a33] shadow-xl overflow-hidden z-30">
+                                <button type="button" class="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
+                                        [class.bg-amber-400/25]="selectedSort === 'featured'"
+                                        [class.text-amber-300]="selectedSort === 'featured'"
+                                        (click)="selectSort('featured')">{{ translateSort('featured') }}</button>
+                                <button type="button" class="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
+                                        [class.bg-amber-400/25]="selectedSort === 'price-asc'"
+                                        [class.text-amber-300]="selectedSort === 'price-asc'"
+                                        (click)="selectSort('price-asc')">{{ translateSort('price-asc') }}</button>
+                                <button type="button" class="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
+                                        [class.bg-amber-400/25]="selectedSort === 'price-desc'"
+                                        [class.text-amber-300]="selectedSort === 'price-desc'"
+                                        (click)="selectSort('price-desc')">{{ translateSort('price-desc') }}</button>
+                                <button type="button" class="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
+                                        [class.bg-amber-400/25]="selectedSort === 'rating'"
+                                        [class.text-amber-300]="selectedSort === 'rating'"
+                                        (click)="selectSort('rating')">{{ translateSort('rating') }}</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -239,11 +282,11 @@
                         {{ isFiltered ? 'search_off' : 'library_books' }}
                     </span>
                     <p class="text-lg font-medium">
-                        {{ isFiltered ? 'Aucun livre dans cette catégorie' : 'Chargement des livres...' }}
+                        {{ isFiltered ? t('home.reco.noBooks') : t('home.reco.loading') }}
                     </p>
                     <button *ngIf="isFiltered" (click)="clearFilters()"
                             class="mt-4 text-sm text-amber-400 hover:text-amber-300 underline">
-                        Voir tous les livres
+                        {{ t('home.reco.viewAll') }}
                     </button>
                 </div>
 

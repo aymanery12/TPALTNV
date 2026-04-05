@@ -7,6 +7,7 @@ import { Footer } from '../../layout/footer/footer';
 import { AuthService } from '../../core/services/auth.service';
 import { OrderService } from '../../core';
 import { Order } from '../../shared/models';
+import { LanguageService } from '../../core/services/language.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -21,13 +22,20 @@ export class UserProfilePage implements OnInit {
   orders: Order[] = [];
   isLoading = true;
   activeTab: 'info' | 'orders' = 'info';
+  currentLang = 'fr';
 
   constructor(
       private authService: AuthService,
-      private orderService: OrderService
+      private orderService: OrderService,
+      private languageService: LanguageService
   ) {}
 
   ngOnInit(): void {
+    this.currentLang = this.languageService.currentLanguage;
+    this.languageService.currentLanguageChanges().subscribe(lang => {
+      this.currentLang = lang;
+    });
+
     this.username = this.authService.getUsername() ?? 'Utilisateur';
     this.role     = this.authService.getRole() ?? 'CLIENT';
     this.orderService.getMyOrders().subscribe({
@@ -41,9 +49,9 @@ export class UserProfilePage implements OnInit {
 
   getStatusLabel(status: string): string {
     const map: Record<string, string> = {
-      EN_PREPARATION: 'En préparation',
-      EXPEDIEE:       'Expédiée',
-      LIVREE:         'Livrée'
+      EN_PREPARATION: this.t('profile.status.preparation'),
+      EXPEDIEE:       this.t('profile.status.shipped'),
+      LIVREE:         this.t('profile.status.delivered')
     };
     return map[status] ?? status;
   }
@@ -63,5 +71,9 @@ export class UserProfilePage implements OnInit {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  t(key: string): string {
+    return this.languageService.t(key);
   }
 }

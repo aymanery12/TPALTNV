@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, HostListener, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { Navbar } from "../../../layout/navbar/navbar";
@@ -11,6 +11,8 @@ import { BookService } from "../../../core/services/book.service";
 import { CartService } from "../../../core/services/cart.service";
 import { WishlistService } from "../../../core/services/wishlist.service";
 import { RecommendationService } from "../../../core/services/recommendation.service";
+import { AuthService } from "../../../core/services/auth.service";
+import { LanguageService } from "../../../core/services/language.service";
 import { Router } from "@angular/router";
 
 @Component({
@@ -29,6 +31,8 @@ import { Router } from "@angular/router";
   styleUrl: "./home-page.scss",
 })
 export class HomePage implements OnInit {
+  readonly offersCategoryValue = '__offers__';
+
   selectedSort     = 'featured';
   currentPage      = 1;
   books: Book[]    = [];
@@ -40,18 +44,45 @@ export class HomePage implements OnInit {
   aiRecommendationType: 'personalized' | 'cold_start' = 'cold_start';
   aiLoading = true;
 
+  averageReviewRating = 0;
+  isLoggedIn = false;
+  username = '';
+  currentLang: 'fr' | 'en' = 'fr';
+
   // Filtres sidebar
   activeCategory = '';
   activePrice: PriceRange | null = null;
+  sortMenuOpen = false;
 
   get sectionTitle(): string {
-    if (this.activeCategory) return this.activeCategory;
-    if (this.activePrice)    return `Prix : ${this.activePrice.label}`;
-    return 'Recommandés pour vous';
+    if (this.activeCategory) {
+      return this.languageService.categoryLabel(this.activeCategory);
+    }
+    if (this.activePrice)    return `${this.t('home.pricePrefix')} ${this.t(this.activePrice.label)}`;
+    return this.t('home.reco.personalized');
   }
 
   get isFiltered(): boolean {
     return !!(this.activeCategory || this.activePrice);
+  }
+
+  get booksFoundLabel(): string {
+    return this.t('home.booksFound').replace('{{count}}', `${this.recommendedBooks.length}`);
+  }
+
+  get booksAvailableLabel(): string {
+    const count = this.books.length;
+
+    if (count === 1) {
+      return '1';
+    }
+
+    if (count < 100) {
+      return `${count}`;
+    }
+
+    const bucket = Math.floor(count / 100) * 100;
+    return `${bucket}+ `;
   }
 
   get wishlistIds(): number[] {
@@ -68,10 +99,25 @@ export class HomePage implements OnInit {
     private cartService: CartService,
     private wishlistService: WishlistService,
     private recommendationService: RecommendationService,
+    private authService: AuthService,
+    private languageService: LanguageService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.currentLang = this.languageService.currentLanguage;
+    this.isLoggedIn = this.authService.isLoggedInSnapshot();
+    this.username = this.authService.getUsername() ?? '';
+
+    this.authService.isLoggedIn().subscribe(isLoggedIn => {
+      this.isLoggedIn = isLoggedIn;
+      this.username = isLoggedIn ? (this.authService.getUsername() ?? '') : '';
+    });
+
+    this.languageService.currentLanguageChanges().subscribe(lang => {
+      this.currentLang = lang;
+    });
+
     this.bookService.getBooks().subscribe({
       next: (books) => {
         this.books = books.map(b => ({
@@ -100,6 +146,11 @@ export class HomePage implements OnInit {
       },
       error: () => { this.aiLoading = false; }
     });
+
+    this.bookService.getAverageReviewRating().subscribe({
+      next: (avg) => this.averageReviewRating = avg,
+      error: () => { this.averageReviewRating = 0; }
+    });
   }
 
   onCategorySelected(cat: string): void {
@@ -124,7 +175,11 @@ export class HomePage implements OnInit {
     let result = [...this.books];
 
     if (this.activeCategory) {
-      result = result.filter(b => b.category === this.activeCategory);
+      if (this.activeCategory === this.offersCategoryValue) {
+        result = result.filter(b => (b.discount ?? 0) > 0);
+      } else {
+        result = result.filter(b => b.category === this.activeCategory);
+      }
     }
     if (this.activePrice) {
       if (this.activePrice.min !== undefined) result = result.filter(b => b.price >= this.activePrice!.min!);
@@ -139,6 +194,21 @@ export class HomePage implements OnInit {
     const selectElement = event.target as HTMLSelectElement;
     this.selectedSort = selectElement.value;
     this.sortBooks();
+  }
+
+  toggleSortMenu(): void {
+    this.sortMenuOpen = !this.sortMenuOpen;
+  }
+
+  selectSort(sort: string): void {
+    this.selectedSort = sort;
+    this.sortBooks();
+    this.sortMenuOpen = false;
+  }
+
+  @HostListener('document:click')
+  closeSortMenu(): void {
+    this.sortMenuOpen = false;
   }
 
   private sortBooks(): void {
@@ -163,6 +233,31 @@ export class HomePage implements OnInit {
 
   onWishlistToggled(book: Book): void {
     this.wishlistService.toggle(book);
+  }
+
+  hasDiscount(book: Book): boolean {
+    return (book.discount ?? 0) > 0;
+  }
+
+  getDisplayPrice(book: Book): number {
+    const discount = book.discount ?? 0;
+    return discount > 0 ? (book.price ?? 0) * (1 - discount / 100) : (book.price ?? 0);
+  }
+
+  get averageReviewLabel(): string {
+    return `${this.averageReviewRating.toFixed(1)} ★`;
+  }
+
+  get greetingLabel(): string {
+    return this.isLoggedIn && this.username ? `${this.t('navbar.guestGreeting')} ${this.username}` : '';
+  }
+
+  t(key: string): string {
+    return this.languageService.t(key);
+  }
+
+  translateSort(sort: string): string {
+    return this.languageService.sortLabel(sort);
   }
 
   scrollToBooks(): void {

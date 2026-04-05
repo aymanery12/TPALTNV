@@ -1,3 +1,14 @@
+error id: file://<WORKSPACE>/TPALT_Backend/src/main/java/com/bookstore/Controller/OrderController.java:_empty_/UserRepository#findByEmail#
+file://<WORKSPACE>/TPALT_Backend/src/main/java/com/bookstore/Controller/OrderController.java
+empty definition using pc, found symbol in pc: _empty_/UserRepository#findByEmail#
+empty definition using semanticdb
+empty definition using fallback
+non-local guesses:
+
+offset: 1896
+uri: file://<WORKSPACE>/TPALT_Backend/src/main/java/com/bookstore/Controller/OrderController.java
+text:
+```scala
 package com.bookstore.Controller;
 
 import com.bookstore.model.Order;
@@ -48,7 +59,7 @@ public class OrderController {
 
         String principal = authentication.getName();
         return userRepository.findByUsername(principal)
-                .or(() -> userRepository.findByEmail(principal))
+                .or(() -> userRepository.@@findByEmail(principal))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur introuvable"));
     }
 
@@ -68,3 +79,9 @@ public class OrderController {
         return orderService.updateStatus(id, newStatus);
     }
 }
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: _empty_/UserRepository#findByEmail#

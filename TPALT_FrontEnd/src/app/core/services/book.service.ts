@@ -37,6 +37,11 @@ export class BookService {
     return this.http.get<BookReview[]>(`${this.apiUrl}/books/${bookId}/reviews`);
   }
 
+  // GET /api/reviews/average
+  getAverageReviewRating(): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/reviews/average`);
+  }
+
   // POST /api/books/{bookId}/reviews  (authentifié)
   addReview(bookId: number, review: { rating: number; comment: string }): Observable<BookReview> {
     return this.http.post<BookReview>(`${this.apiUrl}/books/${bookId}/reviews`, review);

@@ -1,3 +1,14 @@
+error id: file://<WORKSPACE>/TPALT_Backend/src/main/java/com/bookstore/model/Book.java:_empty_/CollectionTable#
+file://<WORKSPACE>/TPALT_Backend/src/main/java/com/bookstore/model/Book.java
+empty definition using pc, found symbol in pc: _empty_/CollectionTable#
+semanticdb not found
+empty definition using fallback
+non-local guesses:
+
+offset: 431
+uri: file://<WORKSPACE>/TPALT_Backend/src/main/java/com/bookstore/model/Book.java
+text:
+```scala
 package com.bookstore.model;
 
 import jakarta.persistence.*;
@@ -20,7 +31,7 @@ public class Book {
     private String title;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "book_author", joinColumns = @JoinColumn(name = "book_id"))
+    @@@CollectionTable(name = "book_author", joinColumns = @JoinColumn(name = "book_id"))
     @Column(name = "author")
     private List<String> author = new ArrayList<>();
 
@@ -115,3 +126,9 @@ public class Book {
         return quantity != null && stockAlert != null && quantity <= stockAlert;
     }
 }
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: _empty_/CollectionTable#

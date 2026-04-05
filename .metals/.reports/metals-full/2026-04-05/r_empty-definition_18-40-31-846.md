@@ -1,3 +1,14 @@
+error id: file://<WORKSPACE>/TPALT_Backend/src/main/java/com/bookstore/Controller/AuthController.java:_empty_/UserRepository#findByUsernameNormalized#
+file://<WORKSPACE>/TPALT_Backend/src/main/java/com/bookstore/Controller/AuthController.java
+empty definition using pc, found symbol in pc: _empty_/UserRepository#findByUsernameNormalized#
+empty definition using semanticdb
+empty definition using fallback
+non-local guesses:
+
+offset: 4390
+uri: file://<WORKSPACE>/TPALT_Backend/src/main/java/com/bookstore/Controller/AuthController.java
+text:
+```scala
 package com.bookstore.Controller;
 
 import com.bookstore.model.User;
@@ -107,7 +118,7 @@ public class AuthController {
         if (email == null || email.isBlank()) {
             return ResponseEntity.badRequest().body(Map.of("error", "Email requis."));
         }
-        if (username != null && !username.isBlank() && userRepository.findByUsernameNormalized(username).isPresent()) {
+        if (username != null && !username.isBlank() && userRepository.@@findByUsernameNormalized(username).isPresent()) {
             return ResponseEntity.status(409).body(Map.of("error", "Nom d'utilisateur déjà pris."));
         }
         if (userRepository.findByEmailNormalized(email).isPresent()) {
@@ -262,3 +273,9 @@ public class AuthController {
         return local.charAt(0) + "*".repeat(local.length() - 2) + local.charAt(local.length() - 1) + "@" + domain;
     }
 }
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: _empty_/UserRepository#findByUsernameNormalized#

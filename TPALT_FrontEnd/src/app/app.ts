@@ -4,6 +4,7 @@ import { filter } from 'rxjs/operators';
 import { ChatbotComponent } from './shared/components/chatbot/chatbot';
 import { LoaderComponent } from './shared/components/loader/loader';
 import { LoadingService } from './core/services/loading.service';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -16,9 +17,15 @@ import { LoadingService } from './core/services/loading.service';
   `
 })
 export class App implements OnInit {
-  constructor(private router: Router, private loadingService: LoadingService) {}
+  constructor(
+    private router: Router,
+    private loadingService: LoadingService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
+    this.authService.clearSessionOnAppStart();
+
     this.router.events.pipe(
       filter(e =>
         e instanceof NavigationStart ||

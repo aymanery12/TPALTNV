@@ -1,34 +1,26 @@
 <div class="min-h-screen bg-[#0f0f1a] text-white flex flex-col">
     <app-navbar></app-navbar>
 
-    <main class="flex-1 max-w-4xl mx-auto w-full p-4 md:p-8">
+    <main class="flex-1 max-w-4xl mx-auto w-full p-4 pt-8 md:p-8 md:pt-12">
 
         <!-- Header profil -->
-        <div class="flex items-center gap-6 mb-8 p-6 bg-gradient-to-r from-[#1a1a2e] to-[#16213e] rounded-2xl border border-white/10">
-            <!-- Avatar -->
+        <div class="flex items-center gap-6 mb-8 mt-4 md:mt-6 p-6 bg-gradient-to-r from-[#1a1a2e] to-[#16213e] rounded-2xl border border-white/10">
             <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-3xl font-bold text-slate-900 shrink-0 shadow-lg">
                 {{ getInitial() }}
             </div>
             <div class="flex-1">
                 <h1 class="text-2xl font-bold text-white">{{ username }}</h1>
-                <div class="flex items-center gap-2 mt-1">
-          <span class="px-3 py-0.5 rounded-full text-xs font-semibold"
-                [class]="role === 'ADMIN' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'">
-            {{ role }}
-          </span>
-                    <span class="text-slate-400 text-sm">· {{ orders.length }} commande(s)</span>
-                </div>
             </div>
             <button
                     class="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 border border-red-500/30 hover:border-red-400/50 px-4 py-2 rounded-xl transition-colors"
                     (click)="logout()">
                 <span class="material-symbols-outlined text-base">logout</span>
-                Déconnexion
+                {{ t('profile.logout') }}
             </button>
         </div>
 
         <!-- Tabs -->
-        <div class="flex gap-2 mb-6 border-b border-white/10 pb-0">
+        <div class="flex gap-2 mb-6 border-b border-white/10 pb-0 flex-wrap">
             <button
                     class="px-5 py-2.5 text-sm font-semibold rounded-t-xl transition-all"
                     [class.bg-amber-400]="activeTab === 'info'"
@@ -37,7 +29,7 @@
                     [class.hover:text-white]="activeTab !== 'info'"
                     (click)="activeTab = 'info'">
                 <span class="material-symbols-outlined text-base align-middle mr-1">person</span>
-                Mes informations
+                {{ t('profile.infoTab') }}
             </button>
             <button
                     class="px-5 py-2.5 text-sm font-semibold rounded-t-xl transition-all"
@@ -47,9 +39,14 @@
                     [class.hover:text-white]="activeTab !== 'orders'"
                     (click)="activeTab = 'orders'">
                 <span class="material-symbols-outlined text-base align-middle mr-1">package_2</span>
-                Mes commandes
+                {{ t('profile.ordersTab') }}
                 <span *ngIf="orders.length > 0" class="ml-1 bg-amber-400 text-slate-900 text-xs font-bold px-1.5 py-0.5 rounded-full">{{ orders.length }}</span>
             </button>
+            <a routerLink="/profile/wishlist"
+                    class="px-5 py-2.5 text-sm font-semibold rounded-t-xl transition-all text-slate-400 hover:text-white hover:bg-slate-800/70">
+                <span class="material-symbols-outlined text-base align-middle mr-1 text-pink-400">favorite</span>
+                {{ t('profile.wishlistTab') }}
+            </a>
         </div>
 
         <!-- Tab: Infos -->
@@ -57,45 +54,25 @@
             <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700">
                 <h2 class="font-bold text-lg mb-4 flex items-center gap-2">
                     <span class="material-symbols-outlined text-amber-400">badge</span>
-                    Informations du compte
+                    {{ t('profile.accountInfo') }}
                 </h2>
                 <div class="space-y-3">
                     <div class="flex items-center justify-between py-3 border-b border-slate-700/50">
-                        <span class="text-slate-400 text-sm">Nom d'utilisateur</span>
+                        <span class="text-slate-400 text-sm">{{ t('profile.username') }}</span>
                         <span class="font-semibold">{{ username }}</span>
                     </div>
                     <div class="flex items-center justify-between py-3 border-b border-slate-700/50">
-                        <span class="text-slate-400 text-sm">Rôle</span>
+                        <span class="text-slate-400 text-sm">{{ t('profile.role') }}</span>
                         <span class="px-3 py-0.5 rounded-full text-xs font-semibold"
-                              [class]="role === 'ADMIN' ? 'bg-purple-500/20 text-purple-300' : 'bg-blue-500/20 text-blue-300'">
-              {{ role }}
-            </span>
+                            [class]="role === 'ADMIN' ? 'bg-purple-500/20 text-purple-300' : 'bg-amber-400 text-slate-900'">
+                            {{ role }}
+                        </span>
                     </div>
                     <div class="flex items-center justify-between py-3">
-                        <span class="text-slate-400 text-sm">Paiement préféré</span>
-                        <span class="text-blue-300 text-sm font-medium">Paiement à la livraison (COD)</span>
+                        <span class="text-slate-400 text-sm">{{ t('profile.preferredPayment') }}</span>
+                        <span class="text-amber-400 text-sm font-semibold">{{ t('profile.cashOnDelivery') }}</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- Liens rapides -->
-            <div class="grid grid-cols-2 gap-4">
-                <a routerLink="/profile/wishlist"
-                   class="flex items-center gap-3 p-4 bg-slate-800/50 rounded-2xl border border-slate-700 hover:border-pink-500/50 hover:bg-pink-500/5 transition-all group">
-                    <span class="material-symbols-outlined text-pink-400 text-2xl group-hover:scale-110 transition-transform">favorite</span>
-                    <div>
-                        <div class="font-semibold text-sm">Ma wishlist</div>
-                        <div class="text-xs text-slate-400">Livres sauvegardés</div>
-                    </div>
-                </a>
-                <a routerLink="/orders"
-                   class="flex items-center gap-3 p-4 bg-slate-800/50 rounded-2xl border border-slate-700 hover:border-amber-500/50 hover:bg-amber-500/5 transition-all group">
-                    <span class="material-symbols-outlined text-amber-400 text-2xl group-hover:scale-110 transition-transform">package_2</span>
-                    <div>
-                        <div class="font-semibold text-sm">Mes commandes</div>
-                        <div class="text-xs text-slate-400">{{ orders.length }} commande(s)</div>
-                    </div>
-                </a>
             </div>
         </div>
 
@@ -103,16 +80,16 @@
         <div *ngIf="activeTab === 'orders'">
             <div *ngIf="isLoading" class="text-center py-12 text-slate-400">
                 <span class="material-symbols-outlined animate-spin text-4xl block mb-2">progress_activity</span>
-                Chargement...
+                {{ t('profile.loading') }}
             </div>
 
             <div *ngIf="!isLoading && orders.length === 0"
                  class="text-center py-12 text-slate-400">
                 <span class="material-symbols-outlined text-5xl block mb-3 text-slate-600">package_2</span>
-                <p class="font-medium">Aucune commande pour le moment</p>
+                <p class="font-medium">{{ t('profile.noOrders') }}</p>
                 <a routerLink="/home"
                    class="inline-block mt-4 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6 py-2.5 rounded-xl text-sm transition-colors">
-                    Explorer le catalogue
+                    {{ t('profile.exploreCatalog') }}
                 </a>
             </div>
 
@@ -121,13 +98,13 @@
                      class="bg-slate-800/50 rounded-2xl p-5 border border-slate-700 hover:border-slate-600 transition-colors">
                     <div class="flex items-start justify-between mb-3">
                         <div>
-                            <span class="text-slate-400 text-xs">Commande</span>
+                            <span class="text-slate-400 text-xs">{{ t('profile.order') }}</span>
                             <h3 class="font-bold text-white">#{{ order.id }}</h3>
                         </div>
                         <span class="px-3 py-1 rounded-full text-xs font-semibold border"
                               [class]="getStatusClass(order.status ?? '')">
-              {{ getStatusLabel(order.status ?? '') }}
-            </span>
+                            {{ getStatusLabel(order.status ?? '') }}
+                        </span>
                     </div>
 
                     <div class="flex items-center justify-between text-sm">
@@ -141,10 +118,10 @@
                     </div>
 
                     <div class="mt-3 pt-3 border-t border-slate-700 flex items-center justify-between text-xs text-slate-500">
-            <span>
-              <span class="material-symbols-outlined text-xs align-middle">local_shipping</span>
-              Paiement à la livraison (COD)
-            </span>
+                        <span>
+                            <span class="material-symbols-outlined text-xs align-middle">local_shipping</span>
+                            {{ t('profile.cashOnDelivery') }}
+                        </span>
                         <span>{{ order.orderDate | date:'dd/MM/yyyy' }}</span>
                     </div>
                 </div>

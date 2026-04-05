@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global custom scrollbar (yellow accent) */
+html, body {
+  scrollbar-width: thin;
+  scrollbar-color: #fbbf24 #111827;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: #111827;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+  border-radius: 9999px;
+  border: 2px solid #111827;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #fcd34d 0%, #f59e0b 100%);
+}
+
 /* Spacer so page content is not hidden under the fixed navbar (~96px tall) */
 app-navbar {
   display: block;

@@ -59,16 +59,16 @@
             <!-- ════════════ LOGIN FORM ════════════ -->
             <form *ngIf="mode === 'login'" (ngSubmit)="onLogin()" class="space-y-5" novalidate>
 
-                <!-- Username -->
+                <!-- Identifiant -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-2">Nom d'utilisateur</label>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Nom d'utilisateur / adresse mail</label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg">person</span>
                         <input type="text" [(ngModel)]="loginData.username" name="username"
                                class="w-full bg-white/10 border rounded-2xl py-3.5 pl-11 pr-4 text-white placeholder-slate-400 focus:outline-none focus:bg-white/15 transition-all text-sm"
                                [class.border-red-500]="errors['username']"
                                [class.border-white/20]="!errors['username']"
-                               placeholder="Votre nom d'utilisateur">
+                               placeholder="Votre nom d'utilisateur ou votre adresse mail">
                     </div>
                     <p *ngIf="errors['username']" class="mt-1.5 text-xs text-red-400 flex items-center gap-1">
                         <span class="material-symbols-outlined text-sm">error</span>{{ errors['username'] }}
@@ -80,11 +80,17 @@
                     <label class="block text-sm font-medium text-slate-300 mb-2">Mot de passe</label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg">lock</span>
-                        <input type="password" [(ngModel)]="loginData.password" name="password"
-                               class="w-full bg-white/10 border rounded-2xl py-3.5 pl-11 pr-4 text-white placeholder-slate-400 focus:outline-none focus:bg-white/15 transition-all text-sm"
+                        <input [type]="showLoginPassword ? 'text' : 'password'" [(ngModel)]="loginData.password" name="password"
+                               class="w-full bg-white/10 border rounded-2xl py-3.5 pl-11 pr-12 text-white placeholder-slate-400 focus:outline-none focus:bg-white/15 transition-all text-sm"
                                [class.border-red-500]="errors['password']"
                                [class.border-white/20]="!errors['password']"
                                placeholder="••••••••">
+                        <button type="button"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-300 transition-colors"
+                                (click)="showLoginPassword = !showLoginPassword"
+                                [attr.aria-label]="showLoginPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+                            <span class="material-symbols-outlined text-lg">{{ showLoginPassword ? 'visibility_off' : 'visibility' }}</span>
+                        </button>
                     </div>
                     <p *ngIf="errors['password']" class="mt-1.5 text-xs text-red-400 flex items-center gap-1">
                         <span class="material-symbols-outlined text-sm">error</span>{{ errors['password'] }}
@@ -118,9 +124,9 @@
                     </p>
                 </div>
 
-                <!-- Email -->
+                <!-- Adresse mail -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-2">Email</label>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Adresse mail</label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg">mail</span>
                         <input type="email" [(ngModel)]="signupData.email" name="email"
@@ -141,11 +147,17 @@
                     <label class="block text-sm font-medium text-slate-300 mb-2">Mot de passe</label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg">lock</span>
-                        <input type="password" [(ngModel)]="signupData.password" name="password"
-                               class="w-full bg-white/10 border rounded-2xl py-3.5 pl-11 pr-4 text-white placeholder-slate-400 focus:outline-none focus:bg-white/15 transition-all text-sm"
+                        <input [type]="showSignupPassword ? 'text' : 'password'" [(ngModel)]="signupData.password" name="password"
+                               class="w-full bg-white/10 border rounded-2xl py-3.5 pl-11 pr-12 text-white placeholder-slate-400 focus:outline-none focus:bg-white/15 transition-all text-sm"
                                [class.border-red-500]="errors['password']"
                                [class.border-white/20]="!errors['password']"
                                placeholder="••••••••">
+                        <button type="button"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-300 transition-colors"
+                                (click)="showSignupPassword = !showSignupPassword"
+                                [attr.aria-label]="showSignupPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+                            <span class="material-symbols-outlined text-lg">{{ showSignupPassword ? 'visibility_off' : 'visibility' }}</span>
+                        </button>
                     </div>
 
                     <!-- Barre de force -->
@@ -178,12 +190,18 @@
                     <label class="block text-sm font-medium text-slate-300 mb-2">Confirmer le mot de passe</label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg">lock_reset</span>
-                        <input type="password" [(ngModel)]="signupData.confirm" name="confirm"
-                               class="w-full bg-white/10 border rounded-2xl py-3.5 pl-11 pr-4 text-white placeholder-slate-400 focus:outline-none focus:bg-white/15 transition-all text-sm"
+                        <input [type]="showConfirmPassword ? 'text' : 'password'" [(ngModel)]="signupData.confirm" name="confirm"
+                               class="w-full bg-white/10 border rounded-2xl py-3.5 pl-11 pr-12 text-white placeholder-slate-400 focus:outline-none focus:bg-white/15 transition-all text-sm"
                                [class.border-red-500]="errors['confirm']"
                                [class.border-green-500]="signupData.confirm && signupData.confirm === signupData.password && !errors['confirm']"
                                [class.border-white/20]="!signupData.confirm && !errors['confirm']"
                                placeholder="••••••••">
+                        <button type="button"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-300 transition-colors"
+                                (click)="showConfirmPassword = !showConfirmPassword"
+                                [attr.aria-label]="showConfirmPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+                            <span class="material-symbols-outlined text-lg">{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</span>
+                        </button>
                     </div>
                     <p *ngIf="errors['confirm']" class="mt-1.5 text-xs text-red-400 flex items-center gap-1">
                         <span class="material-symbols-outlined text-sm">error</span>{{ errors['confirm'] }}
@@ -210,7 +228,7 @@
                     <div class="w-16 h-16 rounded-2xl bg-amber-400/20 flex items-center justify-center mx-auto mb-4">
                         <span class="material-symbols-outlined text-amber-400 text-3xl">mark_email_read</span>
                     </div>
-                    <h2 class="text-white font-bold text-xl mb-1">Confirmez votre email</h2>
+                    <h2 class="text-white font-bold text-xl mb-1">Confirmez votre adresse mail</h2>
                     <p class="text-slate-400 text-sm">
                         Un code à 6 chiffres a été envoyé à<br>
                         <span class="text-amber-400 font-semibold">{{ signupData.email }}</span>

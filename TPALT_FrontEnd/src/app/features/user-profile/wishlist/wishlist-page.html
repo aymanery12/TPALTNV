@@ -1,29 +1,29 @@
 <div class="min-h-screen bg-[#0f0f1a] text-white flex flex-col">
     <app-navbar></app-navbar>
 
-    <main class="flex-1 max-w-4xl mx-auto w-full p-4 md:p-8">
+    <main class="flex-1 max-w-4xl mx-auto w-full p-4 pt-12 md:p-8 md:pt-16">
 
         <!-- Header -->
-        <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center justify-between mb-8 mt-6 md:mt-8">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-pink-500/20 border border-pink-500/30 flex items-center justify-center">
                     <span class="material-symbols-outlined text-pink-400">favorite</span>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold">Ma Wishlist</h1>
-                    <p class="text-slate-400 text-sm">{{ wishlist.length }} livre(s) sauvegardé(s)</p>
+                    <h1 class="text-2xl font-bold">{{ t('wishlist.title') }}</h1>
+                    <p class="text-slate-400 text-sm">{{ t('wishlist.count').replace('{{count}}', wishlist.length.toString()) }}</p>
                 </div>
             </div>
             <div class="flex items-center gap-3">
                 <a routerLink="/profile"
                    class="flex items-center gap-1 text-sm text-slate-400 hover:text-white transition-colors">
                     <span class="material-symbols-outlined text-base">arrow_back</span>
-                    Mon profil
+                    {{ t('wishlist.backToProfile') }}
                 </a>
                 <button *ngIf="wishlist.length > 0"
                         class="text-sm text-red-400 hover:text-red-300 border border-red-500/30 px-3 py-1.5 rounded-lg transition-colors"
                         (click)="clearWishlist()">
-                    Tout supprimer
+                    {{ t('wishlist.clearAll') }}
                 </button>
             </div>
         </div>
@@ -32,11 +32,11 @@
         <div *ngIf="wishlist.length === 0"
              class="text-center py-16 text-slate-400">
             <span class="material-symbols-outlined text-6xl block mb-4 text-slate-600">favorite_border</span>
-            <p class="text-lg font-medium">Votre wishlist est vide</p>
-            <p class="text-sm mt-1 mb-6">Ajoutez des livres depuis le catalogue en cliquant sur ❤️</p>
+            <p class="text-lg font-medium">{{ t('wishlist.emptyTitle') }}</p>
+            <p class="text-sm mt-1 mb-6">{{ t('wishlist.emptyHint') }}</p>
             <a routerLink="/home"
                class="inline-block bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors">
-                Explorer le catalogue
+                {{ t('wishlist.explore') }}
             </a>
         </div>
 
@@ -57,7 +57,7 @@
                     <button
                             class="absolute top-2 right-2 w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-lg"
                             (click)="removeFromWishlist(book)"
-                            title="Retirer de la wishlist">
+                            [title]="t('wishlist.removeTooltip')">
                         <span class="material-symbols-outlined text-white text-sm">close</span>
                     </button>
                 </div>
@@ -69,7 +69,7 @@
                     <div class="flex items-center justify-between">
                         <span class="text-amber-400 font-bold">{{ book.price | number:'1.2-2' }} €</span>
                         <button class="text-xs bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-3 py-1 rounded-lg transition-colors">
-                            Acheter
+                            {{ t('wishlist.buy') }}
                         </button>
                     </div>
                 </div>

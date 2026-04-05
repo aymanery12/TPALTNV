@@ -14,7 +14,7 @@ import { Order } from '../../../shared/models/order.model';
     <div class="min-h-screen bg-[#0f0f1a] text-white flex flex-col">
       <app-navbar></app-navbar>
 
-      <main class="flex-1 max-w-[1200px] mx-auto w-full p-4 md:p-8">
+      <main class="flex-1 max-w-[1200px] mx-auto w-full p-4 pt-10 md:p-8 md:pt-14">
         <h1 class="text-2xl font-bold mb-6">Mes commandes</h1>
 
         <!-- Empty state -->

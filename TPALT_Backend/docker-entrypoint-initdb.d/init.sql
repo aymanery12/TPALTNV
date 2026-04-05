@@ -80,3 +80,28 @@ VALUES
     'Classique',
     4.6
 );
+
+-- ─── Auteurs des livres de départ ───
+INSERT IGNORE INTO book_author (book_id, author)
+SELECT id, 'J.R.R. Tolkien' FROM book WHERE title = 'Le Seigneur des Anneaux';
+
+INSERT IGNORE INTO book_author (book_id, author)
+SELECT id, 'Frank Herbert' FROM book WHERE title = 'Dune';
+
+INSERT IGNORE INTO book_author (book_id, author)
+SELECT id, 'J.K. Rowling' FROM book WHERE title = 'Harry Potter à l''école des sorciers';
+
+INSERT IGNORE INTO book_author (book_id, author)
+SELECT id, 'Paulo Coelho' FROM book WHERE title = 'L''Alchimiste';
+
+INSERT IGNORE INTO book_author (book_id, author)
+SELECT id, 'George Orwell' FROM book WHERE title = '1984';
+
+INSERT IGNORE INTO book_author (book_id, author)
+SELECT id, 'Antoine de Saint-Exupéry' FROM book WHERE title = 'Le Petit Prince';
+
+INSERT IGNORE INTO book_author (book_id, author)
+SELECT id, 'Isaac Asimov' FROM book WHERE title = 'Fondation';
+
+INSERT IGNORE INTO book_author (book_id, author)
+SELECT id, 'Victor Hugo' FROM book WHERE title = 'Les Misérables';

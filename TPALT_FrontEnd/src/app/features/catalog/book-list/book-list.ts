@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +11,7 @@ import { Navbar } from '../../../layout/navbar/navbar';
 import { Footer } from '../../../layout/footer/footer';
 import { BookGridComponent } from '../../../shared/components/book-grid/book-grid';
 import { Pagination } from '../../../shared/pagination/pagination';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-book-list',
@@ -26,14 +27,14 @@ import { Pagination } from '../../../shared/pagination/pagination';
         <span class="material-symbols-outlined text-lg">check_circle</span>{{ toastMsg }}
       </div>
 
-      <main class="flex-1 max-w-[1440px] mx-auto w-full p-4 md:p-8">
+      <main class="flex-1 max-w-[1440px] mx-auto w-full p-4 pt-14 md:p-8 md:pt-20">
 
         <!-- Header -->
         <div class="mb-6">
           <h1 class="text-2xl font-bold text-white">
-            {{ searchQuery ? 'Résultats pour "' + searchQuery + '"' : 'Catalogue' }}
+            {{ searchQuery ? t('catalog.searchResults').replace('{{query}}', searchQuery) : t('catalog.title') }}
           </h1>
-          <p class="text-slate-400 text-sm mt-1">{{ filteredBooks.length }} livre(s) trouvé(s)</p>
+          <p class="text-slate-400 text-sm mt-1">{{ t('catalog.booksFound').replace('{{count}}', filteredBooks.length.toString()) }}</p>
         </div>
 
         <!-- Search + Sort bar -->
@@ -46,37 +47,84 @@ import { Pagination } from '../../../shared/pagination/pagination';
               type="text"
               [(ngModel)]="searchQuery"
               (ngModelChange)="onSearchChange()"
-              placeholder="Rechercher un titre, auteur..."
+              [placeholder]="t('navbar.searchPlaceholder')"
               class="w-full bg-white/10 border border-white/20 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-400 focus:outline-none focus:border-amber-400 transition-colors text-sm">
           </div>
 
           <!-- Category filter -->
-          <select [(ngModel)]="selectedCategory" (ngModelChange)="applyFilters()"
-                  class="bg-white/10 border border-white/20 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-400 cursor-pointer min-w-[160px]">
-            <option value="" class="bg-slate-800">Toutes catégories</option>
-            <option *ngFor="let cat of categories" [value]="cat" class="bg-slate-800">{{ cat }}</option>
-          </select>
+          <div class="relative min-w-[160px]" (click)="$event.stopPropagation()">
+            <button
+              type="button"
+              class="w-full bg-slate-900/70 border border-amber-400/30 text-white rounded-xl pl-3 pr-10 py-3 text-sm focus:outline-none focus:border-amber-400 hover:border-amber-400/60 transition-colors text-left"
+              (click)="toggleCategoryMenu()">
+              {{ selectedCategoryLabel }}
+              <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-amber-300 text-lg pointer-events-none">expand_more</span>
+            </button>
 
-          <!-- Sort -->
-          <select [(ngModel)]="selectedSort" (ngModelChange)="applyFilters()"
-                  class="bg-white/10 border border-white/20 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-400 cursor-pointer min-w-[160px]">
-            <option value="featured"   class="bg-slate-800">En vedette</option>
-            <option value="price-asc"  class="bg-slate-800">Prix croissant</option>
-            <option value="price-desc" class="bg-slate-800">Prix décroissant</option>
-            <option value="rating"     class="bg-slate-800">Mieux notés</option>
-            <option value="title"      class="bg-slate-800">Titre A-Z</option>
-          </select>
+            <div *ngIf="categoryMenuOpen"
+                class="absolute left-0 mt-2 w-full rounded-xl border border-amber-400/30 bg-[#121a33] shadow-xl overflow-hidden z-30 max-h-72 overflow-y-auto">
+              <button type="button" class="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
+                      [class.bg-amber-400/25]="selectedCategory === ''"
+                      [class.text-amber-300]="selectedCategory === ''"
+                      (click)="selectCategory('')">{{ t('catalog.allCategories') }}</button>
+              <button type="button" class="w-full text-left px-3 py-2 text-sm text-red-300 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
+                      [class.bg-amber-400/25]="selectedCategory === offersCategoryValue"
+                      [class.text-amber-300]="selectedCategory === offersCategoryValue"
+                      (click)="selectCategory(offersCategoryValue)">{{ t('catalog.onSale') }}</button>
+              <button *ngFor="let cat of categories"
+                      type="button"
+                      class="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
+                      [class.bg-amber-400/25]="selectedCategory === cat"
+                      [class.text-amber-300]="selectedCategory === cat"
+                      (click)="selectCategory(cat)">{{ translateCategory(cat) }}</button>
+            </div>
+          </div>
+
+            <!-- Sort -->
+            <div class="relative min-w-[160px]" (click)="$event.stopPropagation()">
+              <button
+                type="button"
+                class="w-full bg-slate-900/70 border border-amber-400/30 text-white rounded-xl pl-3 pr-10 py-3 text-sm focus:outline-none focus:border-amber-400 hover:border-amber-400/60 transition-colors text-left"
+                (click)="toggleSortMenu()">
+                {{ translateSort(selectedSort) }}
+                <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-amber-300 text-lg pointer-events-none">expand_more</span>
+              </button>
+
+              <div *ngIf="sortMenuOpen"
+               class="absolute left-0 mt-2 w-full rounded-xl border border-amber-400/30 bg-[#121a33] shadow-xl overflow-hidden z-30">
+                <button type="button" class="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
+                  [class.bg-amber-400/25]="selectedSort === 'featured'"
+                  [class.text-amber-300]="selectedSort === 'featured'"
+                  (click)="selectSort('featured')">{{ t('sort.featured') }}</button>
+                <button type="button" class="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
+                  [class.bg-amber-400/25]="selectedSort === 'price-asc'"
+                  [class.text-amber-300]="selectedSort === 'price-asc'"
+                  (click)="selectSort('price-asc')">{{ t('sort.priceAsc') }}</button>
+                <button type="button" class="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
+                  [class.bg-amber-400/25]="selectedSort === 'price-desc'"
+                  [class.text-amber-300]="selectedSort === 'price-desc'"
+                  (click)="selectSort('price-desc')">{{ t('sort.priceDesc') }}</button>
+                <button type="button" class="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
+                  [class.bg-amber-400/25]="selectedSort === 'rating'"
+                  [class.text-amber-300]="selectedSort === 'rating'"
+                  (click)="selectSort('rating')">{{ t('sort.rating') }}</button>
+                <button type="button" class="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
+                  [class.bg-amber-400/25]="selectedSort === 'title'"
+                  [class.text-amber-300]="selectedSort === 'title'"
+                  (click)="selectSort('title')">{{ t('sort.title') }}</button>
+              </div>
+          </div>
         </div>
 
         <!-- No results -->
         <div *ngIf="!isLoading && filteredBooks.length === 0"
              class="flex flex-col items-center justify-center py-24 text-slate-400">
           <span class="material-symbols-outlined text-6xl mb-4 text-slate-600">search_off</span>
-          <p class="text-lg font-medium">Aucun livre trouvé</p>
-          <p class="text-sm mt-1">Essayez un autre mot-clé ou une autre catégorie</p>
+          <p class="text-lg font-medium">{{ t('catalog.noBooks') }}</p>
+          <p class="text-sm mt-1">{{ t('catalog.noBooksHint') }}</p>
           <button (click)="clearFilters()"
                   class="mt-4 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6 py-2 rounded-xl transition-colors">
-            Réinitialiser
+            {{ t('catalog.reset') }}
           </button>
         </div>
 
@@ -107,6 +155,8 @@ import { Pagination } from '../../../shared/pagination/pagination';
 })
 export class BookList implements OnInit, OnDestroy {
 
+  readonly offersCategoryValue = '__offers__';
+
   allBooks: Book[] = [];
   filteredBooks: Book[] = [];
   pagedBooks: Book[] = [];
@@ -116,6 +166,9 @@ export class BookList implements OnInit, OnDestroy {
   searchQuery = '';
   selectedCategory = '';
   selectedSort = 'featured';
+  categoryMenuOpen = false;
+  sortMenuOpen = false;
+  currentLang: 'fr' | 'en' = 'fr';
   minRating = 0;
   minPrice = 0;
   maxPrice = 0;
@@ -134,6 +187,7 @@ export class BookList implements OnInit, OnDestroy {
       private bookService: BookService,
       private cartService: CartService,
       private wishlistService: WishlistService,
+      private languageService: LanguageService,
       private route: ActivatedRoute,
       private router: Router
   ) {}
@@ -141,6 +195,11 @@ export class BookList implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.wishlistSub = this.wishlistService.getIds().subscribe(ids => {
       this.wishlistIds = ids;
+    });
+
+    this.currentLang = this.languageService.currentLanguage;
+    this.languageService.currentLanguageChanges().subscribe(lang => {
+      this.currentLang = lang;
     });
 
     this.route.queryParams.subscribe(params => {
@@ -212,7 +271,11 @@ export class BookList implements OnInit, OnDestroy {
 
     // Filtre catégorie
     if (this.selectedCategory) {
-      result = result.filter(b => b.category === this.selectedCategory);
+      if (this.selectedCategory === this.offersCategoryValue) {
+        result = result.filter(b => (b.discount ?? 0) > 0);
+      } else {
+        result = result.filter(b => b.category === this.selectedCategory);
+      }
     }
 
     // Filtre note minimale
@@ -260,6 +323,46 @@ export class BookList implements OnInit, OnDestroy {
     this.router.navigate([], { replaceUrl: true });
   }
 
+  toggleSortMenu(): void {
+    this.sortMenuOpen = !this.sortMenuOpen;
+    if (this.sortMenuOpen) this.categoryMenuOpen = false;
+  }
+
+  toggleCategoryMenu(): void {
+    this.categoryMenuOpen = !this.categoryMenuOpen;
+    if (this.categoryMenuOpen) this.sortMenuOpen = false;
+  }
+
+  selectCategory(category: string): void {
+    this.selectedCategory = category;
+    this.currentPage = 1;
+    this.applyFilters();
+    this.categoryMenuOpen = false;
+  }
+
+  selectSort(sort: string): void {
+    this.selectedSort = sort;
+    this.currentPage = 1;
+    this.applyFilters();
+    this.sortMenuOpen = false;
+  }
+
+  @HostListener('document:click')
+  closeSortMenu(): void {
+    this.categoryMenuOpen = false;
+    this.sortMenuOpen = false;
+  }
+
+  get selectedCategoryLabel(): string {
+    if (!this.selectedCategory) {
+      return this.t('catalog.allCategories');
+    }
+    if (this.selectedCategory === this.offersCategoryValue) {
+      return this.t('catalog.onSale');
+    }
+    return this.translateCategory(this.selectedCategory);
+  }
+
   onPageChange(page: number): void {
     this.currentPage = page;
     this.updatePage();
@@ -277,6 +380,18 @@ export class BookList implements OnInit, OnDestroy {
 
   onWishlistToggled(book: Book): void {
     this.wishlistService.toggle(book);
+  }
+
+  translateCategory(cat: string): string {
+    return this.languageService.categoryLabel(cat);
+  }
+
+  translateSort(sort: string): string {
+    return this.languageService.sortLabel(sort);
+  }
+
+  t(key: string): string {
+    return this.languageService.t(key);
   }
 
   private showToast(msg: string): void {
