@@ -6,13 +6,24 @@ import com.bookstore.model.User;
 import com.bookstore.repository.BookRepository;
 import com.bookstore.repository.OrderRepository;
 import com.bookstore.repository.UserRepository;
-import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -22,75 +33,66 @@ public class RecommendationController {
 
     private static final Logger log = LoggerFactory.getLogger(RecommendationController.class);
 
-    private final BookRepository     bookRepository;
-    private final OrderRepository    orderRepository;
-    private final UserRepository     userRepository;
+    private final BookRepository bookRepository;
+    private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+
     public RecommendationController(BookRepository bookRepository,
                                     OrderRepository orderRepository,
-                                    UserRepository userRepository,
-                                    GoogleAiGeminiChatModel gemini) {
-        this.bookRepository  = bookRepository;
+                                    UserRepository userRepository) {
+        this.bookRepository = bookRepository;
         this.orderRepository = orderRepository;
-        this.userRepository  = userRepository;
+        this.userRepository = userRepository;
     }
 
-    /**
-     * GET /api/recommendations
-     * - Utilisateur connecté avec historique → recommandations IA personnalisées
-     * - Nouvel utilisateur / non connecté → cold start (top livres)
-     */
     @GetMapping
     public Map<String, Object> getRecommendations(Authentication authentication) {
+        try {
+            if (authentication == null || !authentication.isAuthenticated()) {
+                log.info("Recommandations cold start (non connecté)");
+                return buildResponse(getColdStart(), "cold_start");
+            }
 
-        // ── Cold start : utilisateur non connecté ────────────────────────────
-        if (authentication == null || !authentication.isAuthenticated()) {
-            log.info("🔮 Recommandations cold start (non connecté)");
-            return buildResponse(getColdStart(), "cold_start");
-        }
+            Optional<User> optUser = userRepository.findByUsername(authentication.getName());
+            if (optUser.isEmpty()) {
+                return buildResponse(getColdStart(), "cold_start");
+            }
 
-        Optional<User> optUser = userRepository.findByUsername(authentication.getName());
-        if (optUser.isEmpty()) {
-            return buildResponse(getColdStart(), "cold_start");
-        }
+            List<Order> orders = orderRepository.findByUserId(optUser.get().getId());
+            if (orders.isEmpty()) {
+                log.info("Cold start pour {} (aucune commande)", authentication.getName());
+                return buildResponse(getColdStart(), "cold_start");
+            }
 
-        List<Order> orders = orderRepository.findByUserId(optUser.get().getId());
+            Set<Long> purchasedIds = orders.stream()
+                    .flatMap(o -> o.getItems() == null ? java.util.stream.Stream.empty() : o.getItems().stream())
+                    .map(item -> item.getBook() != null ? item.getBook().getId() : null)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
 
-        // ── Cold start : aucune commande ────────────────────────────────────
-        if (orders.isEmpty()) {
-            log.info("🔮 Cold start pour {} (aucune commande)", authentication.getName());
-            return buildResponse(getColdStart(), "cold_start");
-        }
+            List<Book> purchasedBooks = purchasedIds.stream()
+                    .map(id -> bookRepository.findById(id).orElse(null))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
 
-        // ── Recommandations IA personnalisées ───────────────────────────────
-        log.info("🤖 Recommandations IA pour {} ({} commandes)", authentication.getName(), orders.size());
+            List<Book> availableCatalog = bookRepository.findAll().stream()
+                    .filter(b -> !purchasedIds.contains(b.getId()))
+                    .collect(Collectors.toList());
 
-        // Livres déjà achetés
-        Set<Long> purchasedIds = orders.stream()
-                .flatMap(o -> o.getItems().stream())
-                .filter(item -> item.getBook() != null)
-                .map(item -> item.getBook().getId())
-                .collect(Collectors.toSet());
-
-        List<Book> purchasedBooks = purchasedIds.stream()
-                .map(id -> bookRepository.findById(id).orElse(null))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-
-        // Catalogue disponible (excluant les livres déjà achetés)
-        List<Book> availableCatalog = bookRepository.findAll().stream()
-                .filter(b -> !purchasedIds.contains(b.getId()))
-                .collect(Collectors.toList());
-
-        List<Book> aiRecs = getAIRecommendations(purchasedBooks, availableCatalog);
-        if (aiRecs.isEmpty()) return buildResponse(getColdStart(), "cold_start");
-        return buildResponse(aiRecs, "personalized");
+            List<Book> aiRecs = getAIRecommendations(purchasedBooks, availableCatalog);
+            if (aiRecs.isEmpty()) {
+                return buildResponse(getColdStart(), "cold_start");
+            }
+            return buildResponse(aiRecs, "personalized");
         } catch (Exception e) {
-            log.error("❌ Erreur Gemini recommandations : {}", e.getMessage());
-    // ── Base de données : recommandations personnalisées ────────────────────
+            log.error("Recommendation error: {}", e.getMessage(), e);
+            return buildResponse(getColdStart(), "cold_start");
         }
     }
+
+    private List<Book> getAIRecommendations(List<Book> purchased, List<Book> catalog) {
         if (catalog.isEmpty()) {
-            return Collections.emptyList();
+            return List.of();
         }
 
         Set<Long> purchasedIds = purchased.stream()
@@ -104,7 +106,7 @@ public class RecommendationController {
         for (Book book : purchased) {
             int weight = Math.max(1, book.getSoldCount() != null ? book.getSoldCount() : 1);
 
-            for (String rawAuthor : book.getAuthor() == null ? Collections.<String>emptyList() : book.getAuthor()) {
+            for (String rawAuthor : book.getAuthor() == null ? List.<String>of() : book.getAuthor()) {
                 String author = normalizeKey(rawAuthor);
                 if (!author.isEmpty()) {
                     authorWeights.merge(author, weight, Integer::sum);
@@ -153,14 +155,38 @@ public class RecommendationController {
         }
 
         return recommendations.size() > 10 ? recommendations.subList(0, 10) : recommendations;
-        Map<String, Object> response = new LinkedHashMap<>();
+    }
+
+    private List<Book> getColdStart() {
+        return bookRepository.findAll().stream()
+                .sorted(Comparator
+                        .comparingDouble((Book b) -> scoreColdStart(b)).reversed()
+                        .thenComparing((Book b) -> b.getRating() != null ? b.getRating() : 0.0, Comparator.reverseOrder())
+                        .thenComparing((Book b) -> b.getSoldCount() != null ? b.getSoldCount() : 0, Comparator.reverseOrder())
+                        .thenComparing(Book::getTitle, String.CASE_INSENSITIVE_ORDER))
+                .limit(8)
+                .collect(Collectors.toList());
+    }
+
+    private double scoreColdStart(Book book) {
+        double rating = book.getRating() != null ? book.getRating() : 0.0;
+        int soldCount = book.getSoldCount() != null ? book.getSoldCount() : 0;
+        double score = rating * 2.0 + Math.min(soldCount, 500) / 50.0;
+        if (Boolean.TRUE.equals(book.getFeatured())) {
+            score += 1.5;
+        }
+        if ((book.getDiscount() != null ? book.getDiscount() : 0.0) > 0) {
+            score += 0.5;
+        }
+        return score;
+    }
 
     private double computeDatabaseScore(Book book,
                                         Map<String, Integer> authorWeights,
                                         Map<String, Integer> categoryWeights) {
         double score = 0.0;
 
-        for (String rawAuthor : book.getAuthor() == null ? Collections.<String>emptyList() : book.getAuthor()) {
+        for (String rawAuthor : book.getAuthor() == null ? List.<String>of() : book.getAuthor()) {
             String author = normalizeKey(rawAuthor);
             if (!author.isEmpty()) {
                 score += authorWeights.getOrDefault(author, 0) * 5.0;
@@ -189,9 +215,12 @@ public class RecommendationController {
         return value == null ? "" : value.trim().toLowerCase(Locale.ROOT);
     }
 
-    private record BookScore(Book book, double score) {}
+    private Map<String, Object> buildResponse(List<Book> books, String type) {
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("type", type);
         response.put("books", books);
         return response;
     }
+
+    private record BookScore(Book book, double score) {}
 }
