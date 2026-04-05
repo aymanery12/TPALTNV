@@ -55,6 +55,14 @@ export class AuthService {
     );
   }
 
+  sendResetCode(email: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/auth/send-code/reset-password`, { email });
+  }
+
+  resetPassword(data: { email: string; code: string; newPassword: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/auth/reset-password`, data);
+  }
+
   register(data: RegisterRequest): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/auth/signup`, data);
   }

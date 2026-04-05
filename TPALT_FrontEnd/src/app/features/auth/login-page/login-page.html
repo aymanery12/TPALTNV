@@ -24,8 +24,8 @@
         <!-- Card -->
         <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
 
-            <!-- ════════════ ONGLETS (masqués pendant la vérification) ════════════ -->
-            <div *ngIf="mode !== 'verify-signup'" class="flex rounded-2xl bg-white/5 p-1 mb-8 gap-1">
+            <!-- ════════════ ONGLETS (masqués pendant la vérification et reset) ════════════ -->
+            <div *ngIf="mode !== 'verify-signup' && mode !== 'forgot-password' && mode !== 'reset-password'" class="flex rounded-2xl bg-white/5 p-1 mb-8 gap-1">
                 <button
                         class="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200"
                         [class.bg-amber-400]="mode === 'login'"
@@ -103,6 +103,14 @@
                     <span *ngIf="!isLoading" class="material-symbols-outlined text-lg">login</span>
                     {{ isLoading ? 'Vérification...' : 'Se connecter' }}
                 </button>
+
+                <!-- Lien mot de passe oublié -->
+                <div class="text-center mt-2">
+                    <button type="button" (click)="switchMode('forgot-password')"
+                            class="text-slate-400 hover:text-amber-400 text-sm transition-colors">
+                        Mot de passe oublié ?
+                    </button>
+                </div>
             </form>
 
             <!-- ════════════ SIGNUP FORM ════════════ -->
@@ -266,8 +274,166 @@
                 </div>
             </div>
 
+            <!-- ════════════ FORGOT PASSWORD FORM ════════════ -->
+            <div *ngIf="mode === 'forgot-password'" class="space-y-6">
+
+                <!-- Icon + title -->
+                <div class="text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-amber-400/20 flex items-center justify-center mx-auto mb-4">
+                        <span class="material-symbols-outlined text-amber-400 text-3xl">lock_reset</span>
+                    </div>
+                    <h2 class="text-white font-bold text-xl mb-1">Mot de passe oublié ?</h2>
+                    <p class="text-slate-400 text-sm">Entrez votre adresse mail pour recevoir un code de réinitialisation.</p>
+                </div>
+
+                <!-- Email input -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Adresse mail</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg">mail</span>
+                        <input type="email" [(ngModel)]="forgotEmail" name="forgotEmail"
+                               class="w-full bg-white/10 border rounded-2xl py-3.5 pl-11 pr-4 text-white placeholder-slate-400 focus:outline-none focus:bg-white/15 transition-all text-sm"
+                               [class.border-red-500]="errors['email']"
+                               [class.border-white/20]="!errors['email']"
+                               placeholder="votre@email.com">
+                    </div>
+                    <p *ngIf="errors['email']" class="mt-1.5 text-xs text-red-400 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">error</span>{{ errors['email'] }}
+                    </p>
+                </div>
+
+                <button (click)="onForgotPassword()" [disabled]="isLoading"
+                        class="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-900 font-bold py-4 rounded-2xl transition-all duration-200 shadow-lg hover:scale-[1.02] active:scale-100 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                    <span *ngIf="isLoading" class="material-symbols-outlined animate-spin text-lg">progress_activity</span>
+                    <span *ngIf="!isLoading" class="material-symbols-outlined text-lg">mark_email_unread</span>
+                    {{ isLoading ? 'Envoi du code...' : 'Recevoir le code' }}
+                </button>
+
+                <button (click)="switchMode('login')" class="w-full text-slate-400 hover:text-white text-sm flex items-center justify-center gap-1 transition-colors mt-2">
+                    <span class="material-symbols-outlined text-base">arrow_back</span>
+                    Retour à la connexion
+                </button>
+            </div>
+
+            <!-- ════════════ RESET PASSWORD FORM ════════════ -->
+            <div *ngIf="mode === 'reset-password'" class="space-y-5">
+
+                <!-- Icon + title -->
+                <div class="text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-amber-400/20 flex items-center justify-center mx-auto mb-4">
+                        <span class="material-symbols-outlined text-amber-400 text-3xl">key</span>
+                    </div>
+                    <h2 class="text-white font-bold text-xl mb-1">Nouveau mot de passe</h2>
+                    <p class="text-slate-400 text-sm">
+                        Code envoyé à<br>
+                        <span class="text-amber-400 font-semibold">{{ forgotEmail }}</span>
+                    </p>
+                </div>
+
+                <!-- Code de vérification -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Code de vérification</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg">pin</span>
+                        <input type="text" [(ngModel)]="verificationCode" name="resetCode"
+                               maxlength="6" inputmode="numeric" pattern="[0-9]*"
+                               class="w-full bg-white/10 border rounded-2xl py-3.5 pl-11 pr-4 text-white placeholder-slate-400 focus:outline-none focus:bg-white/15 transition-all text-sm tracking-widest text-center text-lg font-mono"
+                               [class.border-red-500]="errors['code']"
+                               [class.border-white/20]="!errors['code']"
+                               placeholder="_ _ _ _ _ _">
+                    </div>
+                    <p *ngIf="errors['code']" class="mt-1.5 text-xs text-red-400 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">error</span>{{ errors['code'] }}
+                    </p>
+                    <p class="mt-1 text-xs text-slate-500 text-center">Le code expire dans 15 minutes.</p>
+                </div>
+
+                <!-- Nouveau mot de passe -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Nouveau mot de passe</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg">lock</span>
+                        <input [type]="showResetPassword ? 'text' : 'password'" [(ngModel)]="resetData.newPassword" name="resetNewPassword"
+                               class="w-full bg-white/10 border rounded-2xl py-3.5 pl-11 pr-12 text-white placeholder-slate-400 focus:outline-none focus:bg-white/15 transition-all text-sm"
+                               [class.border-red-500]="errors['newPassword']"
+                               [class.border-white/20]="!errors['newPassword']"
+                               placeholder="••••••••">
+                        <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-300 transition-colors"
+                                (click)="showResetPassword = !showResetPassword">
+                            <span class="material-symbols-outlined text-lg">{{ showResetPassword ? 'visibility_off' : 'visibility' }}</span>
+                        </button>
+                    </div>
+
+                    <!-- Barre de force -->
+                    <div *ngIf="resetData.newPassword" class="mt-2">
+                        <div class="flex gap-1 mb-1">
+                            <div *ngFor="let i of [1,2,3,4,5]"
+                                 class="h-1 flex-1 rounded-full transition-all duration-300"
+                                 [ngClass]="i <= resetPasswordStrength.level ? resetPasswordStrength.color : 'bg-slate-700'">
+                            </div>
+                        </div>
+                        <p class="text-xs" [ngClass]="{
+                            'text-red-400':     resetPasswordStrength.level <= 1,
+                            'text-orange-400':  resetPasswordStrength.level === 2,
+                            'text-yellow-400':  resetPasswordStrength.level === 3,
+                            'text-green-400':   resetPasswordStrength.level === 4,
+                            'text-emerald-400': resetPasswordStrength.level === 5
+                        }">{{ resetPasswordStrength.label }}</p>
+                    </div>
+
+                    <p *ngIf="errors['newPassword']" class="mt-1.5 text-xs text-red-400 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">error</span>{{ errors['newPassword'] }}
+                    </p>
+                    <p *ngIf="!errors['newPassword']" class="mt-1 text-xs text-slate-500">
+                        Min. 8 caractères · 1 majuscule · 1 chiffre · 1 spécial (@$!%*#?&)
+                    </p>
+                </div>
+
+                <!-- Confirmer mot de passe -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Confirmer le mot de passe</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg">lock_reset</span>
+                        <input [type]="showResetConfirm ? 'text' : 'password'" [(ngModel)]="resetData.confirm" name="resetConfirm"
+                               class="w-full bg-white/10 border rounded-2xl py-3.5 pl-11 pr-12 text-white placeholder-slate-400 focus:outline-none focus:bg-white/15 transition-all text-sm"
+                               [class.border-red-500]="errors['confirm']"
+                               [class.border-green-500]="resetData.confirm && resetData.confirm === resetData.newPassword && !errors['confirm']"
+                               [class.border-white/20]="!resetData.confirm && !errors['confirm']"
+                               placeholder="••••••••">
+                        <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-300 transition-colors"
+                                (click)="showResetConfirm = !showResetConfirm">
+                            <span class="material-symbols-outlined text-lg">{{ showResetConfirm ? 'visibility_off' : 'visibility' }}</span>
+                        </button>
+                    </div>
+                    <p *ngIf="errors['confirm']" class="mt-1.5 text-xs text-red-400 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">error</span>{{ errors['confirm'] }}
+                    </p>
+                    <p *ngIf="!errors['confirm'] && resetData.confirm && resetData.confirm === resetData.newPassword"
+                       class="mt-1.5 text-xs text-green-400 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">check_circle</span>Les mots de passe correspondent
+                    </p>
+                </div>
+
+                <button (click)="onResetPassword()" [disabled]="isLoading"
+                        class="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-900 font-bold py-4 rounded-2xl transition-all duration-200 shadow-lg hover:scale-[1.02] active:scale-100 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                    <span *ngIf="isLoading" class="material-symbols-outlined animate-spin text-lg">progress_activity</span>
+                    <span *ngIf="!isLoading" class="material-symbols-outlined text-lg">lock_open</span>
+                    {{ isLoading ? 'Réinitialisation...' : 'Réinitialiser le mot de passe' }}
+                </button>
+
+                <div class="flex items-center justify-between text-sm">
+                    <button (click)="switchMode('forgot-password')" class="text-slate-400 hover:text-white flex items-center gap-1 transition-colors">
+                        <span class="material-symbols-outlined text-base">arrow_back</span>
+                        Retour
+                    </button>
+                    <button (click)="resendResetCode()" [disabled]="isLoading" class="text-amber-400 hover:text-amber-300 font-semibold transition-colors disabled:opacity-50">
+                        Renvoyer le code
+                    </button>
+                </div>
+            </div>
+
             <!-- Bottom link (seulement sur login/signup) -->
-            <p *ngIf="mode !== 'verify-signup'" class="text-center text-slate-400 text-sm mt-6">
+            <p *ngIf="mode === 'login' || mode === 'signup'" class="text-center text-slate-400 text-sm mt-6">
                 <ng-container *ngIf="mode === 'login'">
                     Pas encore de compte ?
                     <button class="text-amber-400 hover:text-amber-300 font-semibold ml-1" (click)="switchMode('signup')">S'inscrire</button>

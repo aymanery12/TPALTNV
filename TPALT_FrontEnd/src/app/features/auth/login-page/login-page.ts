@@ -12,13 +12,17 @@ import { AuthService } from '../../../core/services/auth.service';
     styleUrl: './login-page.scss'
 })
 export class LoginPage implements OnInit {
-    // 'login' | 'signup' | 'verify-signup'
-    mode: 'login' | 'signup' | 'verify-signup' = 'login';
+    // 'login' | 'signup' | 'verify-signup' | 'forgot-password' | 'reset-password'
+    mode: 'login' | 'signup' | 'verify-signup' | 'forgot-password' | 'reset-password' = 'login';
 
-    loginData  = { username: '', password: '' };
-    signupData = { username: '', email: '', password: '', confirm: '' };
+    loginData      = { username: '', password: '' };
+    signupData     = { username: '', email: '', password: '', confirm: '' };
+    forgotEmail    = '';
+    resetData      = { newPassword: '', confirm: '' };
 
     verificationCode = '';
+    showResetPassword = false;
+    showResetConfirm  = false;
 
     isLoading = false;
     errorMsg  = '';
@@ -50,17 +54,14 @@ export class LoginPage implements OnInit {
         });
     }
 
-    get passwordStrength() {
-        const pass = this.signupData.password || '';
+    private computeStrength(pass: string) {
         if (!pass) return { level: 0, label: 'Très faible', color: 'bg-slate-700' };
-
         let points = 0;
         if (pass.length >= 8) points++;
         if (/[A-Z]/.test(pass)) points++;
         if (/\d/.test(pass)) points++;
         if (/[@$!%*#?&_\-.]/.test(pass)) points++;
         if (pass.length >= 12) points++;
-
         const levels = [
             { label: 'Très faible', color: 'bg-red-500' },
             { label: 'Faible',      color: 'bg-red-400' },
@@ -69,8 +70,15 @@ export class LoginPage implements OnInit {
             { label: 'Fort',        color: 'bg-green-400' },
             { label: 'Excellent',   color: 'bg-emerald-400' }
         ];
-
         return { level: points, ...levels[points] };
+    }
+
+    get passwordStrength() {
+        return this.computeStrength(this.signupData.password || '');
+    }
+
+    get resetPasswordStrength() {
+        return this.computeStrength(this.resetData.newPassword || '');
     }
 
     // ── CONNEXION ─────────────────────────────────────────────────────────────
@@ -93,10 +101,10 @@ export class LoginPage implements OnInit {
             },
             error: (err) => {
                 this.isLoading = false;
-                this.cdr.detectChanges();
                 this.errorMsg = err?.status === 401
                     ? 'Identifiants incorrects.'
                     : (err?.error?.error || 'Erreur de connexion serveur.');
+                this.cdr.detectChanges();
             }
         });
     }
@@ -120,7 +128,6 @@ export class LoginPage implements OnInit {
             },
             error: (err) => {
                 this.isLoading = false;
-                this.cdr.detectChanges();
                 const backendMsg = (err?.error?.error || '').toString();
                 if (err?.status === 409) {
                     this.errorMsg = backendMsg.toLowerCase().includes('email')
@@ -129,6 +136,7 @@ export class LoginPage implements OnInit {
                 } else {
                     this.errorMsg = backendMsg || 'Erreur lors de l\'envoi du code.';
                 }
+                this.cdr.detectChanges();
             }
         });
     }
@@ -157,7 +165,6 @@ export class LoginPage implements OnInit {
             },
             error: (err) => {
                 this.isLoading = false;
-                this.cdr.detectChanges();
                 const backendMsg = (err?.error?.error || '').toString();
                 if (err?.status === 409) {
                     this.errorMsg = backendMsg.toLowerCase().includes('email')
@@ -166,6 +173,7 @@ export class LoginPage implements OnInit {
                 } else {
                     this.errorMsg = backendMsg || 'Code incorrect ou expiré.';
                 }
+                this.cdr.detectChanges();
             }
         });
     }
@@ -190,9 +198,89 @@ export class LoginPage implements OnInit {
         });
     }
 
+    // ── MOT DE PASSE OUBLIÉ ───────────────────────────────────────────────────
+
+    onForgotPassword(): void {
+        this.errorMsg = '';
+        this.forgotEmail = (this.forgotEmail || '').trim().toLowerCase();
+        if (!this.forgotEmail || !this.EMAIL_REGEX.test(this.forgotEmail)) {
+            this.errors = { email: 'Adresse mail invalide' };
+            return;
+        }
+        this.isLoading = true;
+        this.authService.sendResetCode(this.forgotEmail).subscribe({
+            next: (res: any) => {
+                this.isLoading = false;
+                this.successMsg = res.message;
+                this.verificationCode = '';
+                this.resetData = { newPassword: '', confirm: '' };
+                this.mode = 'reset-password';
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                this.isLoading = false;
+                this.errorMsg = err?.error?.error || 'Erreur lors de l\'envoi du code.';
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    onResetPassword(): void {
+        this.errorMsg = '';
+        this.errors = {};
+        if (!this.verificationCode || this.verificationCode.length !== 6) {
+            this.errors['code'] = 'Le code doit contenir 6 chiffres.';
+            return;
+        }
+        if (!this.resetData.newPassword || !this.PASSWORD_REGEX.test(this.resetData.newPassword)) {
+            this.errors['newPassword'] = 'Mot de passe trop faible';
+            return;
+        }
+        if (this.resetData.newPassword !== this.resetData.confirm) {
+            this.errors['confirm'] = 'Les mots de passe divergent';
+            return;
+        }
+        this.isLoading = true;
+        this.authService.resetPassword({
+            email: this.forgotEmail,
+            code: this.verificationCode,
+            newPassword: this.resetData.newPassword
+        }).subscribe({
+            next: () => {
+                this.isLoading = false;
+                this.successMsg = 'Mot de passe réinitialisé ! Redirection...';
+                this.cdr.detectChanges();
+                setTimeout(() => this.switchMode('login'), 1500);
+            },
+            error: (err) => {
+                this.isLoading = false;
+                this.errorMsg = err?.error?.error || 'Code incorrect ou expiré.';
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    resendResetCode(): void {
+        this.errorMsg = '';
+        this.isLoading = true;
+        this.authService.sendResetCode(this.forgotEmail).subscribe({
+            next: (res: any) => {
+                this.isLoading = false;
+                this.successMsg = res.message;
+                this.verificationCode = '';
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                this.isLoading = false;
+                this.errorMsg = err?.error?.error || 'Impossible de renvoyer le code.';
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
     // ── Utilitaires ───────────────────────────────────────────────────────────
 
-    switchMode(newMode: 'login' | 'signup' | 'verify-signup'): void {
+    switchMode(newMode: 'login' | 'signup' | 'verify-signup' | 'forgot-password' | 'reset-password'): void {
         this.mode  = newMode;
         this.errorMsg   = '';
         this.successMsg = '';

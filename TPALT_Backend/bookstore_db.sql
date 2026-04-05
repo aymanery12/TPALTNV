@@ -464,7 +464,7 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`id`, `username`, `password`, `email`, `role`) VALUES
 (1, 'admin', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhy8', 'admin@bookstore.com', 'ADMIN'),
-(2, 'fyz', '$2a$10$Rji7GIdaFbG9E/xjlagGVebfrhaM6khHbTxV660hzrWvBLtRPeA7i', 'fayezhajjj@gmail.com\n', 'ADMIN'),
+(2, 'fyz', '$2a$10$Rji7GIdaFbG9E/xjlagGVebfrhaM6khHbTxV660hzrWvBLtRPeA7i', 'fayezhajjj@gmail.com', 'ADMIN'),
 (3, 'TheNuber', '$2a$10$nFaRkWt567amTwfR1s5ebe/jzitBYFtpaLAyTa0c14711N42qpsgG', 'rubencoll386@gmail.com', 'CLIENT');
 
 -- --------------------------------------------------------
@@ -508,7 +508,7 @@ CREATE TABLE `verification_codes` (
 INSERT INTO `verification_codes` (`id`, `code`, `email`, `expires_at`, `type`, `used`, `username`) VALUES
 (1, '300739', 'fyz@fyz.fr', '2026-03-27 20:49:06.959577', 'login', b'0', 'fyz'),
 (2, '493435', 'aymane.ryan12@gmail.com', '2026-03-27 20:50:49.095661', 'login', b'1', 'fyz'),
-(3, '555560', 'fayezhajjj@gmail.com\n', '2026-03-27 20:53:20.082816', 'login', b'1', 'fyz'),
+(3, '555560', 'fayezhajjj@gmail.com', '2026-03-27 20:53:20.082816', 'login', b'1', 'fyz'),
 (4, '992827', 'rubencoll386@gmail.com', '2026-03-28 15:57:51.269095', 'signup', b'1', NULL),
 (5, '899482', 'rubencoll386@gmail.com', '2026-03-28 15:58:48.352388', 'login', b'1', 'TheNuber');
 

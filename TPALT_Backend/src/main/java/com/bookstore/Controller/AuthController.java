@@ -71,6 +71,24 @@ class VerifyLoginRequest {
     public void setCode(String code) { this.code = code; }
 }
 
+class ForgotPasswordRequest {
+    private String email;
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+}
+
+class ResetPasswordRequest {
+    private String email;
+    private String code;
+    private String newPassword;
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
+    public String getNewPassword() { return newPassword; }
+    public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
+}
+
 // ─── Controller ──────────────────────────────────────────────────────────────
 
 @RestController
@@ -171,7 +189,59 @@ public class AuthController {
         ));
     }
 
-    // ── 3. Connexion : vérification des identifiants + retour JWT ────────────
+    // ── 3. Envoi du code pour réinitialisation mot de passe ─────────────────
+
+    @PostMapping("/send-code/reset-password")
+    public ResponseEntity<?> sendResetPasswordCode(@RequestBody ForgotPasswordRequest req) {
+        String email = normalizeEmail(req.getEmail());
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Email requis."));
+        }
+        if (userRepository.findByEmailNormalized(email).isEmpty()) {
+            return ResponseEntity.status(404).body(Map.of("error", "Aucun compte associé à cet email."));
+        }
+
+        String code = generateCode();
+        saveCode(email, null, code, "reset-password");
+
+        try {
+            emailService.sendVerificationCode(email, code, "reset-password");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Échec d'envoi de l'email : " + e.getMessage()));
+        }
+
+        return ResponseEntity.ok(Map.of("message", "Code envoyé à " + maskEmail(email)));
+    }
+
+    // ── 4. Vérification du code + changement du mot de passe ────────────────
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest req) {
+        String email = normalizeEmail(req.getEmail());
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Email requis."));
+        }
+        if (req.getNewPassword() == null || req.getNewPassword().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Nouveau mot de passe requis."));
+        }
+
+        ResponseEntity<?> codeCheck = validateCode(email, req.getCode(), "reset-password");
+        if (codeCheck != null) return codeCheck;
+
+        Optional<User> optUser = userRepository.findByEmailNormalized(email);
+        if (optUser.isEmpty()) {
+            return ResponseEntity.status(404).body(Map.of("error", "Utilisateur introuvable."));
+        }
+
+        User user = optUser.get();
+        user.setPassword(passwordEncoder.encode(req.getNewPassword()));
+        userRepository.save(user);
+        markCodeUsed(email, "reset-password");
+
+        return ResponseEntity.ok(Map.of("message", "Mot de passe réinitialisé avec succès."));
+    }
+
+    // ── 5. Connexion : vérification des identifiants + retour JWT ────────────
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest req) {

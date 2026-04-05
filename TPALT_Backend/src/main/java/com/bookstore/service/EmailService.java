@@ -34,6 +34,10 @@ public class EmailService {
             subject = "BookStore – Code de vérification pour la création de compte";
             body = buildEmailBody(code, "Confirmer votre inscription",
                     "Vous avez demandé la création d'un compte sur BookStore.");
+        } else if ("reset-password".equals(type)) {
+            subject = "BookStore – Code de réinitialisation du mot de passe";
+            body = buildEmailBody(code, "Réinitialiser votre mot de passe",
+                    "Vous avez demandé la réinitialisation de votre mot de passe sur BookStore.");
         } else {
             subject = "BookStore – Code de connexion (2FA)";
             body = buildEmailBody(code, "Confirmer votre connexion",
