@@ -13,8 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @RestController
@@ -27,8 +25,6 @@ public class RecommendationController {
     private final BookRepository     bookRepository;
     private final OrderRepository    orderRepository;
     private final UserRepository     userRepository;
-    private final GoogleAiGeminiChatModel gemini;
-
     public RecommendationController(BookRepository bookRepository,
                                     OrderRepository orderRepository,
                                     UserRepository userRepository,
@@ -36,7 +32,6 @@ public class RecommendationController {
         this.bookRepository  = bookRepository;
         this.orderRepository = orderRepository;
         this.userRepository  = userRepository;
-        this.gemini          = gemini;
     }
 
     /**
@@ -86,93 +81,115 @@ public class RecommendationController {
                 .filter(b -> !purchasedIds.contains(b.getId()))
                 .collect(Collectors.toList());
 
-        if (availableCatalog.isEmpty()) {
-            return buildResponse(getColdStart(), "cold_start");
-        }
-
-        try {
-            List<Book> aiRecs = getAIRecommendations(purchasedBooks, availableCatalog);
-            if (aiRecs.isEmpty()) return buildResponse(getColdStart(), "cold_start");
-            return buildResponse(aiRecs, "personalized");
+        List<Book> aiRecs = getAIRecommendations(purchasedBooks, availableCatalog);
+        if (aiRecs.isEmpty()) return buildResponse(getColdStart(), "cold_start");
+        return buildResponse(aiRecs, "personalized");
         } catch (Exception e) {
             log.error("❌ Erreur Gemini recommandations : {}", e.getMessage());
-            return buildResponse(getColdStart(), "cold_start");
+    // ── Base de données : recommandations personnalisées ────────────────────
         }
     }
-
-    // ── Gemini : génère les recommandations ──────────────────────────────────
-
-    private List<Book> getAIRecommendations(List<Book> purchased, List<Book> catalog) {
-        // Résumé des achats
-        String purchasedStr = purchased.stream()
-                .map(b -> String.format("\"%s\" (catégorie: %s)", b.getTitle(), b.getCategory()))
-                .collect(Collectors.joining(", "));
-
-        // Catalogue limité à 60 livres pour éviter un prompt trop long
-        List<Book> limitedCatalog = catalog.size() > 60
-                ? catalog.stream()
-                        .sorted(Comparator.comparingDouble((Book b) -> b.getRating() != null ? b.getRating() : 0.0).reversed())
-                        .limit(60)
-                        .collect(Collectors.toList())
-                : catalog;
-
-        String catalogStr = limitedCatalog.stream()
-                .map(b -> String.format("%d|%s|%s|%.1f",
-                        b.getId(), b.getTitle(), b.getCategory(),
-                        b.getRating() != null ? b.getRating() : 0.0))
-                .collect(Collectors.joining("\n"));
-
-        String prompt = """
-                Tu es un moteur de recommandation de livres pour une librairie en ligne.
-
-                Livres déjà achetés par l'utilisateur :
-                %s
-
-                Catalogue disponible (format: ID|Titre|Catégorie|Note) :
-                %s
-
-                En te basant sur les goûts de l'utilisateur (catégories, thèmes similaires),
-                recommande exactement 6 livres qu'il n'a pas encore achetés.
-                Réponds UNIQUEMENT avec un tableau JSON d'IDs entiers, exemple : [3, 7, 12, 4, 8, 15]
-                Aucun texte avant ou après. Juste le tableau JSON.
-                """.formatted(purchasedStr, catalogStr);
-
-        log.info("📝 Prompt recommandations envoyé à Gemini ({} chars)", prompt.length());
-        String response = gemini.generate(prompt);
-        log.info("✅ Réponse Gemini : {}", response);
-
-        // Extraire les IDs depuis la réponse (regex robuste)
-        Pattern pattern = Pattern.compile("\\d+");
-        Matcher matcher = pattern.matcher(response);
-        List<Long> ids = new ArrayList<>();
-        while (matcher.find() && ids.size() < 6) {
-            ids.add(Long.parseLong(matcher.group()));
+        if (catalog.isEmpty()) {
+            return Collections.emptyList();
         }
 
-        return ids.stream()
-                .map(id -> bookRepository.findById(id).orElse(null))
+        Set<Long> purchasedIds = purchased.stream()
+                .map(Book::getId)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
+                .collect(Collectors.toSet());
 
-    // ── Cold start : top livres par note et featured ─────────────────────────
+        Map<String, Integer> authorWeights = new HashMap<>();
+        Map<String, Integer> categoryWeights = new HashMap<>();
 
-    private List<Book> getColdStart() {
-        return bookRepository.findAll().stream()
+        for (Book book : purchased) {
+            int weight = Math.max(1, book.getSoldCount() != null ? book.getSoldCount() : 1);
+
+            for (String rawAuthor : book.getAuthor() == null ? Collections.<String>emptyList() : book.getAuthor()) {
+                String author = normalizeKey(rawAuthor);
+                if (!author.isEmpty()) {
+                    authorWeights.merge(author, weight, Integer::sum);
+                }
+            }
+
+            String category = normalizeKey(book.getCategory());
+            if (!category.isEmpty()) {
+                categoryWeights.merge(category, weight, Integer::sum);
+            }
+        }
+
+        List<BookScore> scored = catalog.stream()
+                .filter(book -> !purchasedIds.contains(book.getId()))
+                .map(book -> new BookScore(book, computeDatabaseScore(book, authorWeights, categoryWeights)))
                 .sorted(Comparator
-                        .comparingDouble((Book b) -> {
-                            double rating = b.getRating() != null ? b.getRating() : 0.0;
-                            boolean featured = Boolean.TRUE.equals(b.getFeatured());
-                            return rating + (featured ? 1.0 : 0.0); // featured books boosted
-                        }).reversed())
-                .limit(8)
+                        .comparingDouble(BookScore::score).reversed()
+                        .thenComparing((BookScore bs) -> bs.book().getRating() != null ? bs.book().getRating() : 0.0, Comparator.reverseOrder())
+                        .thenComparing((BookScore bs) -> bs.book().getSoldCount() != null ? bs.book().getSoldCount() : 0, Comparator.reverseOrder())
+                        .thenComparing(bs -> bs.book().getTitle(), String.CASE_INSENSITIVE_ORDER))
                 .collect(Collectors.toList());
+
+        List<Book> recommendations = scored.stream()
+                .map(BookScore::book)
+                .limit(10)
+                .collect(Collectors.toList());
+
+        if (recommendations.size() < 5) {
+            Set<Long> selectedIds = recommendations.stream()
+                    .map(Book::getId)
+                    .collect(Collectors.toSet());
+
+            for (Book book : catalog.stream()
+                    .filter(book -> !selectedIds.contains(book.getId()))
+                    .sorted(Comparator
+                            .comparingDouble((Book b) -> b.getRating() != null ? b.getRating() : 0.0).reversed()
+                            .thenComparing((Book b) -> b.getSoldCount() != null ? b.getSoldCount() : 0, Comparator.reverseOrder())
+                            .thenComparing(Book::getTitle, String.CASE_INSENSITIVE_ORDER))
+                    .collect(Collectors.toList())) {
+                if (recommendations.size() >= 5) {
+                    break;
+                }
+                recommendations.add(book);
+                selectedIds.add(book.getId());
+            }
+        }
+
+        return recommendations.size() > 10 ? recommendations.subList(0, 10) : recommendations;
+        Map<String, Object> response = new LinkedHashMap<>();
+
+    private double computeDatabaseScore(Book book,
+                                        Map<String, Integer> authorWeights,
+                                        Map<String, Integer> categoryWeights) {
+        double score = 0.0;
+
+        for (String rawAuthor : book.getAuthor() == null ? Collections.<String>emptyList() : book.getAuthor()) {
+            String author = normalizeKey(rawAuthor);
+            if (!author.isEmpty()) {
+                score += authorWeights.getOrDefault(author, 0) * 5.0;
+            }
+        }
+
+        String category = normalizeKey(book.getCategory());
+        if (!category.isEmpty()) {
+            score += categoryWeights.getOrDefault(category, 0) * 3.0;
+        }
+
+        double rating = book.getRating() != null ? book.getRating() : 0.0;
+        int soldCount = book.getSoldCount() != null ? book.getSoldCount() : 0;
+        boolean featured = Boolean.TRUE.equals(book.getFeatured());
+
+        score += rating * 2.0;
+        score += Math.min(soldCount, 500) / 50.0;
+        if (featured) {
+            score += 1.5;
+        }
+
+        return score;
     }
 
-    // ── Helper réponse ────────────────────────────────────────────────────────
+    private String normalizeKey(String value) {
+        return value == null ? "" : value.trim().toLowerCase(Locale.ROOT);
+    }
 
-    private Map<String, Object> buildResponse(List<Book> books, String type) {
-        Map<String, Object> response = new LinkedHashMap<>();
+    private record BookScore(Book book, double score) {}
         response.put("type", type);
         response.put("books", books);
         return response;

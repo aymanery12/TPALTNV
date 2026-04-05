@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -189,7 +189,8 @@ export class BookList implements OnInit, OnDestroy {
       private wishlistService: WishlistService,
       private languageService: LanguageService,
       private route: ActivatedRoute,
-      private router: Router
+      private router: Router,
+      private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -240,8 +241,12 @@ export class BookList implements OnInit, OnDestroy {
 
         this.applyFilters();
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
-      error: () => { this.isLoading = false; }
+      error: () => {
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 

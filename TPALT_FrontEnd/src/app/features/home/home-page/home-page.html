@@ -149,8 +149,8 @@
         </div>
 
         <!-- Skeleton -->
-        <div *ngIf="aiLoading" class="flex gap-5 overflow-x-auto pb-2 scrollbar-hide">
-            <div *ngFor="let i of [1,2,3,4,5,6,7,8]" class="shrink-0 w-40 animate-pulse">
+        <div *ngIf="aiLoading" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 pb-2">
+            <div *ngFor="let i of [1,2,3,4,5,6,7,8]" class="w-full animate-pulse">
                 <div class="w-40 h-56 bg-white/10 rounded-2xl mb-3"></div>
                 <div class="h-3 bg-white/10 rounded w-4/5 mb-2"></div>
                 <div class="h-2.5 bg-white/10 rounded w-3/5"></div>
@@ -159,11 +159,11 @@
 
         <!-- Carousel -->
         <div *ngIf="!aiLoading && aiRecommendations.length > 0"
-             class="flex gap-5 overflow-x-auto pb-3 scrollbar-hide">
+             class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 pb-3">
             <div *ngFor="let book of aiRecommendations"
-                 class="shrink-0 w-40 group cursor-pointer"
+                 class="group cursor-pointer"
                  (click)="onBookSelected(book)">
-                <div class="w-40 h-56 rounded-2xl overflow-hidden shadow-lg ring-1 ring-white/10 mb-3 relative">
+                <div class="w-full aspect-[5/7] rounded-2xl overflow-hidden shadow-lg ring-1 ring-white/10 mb-3 relative">
                     <img [src]="book.imageUrl || book.coverImageUrl"
                          [alt]="book.title"
                          loading="lazy"
@@ -172,7 +172,7 @@
                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent
                                 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <button (click)="onAddToCart(book); $event.stopPropagation()"
+                        <button (click)="onAddToCart(book); $event.stopPropagation()"
                             class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-all
                                    translate-y-2 group-hover:translate-y-0
                                    bg-amber-400 hover:bg-amber-500 rounded-full w-9 h-9
@@ -207,7 +207,7 @@
     </section>
 
     <!-- ══════════════════ CATALOGUE PRINCIPAL ══════════════════ -->
-    <main id="books-section" class="flex-1 w-full px-6 md:px-12 lg:px-20 xl:px-28 pb-12">
+    <main *ngIf="isLoggedIn" id="books-section" class="flex-1 w-full px-6 md:px-12 lg:px-20 xl:px-28 pb-12">
         <div class="flex gap-8">
 
             <!-- Sidebar filtres -->
@@ -301,10 +301,10 @@
                 </app-book-grid>
 
                 <!-- Pagination -->
-                <div class="mt-12 flex justify-center pt-8 pb-4">
+                <div *ngIf="showPagination" class="mt-12 flex justify-center pt-8 pb-4">
                     <app-pagination
                         [currentPage]="currentPage"
-                        [totalPages]="20"
+                        [totalPages]="totalPages"
                         (pageChange)="onPageChange($event)">
                     </app-pagination>
                 </div>

@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { Navbar } from "../../../layout/navbar/navbar";
@@ -13,7 +13,9 @@ import { WishlistService } from "../../../core/services/wishlist.service";
 import { RecommendationService } from "../../../core/services/recommendation.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { LanguageService } from "../../../core/services/language.service";
+import { OrderService } from "../../../core/services/order.service";
 import { Router } from "@angular/router";
+import { Order } from "../../../shared/models/order.model";
 
 @Component({
   selector: "app-home-page",
@@ -32,11 +34,13 @@ import { Router } from "@angular/router";
 })
 export class HomePage implements OnInit {
   readonly offersCategoryValue = '__offers__';
+  readonly pageSize = 14;
 
   selectedSort     = 'featured';
   currentPage      = 1;
   books: Book[]    = [];
   recommendedBooks: Book[] = [];
+  recommendationBaseBooks: Book[] = [];
   wishlistBookIds: number[] = [];
 
   // Recommandations IA
@@ -59,7 +63,7 @@ export class HomePage implements OnInit {
       return this.languageService.categoryLabel(this.activeCategory);
     }
     if (this.activePrice)    return `${this.t('home.pricePrefix')} ${this.t(this.activePrice.label)}`;
-    return this.t('home.reco.personalized');
+    return this.t('home.reco.purchaseBased');
   }
 
   get isFiltered(): boolean {
@@ -68,6 +72,14 @@ export class HomePage implements OnInit {
 
   get booksFoundLabel(): string {
     return this.t('home.booksFound').replace('{{count}}', `${this.recommendedBooks.length}`);
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.recommendedBooks.length / this.pageSize));
+  }
+
+  get showPagination(): boolean {
+    return this.recommendedBooks.length > this.pageSize;
   }
 
   get booksAvailableLabel(): string {
@@ -99,9 +111,11 @@ export class HomePage implements OnInit {
     private cartService: CartService,
     private wishlistService: WishlistService,
     private recommendationService: RecommendationService,
+    private orderService: OrderService,
     private authService: AuthService,
     private languageService: LanguageService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -112,10 +126,13 @@ export class HomePage implements OnInit {
     this.authService.isLoggedIn().subscribe(isLoggedIn => {
       this.isLoggedIn = isLoggedIn;
       this.username = isLoggedIn ? (this.authService.getUsername() ?? '') : '';
+      this.refreshPurchaseBasedRecommendations();
+      this.cdr.detectChanges();
     });
 
     this.languageService.currentLanguageChanges().subscribe(lang => {
       this.currentLang = lang;
+      this.cdr.detectChanges();
     });
 
     this.bookService.getBooks().subscribe({
@@ -127,7 +144,9 @@ export class HomePage implements OnInit {
           reviewCount: b.reviewCount ?? 0,
           inStock: (b.quantity ?? 0) > 0 && (b.status ?? 'ACTIVE') !== 'OUT_OF_STOCK' && (b.status ?? 'ACTIVE') !== 'DISCONTINUED'
         }));
-        this.recommendedBooks = [...this.books];
+        this.recommendationBaseBooks = [...this.books];
+        this.applyFilters();
+        this.refreshPurchaseBasedRecommendations();
 
         const localAvg = this.computeAverageRatingFromBooks(this.books);
         this.bookService.getAverageReviewRating().subscribe({
@@ -136,8 +155,10 @@ export class HomePage implements OnInit {
           },
           error: () => {
             this.averageReviewRating = localAvg;
+            this.cdr.detectChanges();
           }
         });
+        this.cdr.detectChanges();
       },
       error: (err) => console.error('Erreur chargement livres:', err)
     });
@@ -153,8 +174,12 @@ export class HomePage implements OnInit {
         }));
         this.aiRecommendationType = result.type;
         this.aiLoading = false;
+        this.cdr.detectChanges();
       },
-      error: () => { this.aiLoading = false; }
+      error: () => {
+        this.aiLoading = false;
+        this.cdr.detectChanges();
+      }
     });
 
   }
@@ -196,7 +221,7 @@ export class HomePage implements OnInit {
   }
 
   private applyFilters(): void {
-    let result = [...this.books];
+    let result = [...this.recommendationBaseBooks];
 
     if (this.activeCategory) {
       if (this.activeCategory === this.offersCategoryValue) {
@@ -241,9 +266,111 @@ export class HomePage implements OnInit {
       case 'price-desc': this.recommendedBooks.sort((a, b) => b.price - a.price); break;
       case 'rating':     this.recommendedBooks.sort((a, b) => b.rating - a.rating); break;
       default:
-        if (!this.isFiltered) this.recommendedBooks = [...this.books];
+        if (!this.isFiltered) this.recommendedBooks = [...this.recommendationBaseBooks];
         break;
     }
+  }
+
+  private refreshPurchaseBasedRecommendations(): void {
+    if (this.books.length === 0) {
+      return;
+    }
+
+    if (!this.isLoggedIn) {
+      this.recommendationBaseBooks = [...this.books];
+      this.applyFilters();
+      return;
+    }
+
+    this.orderService.getMyOrders().subscribe({
+      next: (orders) => {
+        this.recommendationBaseBooks = this.computePurchaseBasedBooks(orders);
+        this.applyFilters();
+      },
+      error: () => {
+        this.recommendationBaseBooks = [...this.books];
+        this.applyFilters();
+      }
+    });
+  }
+
+  private computePurchaseBasedBooks(orders: Order[]): Book[] {
+    const purchasedIds = new Set<number>();
+    const authorWeights = new Map<string, number>();
+    const categoryWeights = new Map<string, number>();
+
+    for (const order of orders) {
+      for (const item of order.items ?? []) {
+        const purchasedBook = item.book;
+        if (!purchasedBook) {
+          continue;
+        }
+
+        purchasedIds.add(purchasedBook.id);
+        const qty = Math.max(1, item.quantity ?? 1);
+
+        for (const rawAuthor of purchasedBook.author ?? []) {
+          const author = (rawAuthor ?? '').trim().toLowerCase();
+          if (!author) {
+            continue;
+          }
+          authorWeights.set(author, (authorWeights.get(author) ?? 0) + qty);
+        }
+
+        const category = (purchasedBook.category ?? '').trim().toLowerCase();
+        if (category) {
+          categoryWeights.set(category, (categoryWeights.get(category) ?? 0) + qty);
+        }
+      }
+    }
+
+    if (purchasedIds.size === 0) {
+      return [...this.books];
+    }
+
+    const candidates = this.books.filter(book => !purchasedIds.has(book.id));
+
+    const scored = candidates
+      .map(book => ({
+        book,
+        score: this.getPurchaseAffinityScore(book, authorWeights, categoryWeights)
+      }))
+      .filter(entry => entry.score > 0)
+      .sort((a, b) => {
+        if (b.score !== a.score) {
+          return b.score - a.score;
+        }
+        return (b.book.rating ?? 0) - (a.book.rating ?? 0);
+      })
+      .map(entry => entry.book);
+
+    if (scored.length > 0) {
+      return scored;
+    }
+
+    return candidates.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+  }
+
+  private getPurchaseAffinityScore(
+    book: Book,
+    authorWeights: Map<string, number>,
+    categoryWeights: Map<string, number>
+  ): number {
+    let score = 0;
+
+    for (const rawAuthor of book.author ?? []) {
+      const author = (rawAuthor ?? '').trim().toLowerCase();
+      if (author && authorWeights.has(author)) {
+        score += (authorWeights.get(author) ?? 0) * 4;
+      }
+    }
+
+    const category = (book.category ?? '').trim().toLowerCase();
+    if (category && categoryWeights.has(category)) {
+      score += (categoryWeights.get(category) ?? 0) * 2;
+    }
+
+    return score;
   }
 
   onBookSelected(book: Book): void {
