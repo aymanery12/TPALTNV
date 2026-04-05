@@ -6,7 +6,6 @@
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
-                <span class="material-symbols-outlined logo-icon">menu_book</span>
                 <span class="logo-text" *ngIf="!sidebarCollapsed">Book<strong>Store</strong></span>
             </div>
             <button class="collapse-btn" (click)="sidebarCollapsed = !sidebarCollapsed">
@@ -201,8 +200,8 @@
                         <div *ngFor="let mv of recentMovements.slice(0,8)" class="movement-row">
                             <span class="mv-badge" [ngClass]="getMovementClass(mv.type)">{{ getMovementLabel(mv.type) }}</span>
                             <span class="mv-title">{{ mv.book?.title ?? '—' }}</span>
-                            <span class="mv-qty" [class.positive]="mv.quantity > 0" [class.negative]="mv.quantity < 0">
-                                {{ mv.quantity > 0 ? '+' : '' }}{{ mv.quantity }}
+                            <span class="mv-qty" [class.positive]="getSignedMovementQuantity(mv) > 0" [class.negative]="getSignedMovementQuantity(mv) < 0">
+                                {{ getSignedMovementQuantity(mv) > 0 ? '+' : '' }}{{ getSignedMovementQuantity(mv) }}
                             </span>
                             <span class="mv-after">→ {{ mv.stockAfter }}</span>
                         </div>
@@ -392,8 +391,8 @@
                     <tr *ngFor="let mv of stockMovements">
                         <td><span class="pill" [ngClass]="getMovementClass(mv.type)">{{ getMovementLabel(mv.type) }}</span></td>
                         <td>{{ mv.book?.title ?? '—' }}</td>
-                        <td [class.positive]="mv.quantity > 0" [class.negative]="mv.quantity < 0">
-                            {{ mv.quantity > 0 ? '+' : '' }}{{ mv.quantity }}
+                        <td [class.positive]="getSignedMovementQuantity(mv) > 0" [class.negative]="getSignedMovementQuantity(mv) < 0">
+                            {{ getSignedMovementQuantity(mv) > 0 ? '+' : '' }}{{ getSignedMovementQuantity(mv) }}
                         </td>
                         <td class="muted">{{ mv.stockBefore }}</td>
                         <td class="bold">{{ mv.stockAfter }}</td>
@@ -432,7 +431,7 @@
                     <tr *ngFor="let order of orders">
                         <td class="mono">#{{ order.id }}</td>
                         <td>{{ order.user?.username ?? order.username ?? '—' }}</td>
-                        <td class="muted">{{ order.items?.length ?? '—' }} article(s)</td>
+                        <td class="muted">{{ order.itemsCount ?? order.items?.length ?? '—' }} article(s)</td>
                         <td class="bold">{{ formatCurrency(order.totalAmount) }}</td>
                         <td class="muted">{{ order.orderDate | date:'dd/MM/yy HH:mm' }}</td>
                         <td>

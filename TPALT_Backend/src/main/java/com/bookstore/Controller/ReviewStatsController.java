@@ -21,6 +21,7 @@ public class ReviewStatsController {
     @GetMapping("/average")
     public double getAverageRating() {
         return reviewRepository.findAll().stream()
+                .filter(review -> review.getRating() >= 1 && review.getRating() <= 5)
                 .mapToInt(review -> review.getRating())
                 .average()
                 .orElse(0.0);

@@ -7,6 +7,8 @@ export interface Book {
   imageUrl: string;
   category: string;
   rating: number;
+  quantity?: number;
+  status?: 'ACTIVE' | 'OUT_OF_STOCK' | 'DISCONTINUED' | 'COMING_SOON';
 
   // Champs utilisés par le frontend (optionnels)
   coverImageUrl?: string;

@@ -132,6 +132,56 @@
                     </p>
                 </div>
 
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Last name -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Nom</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg">badge</span>
+                            <input type="text" [(ngModel)]="signupData.lastName" name="lastName"
+                                   class="w-full bg-white/10 border rounded-2xl py-3.5 pl-11 pr-4 text-white placeholder-slate-400 focus:outline-none focus:bg-white/15 transition-all text-sm"
+                                   [class.border-red-500]="errors['lastName']"
+                                   [class.border-white/20]="!errors['lastName']"
+                                   placeholder="Votre nom">
+                        </div>
+                        <p *ngIf="errors['lastName']" class="mt-1.5 text-xs text-red-400 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">error</span>{{ errors['lastName'] }}
+                        </p>
+                    </div>
+
+                    <!-- First name -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Prenom</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg">id_card</span>
+                            <input type="text" [(ngModel)]="signupData.firstName" name="firstName"
+                                   class="w-full bg-white/10 border rounded-2xl py-3.5 pl-11 pr-4 text-white placeholder-slate-400 focus:outline-none focus:bg-white/15 transition-all text-sm"
+                                   [class.border-red-500]="errors['firstName']"
+                                   [class.border-white/20]="!errors['firstName']"
+                                   placeholder="Votre prenom">
+                        </div>
+                        <p *ngIf="errors['firstName']" class="mt-1.5 text-xs text-red-400 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">error</span>{{ errors['firstName'] }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Phone -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Numero de telephone</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg">call</span>
+                        <input type="tel" [(ngModel)]="signupData.phoneNumber" name="phoneNumber"
+                               class="w-full bg-white/10 border rounded-2xl py-3.5 pl-11 pr-4 text-white placeholder-slate-400 focus:outline-none focus:bg-white/15 transition-all text-sm"
+                               [class.border-red-500]="errors['phoneNumber']"
+                               [class.border-white/20]="!errors['phoneNumber']"
+                               placeholder="+33 6 12 34 56 78">
+                    </div>
+                    <p *ngIf="errors['phoneNumber']" class="mt-1.5 text-xs text-red-400 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">error</span>{{ errors['phoneNumber'] }}
+                    </p>
+                </div>
+
                 <!-- Adresse mail -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">Adresse mail</label>

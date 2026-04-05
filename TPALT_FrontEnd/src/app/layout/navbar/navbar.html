@@ -1,17 +1,17 @@
 <header class="fixed top-0 left-0 right-0 w-full z-50 bg-[#1a1a2e] shadow-lg">
-    <div class="px-4 md:px-8 py-4 md:py-5">
-        <div class="w-full flex items-center gap-4">
+    <div class="px-3 md:px-5 lg:px-8 py-4 md:py-5">
+        <div class="w-full min-w-0 flex items-center gap-2 md:gap-3 lg:gap-4">
 
             <!-- Logo -->
             <a routerLink="/home" class="flex items-center shrink-0 group">
-                <span class="text-white font-bold text-2xl lg:text-3xl tracking-tight hidden md:block">
+                <span class="text-white font-bold text-xl md:text-2xl lg:text-3xl tracking-tight hidden md:block">
                     Book<span class="text-amber-400">Store</span>
                 </span>
             </a>
 
             <!-- Search Bar -->
-            <div class="flex-1 flex items-center justify-center px-6">
-                <div class="flex w-full max-w-2xl h-10 rounded-lg overflow-hidden shadow-inner border border-slate-600 focus-within:border-amber-400 transition-colors">
+            <div class="flex-1 min-w-0 flex items-center justify-center px-1 md:px-2 lg:px-6">
+                <div class="flex w-full max-w-xl lg:max-w-2xl h-10 rounded-lg overflow-hidden shadow-inner border border-slate-600 focus-within:border-amber-400 transition-colors">
                     <input
                             class="flex-1 bg-white text-slate-900 px-4 text-sm outline-none"
                             [placeholder]="t('navbar.searchPlaceholder')"
@@ -64,7 +64,7 @@
                              class="absolute left-1/2 top-full mt-2 w-[160px] max-w-[calc(100vw-1rem)] -translate-x-1/2 rounded-xl border border-amber-400/30 bg-[#121a33] shadow-xl overflow-hidden z-50 md:w-[180px]">
                             <a routerLink="/login"
                                class="flex items-center gap-3 whitespace-nowrap px-4 py-3 text-sm text-slate-200 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
-                               (click)="closeGuestMenu()">
+                                         >
                                 <span class="material-symbols-outlined text-blue-400 text-lg">login</span>
                                 Login
                             </a>
@@ -72,7 +72,7 @@
                             <a routerLink="/login"
                                [queryParams]="{ mode: 'signup' }"
                                class="flex items-center gap-3 whitespace-nowrap px-4 py-3 text-sm text-slate-200 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
-                               (click)="closeGuestMenu()">
+                                         >
                                 <span class="material-symbols-outlined text-emerald-400 text-lg">person_add</span>
                                 Signup
                             </a>
@@ -86,7 +86,7 @@
                         <button
                                 class="flex flex-col items-center justify-center min-h-[34px] px-3 py-0 rounded-lg hover:bg-white/10 transition-colors leading-tight"
                                 (click)="toggleUserMenu()">
-                            <span class="text-xs text-amber-400">{{ greetingLabel }}</span>
+                            <span class="text-xs text-amber-400 max-w-[110px] lg:max-w-[150px] truncate">{{ greetingLabel }}</span>
                             <span class="text-sm font-bold text-white flex items-center gap-0.5">
                                 {{ t('navbar.account') }}
                                 <span class="material-symbols-outlined text-xs">arrow_drop_down</span>
@@ -99,7 +99,7 @@
 
                             <a *ngIf="isAdmin" routerLink="/admin"
                                  class="flex items-center gap-3 whitespace-nowrap px-4 py-3 text-sm font-bold text-amber-300 hover:bg-amber-400/20 hover:text-amber-200 transition-colors"
-                               (click)="closeUserMenu()">
+                                                             >
                                 <span class="material-symbols-outlined text-amber-400 text-lg">dashboard</span>
                                 Dashboard Admin
                             </a>
@@ -107,21 +107,21 @@
 
                             <a routerLink="/profile"
                                          class="flex items-center gap-3 whitespace-nowrap px-4 py-3 text-sm text-slate-200 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
-                               (click)="closeUserMenu()">
+                               >
                                 <span class="material-symbols-outlined text-blue-400 text-lg">account_circle</span>
                                 {{ t('navbar.profile') }}
                             </a>
 
                             <a routerLink="/profile/wishlist"
                                          class="flex items-center gap-3 whitespace-nowrap px-4 py-3 text-sm text-slate-200 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
-                               (click)="closeUserMenu()">
+                               >
                                 <span class="material-symbols-outlined text-pink-400 text-lg">favorite</span>
                                 {{ t('navbar.wishlist') }}
                             </a>
 
                             <a routerLink="/orders"
                                          class="flex items-center gap-3 whitespace-nowrap px-4 py-3 text-sm text-slate-200 hover:bg-amber-400/20 hover:text-amber-300 transition-colors"
-                               (click)="closeUserMenu()">
+                               >
                                 <span class="material-symbols-outlined text-amber-400 text-lg">package_2</span>
                                 {{ t('navbar.orders') }}
                             </a>
@@ -140,14 +140,14 @@
 
                 <!-- Orders -->
                 <a routerLink="/orders"
-                         class="relative flex items-center gap-1 px-3 py-0 rounded-lg hover:bg-white/10 transition-colors hidden md:flex min-h-[34px] leading-tight">
+                         class="relative items-center gap-1 px-2 lg:px-3 py-0 rounded-lg hover:bg-white/10 transition-colors hidden lg:flex min-h-[34px] leading-tight">
                     <span class="material-symbols-outlined text-white text-3xl">package_2</span>
                     <span class="text-sm font-bold text-white">{{ t('navbar.ordersLink') }}</span>
                 </a>
 
                 <!-- Cart -->
                 <a routerLink="/cart"
-                         class="relative flex items-center gap-1 px-3 py-0 rounded-lg hover:bg-white/10 transition-colors min-h-[34px] leading-tight">
+                         class="relative flex items-center gap-1 px-2 lg:px-3 py-0 rounded-lg hover:bg-white/10 transition-colors min-h-[34px] leading-tight shrink-0">
                     <div class="relative">
                         <span class="material-symbols-outlined text-white text-3xl">shopping_cart</span>
                         <span class="absolute -top-1 -right-1 bg-amber-400 text-slate-900 text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">

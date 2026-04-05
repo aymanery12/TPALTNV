@@ -308,6 +308,46 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/stock/overview")
+    public ResponseEntity<?> getStockOverview() {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("low", bookRepository.findLowStockBooks());
+        payload.put("out", bookRepository.findOutOfStockBooks());
+
+        try {
+            List<Object[]> rows = stockMovementRepository.findTop20Raw();
+
+            List<Map<String, Object>> movements = rows.stream().map(row -> {
+                Map<String, Object> dto = new LinkedHashMap<>();
+                dto.put("id",          row[0]);
+                dto.put("type",        row[1]);
+                dto.put("quantity",    row[2]);
+                dto.put("stockBefore", row[3]);
+                dto.put("stockAfter",  row[4]);
+                dto.put("reason",      row[5]);
+                dto.put("performedBy", row[6] != null ? row[6] : "admin");
+                dto.put("createdAt",   row[7] != null ? row[7].toString() : null);
+
+                if (row[8] != null) {
+                    Map<String, Object> book = new LinkedHashMap<>();
+                    book.put("id", row[8]);
+                    book.put("title", row[9] != null ? row[9] : "—");
+                    dto.put("book", book);
+                } else {
+                    dto.put("book", null);
+                }
+                return dto;
+            }).collect(Collectors.toList());
+
+            payload.put("movements", movements);
+        } catch (Exception e) {
+            log.error("STOCK-OVERVIEW MOVEMENTS ERROR: {}: {}", e.getClass().getName(), e.getMessage(), e);
+            payload.put("movements", Collections.emptyList());
+        }
+
+        return ResponseEntity.ok(payload);
+    }
+
     // ══════════════════════════════════════════════════════════════════════════
     // GESTION DES COMMANDES
     // ══════════════════════════════════════════════════════════════════════════
@@ -315,20 +355,24 @@ public class AdminController {
     @GetMapping("/orders")
     @Transactional(readOnly = true)
     public ResponseEntity<?> getAllOrders(@RequestParam(required = false) String status) {
-        List<Order> all = orderRepository.findAll().stream()
-                // ✅ null-safe : orderDate peut être null sur anciennes commandes
-                .sorted(Comparator.comparing(
-                        o -> o.getOrderDate() != null ? o.getOrderDate() : LocalDateTime.MIN
-                ))
-                .collect(Collectors.toList());
-        Collections.reverse(all);
+        List<Object[]> rows = (status != null && !status.isBlank())
+            ? orderRepository.findAdminOrderSummariesByStatus(status)
+            : orderRepository.findAdminOrderSummaries();
 
-        if (status != null && !status.isBlank()) {
-            all = all.stream()
-                    .filter(o -> o.getStatus() != null && o.getStatus().equalsIgnoreCase(status))
-                    .collect(Collectors.toList());
-        }
-        return ResponseEntity.ok(all);
+        List<Map<String, Object>> summaries = rows.stream().map(row -> {
+            Map<String, Object> dto = new LinkedHashMap<>();
+            dto.put("id", row[0]);
+            dto.put("orderDate", row[1] != null ? row[1].toString() : null);
+            dto.put("totalAmount", row[2]);
+            dto.put("status", row[3]);
+            dto.put("shippingAddress", row[4]);
+            dto.put("paymentMethod", row[5]);
+            dto.put("username", row[6]);
+            dto.put("itemsCount", row[7]);
+            return dto;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(summaries);
     }
 
     // ✅ Endpoint manquant — appelé par le dashboard Angular

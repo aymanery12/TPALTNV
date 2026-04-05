@@ -16,7 +16,15 @@ export class LoginPage implements OnInit {
     mode: 'login' | 'signup' | 'verify-signup' | 'forgot-password' | 'reset-password' = 'login';
 
     loginData      = { username: '', password: '' };
-    signupData     = { username: '', email: '', password: '', confirm: '' };
+    signupData     = {
+        username: '',
+        email: '',
+        password: '',
+        confirm: '',
+        firstName: '',
+        lastName: '',
+        phoneNumber: ''
+    };
     forgotEmail    = '';
     resetData      = { newPassword: '', confirm: '' };
 
@@ -35,6 +43,7 @@ export class LoginPage implements OnInit {
 
     private readonly EMAIL_REGEX    = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     private readonly PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&_\-.])[A-Za-z\d@$!%*#?&_\-.]{8,}$/;
+    private readonly PHONE_REGEX    = /^\+?\d{8,15}$/;
 
     constructor(
         private authService: AuthService,
@@ -115,6 +124,9 @@ export class LoginPage implements OnInit {
         this.errorMsg = '';
         this.signupData.username = (this.signupData.username || '').trim();
         this.signupData.email = (this.signupData.email || '').trim().toLowerCase();
+        this.signupData.firstName = (this.signupData.firstName || '').trim();
+        this.signupData.lastName = (this.signupData.lastName || '').trim();
+        this.signupData.phoneNumber = (this.signupData.phoneNumber || '').replace(/\s+/g, '').trim();
         if (!this.validateSignup()) return;
 
         this.isLoading = true;
@@ -145,6 +157,9 @@ export class LoginPage implements OnInit {
         this.errorMsg = '';
         this.signupData.username = (this.signupData.username || '').trim();
         this.signupData.email = (this.signupData.email || '').trim().toLowerCase();
+        this.signupData.firstName = (this.signupData.firstName || '').trim();
+        this.signupData.lastName = (this.signupData.lastName || '').trim();
+        this.signupData.phoneNumber = (this.signupData.phoneNumber || '').replace(/\s+/g, '').trim();
         if (!this.verificationCode || this.verificationCode.length !== 6) {
             this.errorMsg = 'Le code doit contenir 6 chiffres.';
             return;
@@ -155,6 +170,9 @@ export class LoginPage implements OnInit {
             username: this.signupData.username,
             email:    this.signupData.email,
             password: this.signupData.password,
+            firstName: this.signupData.firstName,
+            lastName: this.signupData.lastName,
+            phoneNumber: this.signupData.phoneNumber,
             code:     this.verificationCode
         }).subscribe({
             next: () => {
@@ -299,6 +317,11 @@ export class LoginPage implements OnInit {
     private validateSignup(): boolean {
         this.errors = {};
         if (!this.signupData.username) this.errors['username'] = 'Requis';
+        if (!this.signupData.lastName) this.errors['lastName'] = 'Requis';
+        if (!this.signupData.firstName) this.errors['firstName'] = 'Requis';
+        if (!this.signupData.phoneNumber || !this.PHONE_REGEX.test(this.signupData.phoneNumber.replace(/\s+/g, ''))) {
+            this.errors['phoneNumber'] = 'Numero de telephone invalide';
+        }
         if (!this.signupData.email || !this.EMAIL_REGEX.test(this.signupData.email)) this.errors['email'] = 'Adresse mail invalide';
         if (!this.signupData.password || !this.PASSWORD_REGEX.test(this.signupData.password)) this.errors['password'] = 'Mot de passe trop faible';
         if (this.signupData.password !== this.signupData.confirm) this.errors['confirm'] = 'Les mots de passe divergent';

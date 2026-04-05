@@ -44,7 +44,8 @@
         <div *ngIf="wishlist.length > 0"
              class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             <div *ngFor="let book of wishlist"
-                 class="bg-slate-800/50 rounded-2xl border border-slate-700 hover:border-pink-500/40 transition-colors overflow-hidden group">
+                 [routerLink]="['/books', book.id]"
+                 class="bg-slate-800/50 rounded-2xl border border-slate-700 hover:border-pink-500/40 transition-colors overflow-hidden group cursor-pointer">
 
                 <!-- Cover -->
                 <div class="aspect-[3/4] overflow-hidden bg-slate-700 relative">
@@ -52,11 +53,18 @@
                          [alt]="book.title"
                          referrerpolicy="no-referrer"
                          (error)="$any($event.target).src='book-placeholder.svg'"
-                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                         [class.opacity-45]="isOutOfStock(book)">
+
+                    <span *ngIf="isOutOfStock(book)"
+                          class="absolute left-2 top-2 rounded-full bg-red-600/90 text-white text-[11px] font-bold px-2 py-1">
+                        {{ t('bookCard.soldOut') }}
+                    </span>
+
                     <!-- Remove button -->
                     <button
                             class="absolute top-2 right-2 w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-lg"
-                            (click)="removeFromWishlist(book)"
+                            (click)="removeFromWishlist(book); $event.stopPropagation()"
                             [title]="t('wishlist.removeTooltip')">
                         <span class="material-symbols-outlined text-white text-sm">close</span>
                     </button>
@@ -66,11 +74,17 @@
                 <div class="p-3">
                     <h3 class="font-bold text-sm line-clamp-2 mb-1">{{ book.title }}</h3>
                     <p class="text-xs text-slate-400 mb-2">{{ book.category }}</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-amber-400 font-bold">{{ book.price | number:'1.2-2' }} €</span>
-                        <button class="text-xs bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-3 py-1 rounded-lg transition-colors">
-                            {{ t('wishlist.buy') }}
-                        </button>
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-amber-400 font-bold">{{ discountedPrice(book) | number:'1.2-2' }} €</span>
+                            <span *ngIf="hasDiscount(book)"
+                                  class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/20 text-red-300">
+                                -{{ book.discount }}%
+                            </span>
+                        </div>
+                        <span *ngIf="hasDiscount(book)" class="text-xs text-slate-500 line-through">
+                            {{ book.price | number:'1.2-2' }} €
+                        </span>
                     </div>
                 </div>
             </div>

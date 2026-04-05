@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +11,8 @@ import { LanguageService } from '../../core/services/language.service';
 import { Book, BookReview } from '../../shared/models/book.model';
 import { Navbar } from '../../layout/navbar/navbar';
 import { Footer } from '../../layout/footer/footer';
+import { EMPTY, merge } from 'rxjs';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-book-details',
@@ -26,7 +28,13 @@ import { Footer } from '../../layout/footer/footer';
         <span class="material-symbols-outlined text-lg">check_circle</span>{{ toastMsg }}
       </div>
 
-      <main class="flex-1 max-w-[1200px] mx-auto w-full p-4 md:p-8">
+      <main class="flex-1 max-w-[1200px] mx-auto w-full p-4 pt-20 md:p-8 md:pt-24">
+
+        <!-- Loading state -->
+        <div *ngIf="isLoading" class="text-center py-24 text-slate-400">
+          <span class="material-symbols-outlined text-5xl mb-3 block animate-spin">progress_activity</span>
+          <p class="text-sm">{{ t('bookDetails.loading') }}</p>
+        </div>
 
         <!-- Not found -->
         <div *ngIf="!isLoading && !book" class="text-center py-32 text-slate-400">
@@ -111,9 +119,10 @@ import { Footer } from '../../layout/footer/footer';
               <!-- Actions -->
               <div class="flex gap-3 flex-wrap">
                 <button (click)="addToCart()"
-                        class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-8 py-3 rounded-xl transition-all hover:scale-105 flex items-center gap-2 shadow-lg shadow-amber-500/25">
+                        [disabled]="isOutOfStock"
+                        class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-8 py-3 rounded-xl transition-all hover:scale-105 flex items-center gap-2 shadow-lg shadow-amber-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-amber-400">
                   <span class="material-symbols-outlined">shopping_cart</span>
-                  {{ t('bookDetails.addToCart') }}
+                  {{ isOutOfStock ? t('bookCard.soldOut') : t('bookDetails.addToCart') }}
                 </button>
                 <button (click)="toggleWishlist()"
                         class="border border-white/20 hover:border-white/40 text-white px-5 py-3 rounded-xl transition-colors hover:bg-white/5 flex items-center gap-2">
@@ -264,6 +273,19 @@ export class BookDetailsComponent implements OnInit {
     return this.book?.price ?? 0;
   }
 
+  get isOutOfStock(): boolean {
+    const b = this.book;
+    if (!b) return true;
+
+    const status = (b.status ?? '').toUpperCase();
+    if (status === 'OUT_OF_STOCK' || status === 'DISCONTINUED') return true;
+
+    const qty = b.quantity;
+    if (typeof qty === 'number' && Number.isFinite(qty)) return qty <= 0;
+
+    return b.inStock === false;
+  }
+
   constructor(
       private route: ActivatedRoute,
       private router: Router,
@@ -272,16 +294,43 @@ export class BookDetailsComponent implements OnInit {
       private chatService: ChatService,
       private authService: AuthService,
       private wishlistService: WishlistService,
+      private cdr: ChangeDetectorRef,
       private languageService: LanguageService
   ) {}
 
   ngOnInit(): void {
-    this.authService.isLoggedIn().subscribe(s => this.isLoggedIn = s);
-    this.route.paramMap.subscribe(params => {
-      const id = Number(params.get('id'));
-      if (!id) { this.isLoading = false; return; }
-      this.loadBook(id);
+    this.authService.isLoggedIn().subscribe(s => {
+      this.isLoggedIn = s;
+      this.cdr.detectChanges();
     });
+
+    const initialId = this.getRouteBookId();
+    if (initialId) {
+      this.loadBook(initialId);
+    } else {
+      this.isLoading = false;
+    }
+
+    merge(this.route.paramMap, this.route.parent?.paramMap ?? EMPTY)
+      .pipe(
+        map(params => Number(params.get('id'))),
+        distinctUntilChanged()
+      )
+      .subscribe(id => {
+        if (id && id > 0) {
+          this.loadBook(id);
+        }
+      });
+  }
+
+  private getRouteBookId(): number | null {
+    const currentId = Number(this.route.snapshot.paramMap.get('id'));
+    if (currentId && currentId > 0) return currentId;
+
+    const parentId = Number(this.route.parent?.snapshot.paramMap.get('id'));
+    if (parentId && parentId > 0) return parentId;
+
+    return null;
   }
 
   loadBook(id: number): void {
@@ -291,16 +340,34 @@ export class BookDetailsComponent implements OnInit {
         this.book = { ...book, coverImageUrl: book.imageUrl };
         this.isInWishlist = this.wishlistService.getIdsSnapshot().includes(book.id);
         this.isLoading = false;
+        this.cdr.detectChanges();
         this.loadReviews(id);
       },
-      error: () => { this.isLoading = false; }
+      error: () => {
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
   loadReviews(bookId: number): void {
     this.bookService.getReviews(bookId).subscribe({
-      next: (reviews) => this.reviews = reviews,
-      error: () => {}
+      next: (reviews) => {
+        // Keep only valid 1..5 ratings for display and average calculations.
+        this.reviews = (reviews ?? []).filter(r => Number.isFinite(r.rating) && r.rating >= 1 && r.rating <= 5);
+
+        if (this.book) {
+          const count = this.reviews.length;
+          const total = this.reviews.reduce((sum, r) => sum + r.rating, 0);
+          this.book.rating = count > 0 ? Math.round((total / count) * 10) / 10 : 0;
+          this.book.reviewCount = count;
+        }
+
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -314,7 +381,7 @@ export class BookDetailsComponent implements OnInit {
   }
 
   addToCart(): void {
-    if (!this.book) return;
+    if (!this.book || this.isOutOfStock) return;
     this.cartService.addToCart(this.book);
     this.showToast(`"${this.book.title}" ${this.t('bookDetails.addToCart')} !`);
   }

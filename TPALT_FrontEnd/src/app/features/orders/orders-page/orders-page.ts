@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Navbar } from '../../../layout/navbar/navbar';
 import { Footer } from '../../../layout/footer/footer';
 import { OrderService } from '../../../core/services/order.service';
+import { LanguageService } from '../../../core/services/language.service';
 import { Order } from '../../../shared/models/order.model';
 
 @Component({
@@ -15,17 +16,17 @@ import { Order } from '../../../shared/models/order.model';
       <app-navbar></app-navbar>
 
       <main class="flex-1 max-w-[1200px] mx-auto w-full p-4 pt-10 md:p-8 md:pt-14">
-        <h1 class="text-2xl font-bold mb-6">Mes commandes</h1>
+        <h1 class="text-2xl font-bold mb-6">{{ t('orders.title') }}</h1>
 
         <!-- Empty state -->
         <div *ngIf="!isLoading && orders.length === 0"
              class="bg-slate-800/50 rounded-xl p-12 text-center text-slate-400">
           <span class="material-symbols-outlined text-6xl mb-4 block text-slate-600">package_2</span>
-          <p class="text-lg font-medium">Aucune commande pour le moment</p>
-          <p class="text-sm mt-1 mb-6">Vos commandes apparaîtront ici après votre premier achat.</p>
+          <p class="text-lg font-medium">{{ t('orders.emptyTitle') }}</p>
+          <p class="text-sm mt-1 mb-6">{{ t('orders.emptyHint') }}</p>
           <a routerLink="/catalog"
              class="inline-block bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors">
-            Explorer le catalogue
+            {{ t('orders.exploreCatalog') }}
           </a>
         </div>
 
@@ -37,12 +38,12 @@ import { Order } from '../../../shared/models/order.model';
             <!-- Order header -->
             <div class="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-b border-slate-700 bg-slate-800/30">
               <div>
-                <p class="text-xs text-slate-400 mb-0.5">Commande #{{ order.id }}</p>
-                <p class="text-sm text-slate-300">{{ order.orderDate | date:'dd/MM/yyyy à HH:mm' }}</p>
+                <p class="text-xs text-slate-400 mb-0.5">{{ t('orders.orderNumber') }} #{{ order.id }}</p>
+                <p class="text-sm text-slate-300">{{ order.orderDate | date:orderDateFormat }}</p>
               </div>
               <div class="text-center">
-                <p class="text-xs text-slate-400 mb-0.5">Adresse</p>
-                <p class="text-sm text-slate-300 max-w-xs truncate">{{ order.shippingAddress }}</p>
+                <p class="text-xs text-slate-400 mb-0.5">{{ t('orders.address') }}</p>
+                <p class="text-sm text-slate-300 max-w-xs truncate">{{ formatShippingAddress(order.shippingAddress) }}</p>
               </div>
               <div class="text-right">
                 <span [class]="getStatusClass(order.status)"
@@ -82,7 +83,7 @@ import { Order } from '../../../shared/models/order.model';
           <span class="material-symbols-outlined text-4xl mb-2 block">error</span>
           <p>{{ errorMsg }}</p>
           <a routerLink="/login" class="mt-3 inline-block text-amber-400 hover:underline text-sm">
-            Se connecter
+            {{ t('orders.login') }}
           </a>
         </div>
       </main>
@@ -95,30 +96,108 @@ export class OrdersPage implements OnInit {
   orders: Order[] = [];
   isLoading = true;
   errorMsg = '';
+  orderDateFormat = 'dd/MM/yyyy a HH:mm';
+  private refreshTimer: ReturnType<typeof setTimeout> | null = null;
+  private emptyRetryAttempts = 0;
+  private readonly maxEmptyRetryAttempts = 5;
 
-  constructor(private orderService: OrderService) {}
+  constructor(
+    private orderService: OrderService,
+    private cdr: ChangeDetectorRef,
+    private languageService: LanguageService
+  ) {}
+
+  t(key: string): string {
+    return this.languageService.t(key);
+  }
 
   ngOnInit(): void {
+    this.orderDateFormat = this.languageService.currentLanguage === 'en' ? 'MM/dd/yyyy, HH:mm' : 'dd/MM/yyyy a HH:mm';
+    this.loadOrders(true);
+  }
+
+  ngOnDestroy(): void {
+    this.stopPostOrderAutoRefresh();
+  }
+
+  private loadOrders(showLoading: boolean): void {
+    if (showLoading) {
+      this.isLoading = true;
+    }
+    this.errorMsg = '';
+
     this.orderService.getMyOrders().subscribe({
       next: (orders) => {
         this.orders = orders;
         this.isLoading = false;
+        this.cdr.detectChanges();
+
+        if (orders.length > 0) {
+          this.emptyRetryAttempts = 0;
+          this.stopPostOrderAutoRefresh();
+          return;
+        }
+
+        if (this.emptyRetryAttempts < this.maxEmptyRetryAttempts) {
+          this.startPostOrderAutoRefresh();
+        } else {
+          this.stopPostOrderAutoRefresh();
+        }
       },
       error: () => {
         this.isLoading = false;
-        this.errorMsg = 'Impossible de charger vos commandes. Veuillez vous connecter.';
+        this.errorMsg = this.t('orders.loadError');
+        this.stopPostOrderAutoRefresh();
+        this.cdr.detectChanges();
       }
     });
   }
 
+  private startPostOrderAutoRefresh(): void {
+    this.stopPostOrderAutoRefresh();
+
+    this.refreshTimer = setTimeout(() => {
+      if (this.orders.length > 0 || this.errorMsg) {
+        this.stopPostOrderAutoRefresh();
+        return;
+      }
+
+      this.emptyRetryAttempts += 1;
+      if (this.emptyRetryAttempts > this.maxEmptyRetryAttempts) {
+        this.stopPostOrderAutoRefresh();
+        return;
+      }
+
+      this.loadOrders(false);
+    }, 900);
+  }
+
+  private stopPostOrderAutoRefresh(): void {
+    if (this.refreshTimer) {
+      clearInterval(this.refreshTimer);
+      this.refreshTimer = null;
+    }
+  }
+
+  formatShippingAddress(rawAddress?: string): string {
+    const value = (rawAddress ?? '').trim();
+    if (!value) return '';
+
+    return value
+      .replace(/^Adresse:\s*/i, '')
+      .replace(/^Address:\s*/i, '')
+      .replace(/^Commentaire:\s*/i, `${this.t('orders.commentPrefix')} `)
+      .replace(/^Comment:\s*/i, `${this.t('orders.commentPrefix')} `);
+  }
+
   getStatusLabel(status?: string): string {
     const labels: Record<string, string> = {
-      'EN_PREPARATION': 'En préparation',
-      'EXPEDIEE':       'Expédiée',
-      'LIVREE':         'Livrée',
-      'ANNULEE':        'Annulée',
+      'EN_PREPARATION': this.t('profile.status.preparation'),
+      'EXPEDIEE':       this.t('profile.status.shipped'),
+      'LIVREE':         this.t('profile.status.delivered'),
+      'ANNULEE':        this.t('orders.status.cancelled'),
     };
-    return labels[status ?? ''] ?? (status ?? 'En cours');
+    return labels[status ?? ''] ?? (status ?? this.t('orders.status.inProgress'));
   }
 
   getStatusClass(status?: string): string {

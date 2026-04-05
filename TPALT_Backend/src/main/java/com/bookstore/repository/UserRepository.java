@@ -16,6 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE LOWER(TRIM(u.username)) = LOWER(TRIM(:username))")
     Optional<User> findByUsernameNormalized(@Param("username") String username);
 
-    @Query(value = "SELECT * FROM users WHERE LOWER(REPLACE(REPLACE(TRIM(email), '\\n', ''), '\\r', '')) = LOWER(TRIM(:email))", nativeQuery = true)
+    @Query(value = "SELECT * FROM `user` WHERE LOWER(REPLACE(REPLACE(TRIM(email), '\\n', ''), '\\r', '')) = LOWER(TRIM(:email))", nativeQuery = true)
     Optional<User> findByEmailNormalized(@Param("email") String email);
 }

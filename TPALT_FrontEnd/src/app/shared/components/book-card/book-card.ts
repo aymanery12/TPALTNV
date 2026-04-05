@@ -2,13 +2,12 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Book } from '../../models/book.model';
-import { RatingComponent } from '../rating/rating';
 import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-book-card',
   standalone: true,
-  imports: [CommonModule, RouterModule, RatingComponent],
+  imports: [CommonModule, RouterModule],
   template: `
     <div class="book-card group flex flex-col h-full bg-white dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
       <!-- Book Cover Image -->
@@ -29,6 +28,11 @@ import { LanguageService } from '../../../core/services/language.service';
             class="absolute top-2 right-2 text-white text-[10px] font-bold px-2 py-0.5 rounded"
             [ngClass]="getBadgeClass()">
           {{ badge }}
+        </div>
+
+        <div *ngIf="isSoldOut"
+             class="absolute inset-0 sold-out-overlay flex items-center justify-center">
+          <span class="sold-out-chip">{{ t('bookCard.soldOut') }}</span>
         </div>
 
         <!-- Wishlist Button -->
@@ -59,13 +63,14 @@ import { LanguageService } from '../../../core/services/language.service';
         </p>
 
         <!-- Rating -->
-        <div class="mb-2">
-          <app-rating
-              [rating]="book.rating"
-              [reviewCount]="book.reviewCount ?? 0"
-              [showCount]="true"
-              [interactive]="false">
-          </app-rating>
+        <div class="mb-2 flex items-center gap-1.5">
+          <span
+              *ngFor="let i of starSlots"
+              class="material-symbols-outlined text-base leading-none rating-star"
+              [class.rating-star-filled]="i <= filledStarCount">
+            star
+          </span>
+          <span class="text-xs text-slate-500">({{ reviewCountDisplay }})</span>
         </div>
 
         <!-- Price Section -->
@@ -86,8 +91,11 @@ import { LanguageService } from '../../../core/services/language.service';
           <!-- Add to Cart Button -->
           <button
               class="w-full mt-2 bg-amber-400 hover:bg-amber-500 active:bg-amber-600 text-slate-900 text-xs font-bold py-1.5 rounded-full transition-colors shadow-sm"
+              [disabled]="isSoldOut"
+              [class.opacity-50]="isSoldOut"
+              [class.cursor-not-allowed]="isSoldOut"
               (click)="onAddToCart()">
-            {{ t('bookCard.addToCart') }}
+            {{ isSoldOut ? t('bookCard.soldOut') : t('bookCard.addToCart') }}
           </button>
         </div>
       </div>
@@ -96,6 +104,16 @@ import { LanguageService } from '../../../core/services/language.service';
   styleUrl: './book-card.scss'
 })
 export class BookCardComponent {
+    get isSoldOut(): boolean {
+      if (this.book?.inStock === false) return true;
+      const status = (this.book?.status ?? '').toUpperCase();
+      if (status === 'OUT_OF_STOCK' || status === 'DISCONTINUED') return true;
+      if (typeof this.book?.quantity === 'number' && this.book.quantity <= 0) return true;
+      return false;
+    }
+
+  starSlots = [1, 2, 3, 4, 5];
+
   @Input() book!: Book;
   @Input() badge?: string;
   @Input() isInWishlist: boolean = false;
@@ -105,6 +123,16 @@ export class BookCardComponent {
   @Output() wishlistToggled = new EventEmitter<Book>();
 
   constructor(public languageService: LanguageService) {}
+
+  get filledStarCount(): number {
+    const avg = this.book?.rating ?? 0;
+    if (!Number.isFinite(avg)) return 0;
+    return Math.max(0, Math.min(5, Math.round(avg)));
+  }
+
+  get reviewCountDisplay(): number {
+    return this.book?.reviewCount ?? 0;
+  }
 
   getAuthorsDisplay(): string {
     if (this.book.authors && this.book.authors.length > 0) {

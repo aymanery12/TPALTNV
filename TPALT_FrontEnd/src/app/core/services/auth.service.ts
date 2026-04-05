@@ -15,6 +15,13 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router, private cartService: CartService) {}
 
+  // Restore persisted auth/cart context on hard refresh.
+  initializeSessionOnAppStart(): void {
+    const username = localStorage.getItem('auth_username');
+    this.isAuthenticated$.next(this.hasToken());
+    this.cartService.switchUser(username);
+  }
+
   // Force une session propre à chaque redémarrage de l'application.
   clearSessionOnAppStart(): void {
     localStorage.removeItem('auth_token');
@@ -43,7 +50,7 @@ export class AuthService {
   }
 
   // Étape 2 inscription : vérifie le code + crée le compte + retourne JWT
-  verifySignup(data: { username: string; email: string; password: string; code: string }): Observable<any> {
+  verifySignup(data: { username: string; email: string; password: string; firstName: string; lastName: string; phoneNumber: string; code: string }): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/auth/verify-signup`, data).pipe(
         tap(response => {
           localStorage.setItem('auth_token',    response.token);

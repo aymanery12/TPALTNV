@@ -124,10 +124,20 @@ export class HomePage implements OnInit {
           ...b,
           coverImageUrl: b.imageUrl,
           authors: b.author ? b.author.map((name, i) => ({ id: String(i), name })) : [],
-          reviewCount: 0,
-          inStock: true
+          reviewCount: b.reviewCount ?? 0,
+          inStock: (b.quantity ?? 0) > 0 && (b.status ?? 'ACTIVE') !== 'OUT_OF_STOCK' && (b.status ?? 'ACTIVE') !== 'DISCONTINUED'
         }));
         this.recommendedBooks = [...this.books];
+
+        const localAvg = this.computeAverageRatingFromBooks(this.books);
+        this.bookService.getAverageReviewRating().subscribe({
+          next: (avg) => {
+            this.averageReviewRating = Number.isFinite(avg) && avg > 0 ? avg : localAvg;
+          },
+          error: () => {
+            this.averageReviewRating = localAvg;
+          }
+        });
       },
       error: (err) => console.error('Erreur chargement livres:', err)
     });
@@ -139,7 +149,7 @@ export class HomePage implements OnInit {
           coverImageUrl: b.imageUrl,
           authors: b.author ? b.author.map((name, i) => ({ id: String(i), name })) : [],
           reviewCount: b.reviewCount ?? 0,
-          inStock: true
+          inStock: (b.quantity ?? 0) > 0 && (b.status ?? 'ACTIVE') !== 'OUT_OF_STOCK' && (b.status ?? 'ACTIVE') !== 'DISCONTINUED'
         }));
         this.aiRecommendationType = result.type;
         this.aiLoading = false;
@@ -147,10 +157,24 @@ export class HomePage implements OnInit {
       error: () => { this.aiLoading = false; }
     });
 
-    this.bookService.getAverageReviewRating().subscribe({
-      next: (avg) => this.averageReviewRating = avg,
-      error: () => { this.averageReviewRating = 0; }
-    });
+  }
+
+  private computeAverageRatingFromBooks(books: Book[]): number {
+    let weightedSum = 0;
+    let totalReviews = 0;
+
+    for (const b of books) {
+      const rating = b.rating ?? 0;
+      const count = b.reviewCount ?? 0;
+
+      if (rating >= 1 && rating <= 5 && count > 0) {
+        weightedSum += rating * count;
+        totalReviews += count;
+      }
+    }
+
+    if (totalReviews === 0) return 0;
+    return weightedSum / totalReviews;
   }
 
   onCategorySelected(cat: string): void {
@@ -227,7 +251,15 @@ export class HomePage implements OnInit {
   }
 
   onAddToCart(book: Book): void {
-    this.cartService.addToCart(book);
+    const result = this.cartService.addToCart(book);
+    if (!result.added) {
+      if (result.reason === 'OUT_OF_STOCK') {
+        this.showToast(this.t('bookCard.soldOut'));
+      } else {
+        this.showToast(this.t('cart.stockLimitError').replace('{{count}}', String(result.maxAvailable ?? 0)));
+      }
+      return;
+    }
     this.showToast(`"${book.title}" ajouté au panier !`);
   }
 

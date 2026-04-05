@@ -51,6 +51,9 @@ class VerifySignupRequest {
     private String username;
     private String email;
     private String password;
+    private String firstName;
+    private String lastName;
+    private String phoneNumber;
     private String code;
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
@@ -58,6 +61,12 @@ class VerifySignupRequest {
     public void setEmail(String email) { this.email = email; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
     public String getCode() { return code; }
     public void setCode(String code) { this.code = code; }
 }
@@ -150,6 +159,9 @@ public class AuthController {
     public ResponseEntity<?> verifySignup(@RequestBody VerifySignupRequest req) {
         String username = normalizeUsername(req.getUsername());
         String email = normalizeEmail(req.getEmail());
+        String firstName = normalizeText(req.getFirstName());
+        String lastName = normalizeText(req.getLastName());
+        String phoneNumber = normalizePhone(req.getPhoneNumber());
 
         if (username == null || username.isBlank()) {
             return ResponseEntity.badRequest().body(Map.of("error", "Nom d'utilisateur requis."));
@@ -159,6 +171,15 @@ public class AuthController {
         }
         if (req.getPassword() == null || req.getPassword().isBlank()) {
             return ResponseEntity.badRequest().body(Map.of("error", "Mot de passe requis."));
+        }
+        if (firstName == null || firstName.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Prenom requis."));
+        }
+        if (lastName == null || lastName.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Nom requis."));
+        }
+        if (phoneNumber == null || !phoneNumber.matches("^\\+?\\d{8,15}$")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Numero de telephone invalide."));
         }
         if (userRepository.findByUsernameNormalized(username).isPresent()) {
             return ResponseEntity.status(409).body(Map.of("error", "Nom d'utilisateur déjà pris."));
@@ -174,6 +195,9 @@ public class AuthController {
         user.setUsername(username);
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(req.getPassword()));
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setPhoneNumber(phoneNumber);
         user.setRole("CLIENT");
         userRepository.save(user);
 
@@ -278,6 +302,16 @@ public class AuthController {
     private String normalizeEmail(String email) {
         if (email == null) return null;
         return email.trim().toLowerCase();
+    }
+
+    private String normalizeText(String value) {
+        if (value == null) return null;
+        return value.trim();
+    }
+
+    private String normalizePhone(String phone) {
+        if (phone == null) return null;
+        return phone.replaceAll("\\s+", "").trim();
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────

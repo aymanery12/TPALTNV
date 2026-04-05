@@ -10,3 +10,28 @@
 .icon-filled {
   font-variation-settings: 'FILL' 1;
 }
+
+.rating-star {
+  color: #fbbf24;
+  font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
+.rating-star-filled {
+  font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+}
+
+.sold-out-overlay {
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.sold-out-chip {
+  background: rgba(220, 38, 38, 0.92);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+}

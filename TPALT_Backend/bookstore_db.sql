@@ -1,699 +1,255 @@
--- phpMyAdmin SQL Dump
--- version 5.2.3
--- https://www.phpmyadmin.net/
---
--- Hôte : mysql:3306
--- Généré le : sam. 04 avr. 2026 à 14:46
--- Version du serveur : 8.0.44
--- Version de PHP : 8.3.30
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Base de données : `bookstore_db`
---
-
--- --------------------------------------------------------
-
---
--- Structure de la table `book`
---
-
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+DROP TABLE IF EXISTS `book`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `book` (
-  `id` bigint NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `price` double DEFAULT NULL,
-  `image_url` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `category` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `category` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `rating` double DEFAULT '0',
   `quantity` int NOT NULL DEFAULT '0',
-  `status` enum('ACTIVE','OUT_OF_STOCK','DISCONTINUED','COMING_SOON') COLLATE utf8mb4_unicode_ci DEFAULT 'ACTIVE',
-  `isbn` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `language` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` enum('ACTIVE','OUT_OF_STOCK','DISCONTINUED','COMING_SOON') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'ACTIVE',
+  `isbn` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `language` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `pages` int DEFAULT NULL,
   `published_year` int DEFAULT NULL,
-  `publisher` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `publisher` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `review_count` int DEFAULT '0',
   `sold_count` int DEFAULT '0',
   `discount` double DEFAULT NULL,
   `featured` bit(1) DEFAULT NULL,
   `stock_alert` int DEFAULT NULL,
   `created_at` datetime(6) DEFAULT NULL,
-  `updated_at` datetime(6) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `updated_at` datetime(6) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_ehpdfjpu1jm3hijhj4mm0hx9h` (`isbn`)
+) ENGINE=InnoDB AUTO_INCREMENT=117 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Déchargement des données de la table `book`
---
-
-INSERT INTO `book` (`id`, `title`, `description`, `price`, `image_url`, `category`, `rating`, `quantity`, `status`, `isbn`, `language`, `pages`, `published_year`, `publisher`, `review_count`, `sold_count`, `discount`, `featured`, `stock_alert`, `created_at`, `updated_at`) VALUES
-(1, 'Le Seigneur des Anneaux : La Communauté de l\'Anneau', 'Dans la paisible Comté, Frodon Sacquet hérite d\'un anneau dont il découvre bientôt la nature terrifiante : il s\'agit de l\'Anneau Unique, forgé par Sauron pour soumettre la Terre du Milieu. Entouré d\'alliés venus de peuples différents, il entreprend un voyage périlleux vers l\'est afin d\'empêcher le retour du mal. Ce premier tome mêle aventure, amitié, courage et naissance d\'une mission qui dépasse de loin un simple hobbit.', 18.9, 'https://covers.openlibrary.org/b/isbn/9782070612888-L.jpg', 'Fantasy', 0, 1, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, 10, b'1', 5, NULL, '2026-03-27 15:08:09.190760'),
-(2, 'Le Seigneur des Anneaux : Les Deux Tours', 'Après l\'éclatement de la Communauté, les compagnons suivent des chemins séparés tandis que la guerre s\'étend à toute la Terre du Milieu. Aragorn, Legolas et Gimli poursuivent les forces ennemies, alors que Frodon et Sam avancent vers le Mordor avec l\'aide ambiguë de Gollum. Le roman développe la montée du conflit, le poids du désespoir et la résistance obstinée de ceux qui refusent de céder aux ténèbres.', 18.9, 'https://covers.openlibrary.org/b/isbn/9782070612895-L.jpg', 'Fantasy', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(3, 'Le Seigneur des Anneaux : Le Retour du Roi', 'Alors que les armées de Sauron marchent sur les derniers royaumes libres, les peuples de la Terre du Milieu se rassemblent pour un combat décisif. Pendant que Gandalf et Aragorn défendent l\'espoir des hommes, Frodon et Sam poursuivent leur traversée du Mordor jusqu\'au cœur du danger. Ce dernier tome donne toute son ampleur épique à la trilogie et conclut avec émotion une méditation sur le sacrifice, la fidélité et la fin des anciens mondes.', 18.9, 'https://covers.openlibrary.org/b/isbn/9782070612901-L.jpg', 'Fantasy', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(4, 'Le Hobbit', 'Bilbo Baggins, hobbit amateur de tranquillité, voit son quotidien bouleversé lorsqu\'un magicien et une troupe de nains l\'entraînent dans une expédition contre le dragon Smaug. Le voyage lui fait découvrir des créatures merveilleuses et terrifiantes, mais surtout des ressources qu\'il ignorait posséder. À la fois conte d\'aventure et prélude à l\'univers du Seigneur des Anneaux, le roman allie humour, émerveillement et bravoure.', 14.5, 'https://m.media-amazon.com/images/I/71wNSrWLp-S._AC_UF1000,1000_QL80_.jpg', 'Fantasy', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(5, 'Harry Potter à l\'école des sorciers', 'Le jour de ses onze ans, Harry Potter apprend qu\'il est un sorcier et qu\'il a été admis à Poudlard, une école de magie cachée au monde ordinaire. En découvrant l\'amitié, les rivalités et les secrets du château, il comprend peu à peu que son passé est lié à une menace toujours active. Ce premier tome pose un univers foisonnant où l\'enfance, le mystère et le merveilleux avancent main dans la main.', 12.9, 'https://covers.openlibrary.org/b/isbn/9782070541270-L.jpg', 'Fantasy', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(6, 'Harry Potter et la Chambre des secrets', 'De retour à Poudlard, Harry fait face à une série d\'événements inquiétants : des élèves sont attaqués, une ancienne légende resurgit et une voix mystérieuse semble l\'appeler dans les couloirs du château. Avec Ron et Hermione, il remonte la piste d\'un secret enfoui au cœur de l\'école. Le roman approfondit l\'univers magique tout en jouant avec le suspense et les peurs de l\'adolescence.', 13.2, 'https://covers.openlibrary.org/b/id/15158614-L.jpg', 'Fantasy', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(7, 'Harry Potter et le Prisonnier d\'Azkaban', 'Harry apprend qu\'un dangereux prisonnier, Sirius Black, s\'est évadé d\'Azkaban et semblerait vouloir l\'atteindre. Tandis que Poudlard se couvre de Détraqueurs, il découvre une vérité plus complexe sur ses parents, ses ennemis et ceux qu\'il croyait connaître. Ce troisième volume gagne en profondeur psychologique et marque un tournant vers un univers plus sombre et plus nuancé.', 13.5, 'https://covers.openlibrary.org/b/isbn/9782070541300-L.jpg', 'Fantasy', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(8, 'Harry Potter et la Coupe de feu', 'Contre toute attente, Harry est sélectionné pour participer au Tournoi des Trois Sorciers, une compétition périlleuse entre écoles de magie. Les épreuves spectaculaires cachent pourtant un complot bien plus grave qui le place au centre d\'un retour redouté. Ce tome élargit l\'univers de la saga, multiplie les tensions et conduit à l\'un de ses basculements majeurs.', 14.2, 'https://covers.openlibrary.org/b/id/15157959-L.jpg', 'Fantasy', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(9, 'Harry Potter et l\'Ordre du Phénix', 'Alors que le ministère refuse d\'admettre le retour de Voldemort, Harry se heurte à l\'incrédulité, à la surveillance et à une solitude grandissante. À Poudlard, il fonde avec ses amis un groupe clandestin pour apprendre à se défendre. Ce roman explore la colère, la manipulation politique et le passage douloureux à l\'âge adulte dans un monde de plus en plus menacé.', 14.5, 'https://ia600404.us.archive.org/view_archive.php?archive=/33/items/l_covers_0010/l_covers_0010_70.zip&file=0010705859-L.jpg', 'Fantasy', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(10, 'Harry Potter et le Prince de sang-mêlé', 'Sous la direction de Dumbledore, Harry commence à comprendre l\'histoire intime de Voldemort et les failles qu\'il faudra exploiter pour espérer le vaincre. Pendant ce temps, une atmosphère d\'inquiétude s\'installe à Poudlard, où les alliances se fragilisent et les drames se préparent. Ce sixième tome associe enquête, révélation et montée inexorable vers la guerre.', 14.5, 'https://ia801705.us.archive.org/view_archive.php?archive=/29/items/l_covers_0008/l_covers_0008_05.zip&file=0008055586-L.jpg', 'Fantasy', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(11, 'Harry Potter et les Reliques de la Mort', 'Privés de l\'aide protectrice de Poudlard, Harry, Ron et Hermione partent à la recherche des horcruxes qui maintiennent Voldemort en vie. Leur quête les confronte à la peur, à la perte et à des choix qui les obligent à grandir brutalement. La saga s\'achève dans un affrontement total où se rejoignent les questions de mémoire, de loyauté et de sacrifice.', 14.9, 'https://covers.openlibrary.org/b/isbn/9782070541348-L.jpg', 'Fantasy', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(12, 'Dune', 'Sur Arrakis, planète désertique où se trouve l\'Épice, substance la plus précieuse de l\'univers, le jeune Paul Atréides voit sa famille entraînée dans une lutte politique d\'une violence extrême. Jeté au milieu du désert, il découvre un peuple, une prophétie et un destin qui pourraient renverser l\'ordre galactique. Le roman associe fresque politique, réflexion écologique et dimension spirituelle dans une œuvre majeure de la science-fiction.', 16.5, 'https://covers.openlibrary.org/b/isbn/9782266320481-L.jpg', 'Science-Fiction', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(13, 'Le Messie de Dune', 'Devenu empereur, Paul Atréides doit affronter les conséquences de sa propre victoire et le fanatisme qui s\'est développé autour de sa personne. Prisonnier d\'une vision de l\'avenir qu\'il comprend trop bien, il tente d\'éviter le pire tout en voyant se refermer sur lui les pièges du pouvoir. Ce second tome est plus sombre, plus politique et plus méditatif que le précédent.', 15.9, 'https://covers.openlibrary.org/b/isbn/9782266320498-L.jpg', 'Science-Fiction', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(14, 'Les Enfants de Dune', 'L\'empire construit par Paul vacille, tandis que ses enfants jumeaux portent en eux un héritage aussi redoutable qu\'exceptionnel. Menacés par les intrigues religieuses et dynastiques, ils doivent comprendre ce qu\'exige réellement l\'avenir d\'Arrakis. Le roman poursuit la réflexion sur la prescience, la responsabilité et les dérives du pouvoir absolu.', 15.9, 'https://ia800100.us.archive.org/view_archive.php?archive=/5/items/l_covers_0012/l_covers_0012_90.zip&file=0012907001-L.jpg', 'Science-Fiction', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(15, 'Fondation', 'Hari Seldon, mathématicien génial, prévoit grâce à la psychohistoire l\'effondrement de l\'Empire galactique et des siècles de barbarie. Pour réduire cette longue nuit, il crée Fondation, un foyer de savoir destiné à préserver les connaissances humaines et à guider discrètement l\'avenir. À travers plusieurs crises successives, le roman montre comment l\'intelligence stratégique peut parfois l\'emporter sur la force brute.', 14.9, 'https://covers.openlibrary.org/b/isbn/9782070360536-L.jpg', 'Science-Fiction', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(16, 'Fondation et Empire', 'La jeune Fondation doit désormais affronter à la fois les derniers sursauts de l\'Empire et l\'apparition d\'un adversaire imprévisible qui échappe aux calculs de Seldon. Ses certitudes vacillent à mesure qu\'un mutant charismatique bouleverse les équilibres établis. Ce deuxième volume introduit une tension nouvelle en montrant les limites d\'une histoire trop parfaitement anticipée.', 14.9, 'https://ia800100.us.archive.org/view_archive.php?archive=/5/items/l_covers_0012/l_covers_0012_70.zip&file=0012705571-L.jpg', 'Science-Fiction', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(17, 'Seconde Fondation', 'La mystérieuse Seconde Fondation, gardienne secrète du plan de Seldon, devient l\'objet de toutes les peurs et de toutes les recherches. Tandis que certains veulent la détruire, d\'autres cherchent à comprendre son influence invisible sur le destin galactique. Asimov y mêle intrigue intellectuelle, manipulation psychique et réflexion sur le contrôle de l\'histoire.', 14.9, 'https://covers.openlibrary.org/b/isbn/9782070360550-L.jpg', 'Science-Fiction', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(18, 'Neuromancien', 'Case, hacker déchu, se voit offrir une dernière chance par un employeur aussi puissant qu\'opaque : participer à une opération impossible au cœur du cyberespace. Accompagné d\'alliés troubles, il entre dans un monde où les frontières entre humain, machine et intelligence artificielle deviennent de plus en plus incertaines. Roman fondateur du cyberpunk, l\'ouvrage impose une esthétique urbaine, nerveuse et visionnaire.', 13.9, 'https://covers.openlibrary.org/b/id/12993489-L.jpg', 'Science-Fiction', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(19, 'Fahrenheit 451', 'Dans une société où les livres sont interdits, Guy Montag exerce le métier de pompier chargé non pas d\'éteindre les incendies, mais de brûler les ouvrages et les maisons qui les abritent. Une rencontre inattendue fissure pourtant ses certitudes et l\'amène à questionner le vide culturel dans lequel il vit. Le roman défend la lecture, la mémoire et l\'esprit critique contre l\'uniformisation du monde.', 11.9, 'https://covers.openlibrary.org/b/id/15141082-L.jpg', 'Dystopie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(20, '1984', 'Winston Smith vit sous l\'autorité totale du Parti, qui surveille les corps, les mots et jusqu\'aux pensées. Lorsqu\'il tente de préserver une part de vérité intime en aimant Julia et en doutant du régime, il s\'engage dans une rébellion vouée à être écrasée. Ce classique glaçant montre comment une dictature peut déformer la réalité elle-même pour mieux abolir la liberté.', 10.5, 'https://covers.openlibrary.org/b/isbn/9782070368228-L.jpg', 'Dystopie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(21, 'La Ferme des animaux', 'Des animaux chassent le fermier qui les exploitaient et rêvent de bâtir une société plus juste. Mais peu à peu, les cochons accaparent le pouvoir, réécrivent les règles et reproduisent les mêmes mécanismes d\'oppression qu\'ils prétendaient combattre. Sous la forme d\'une fable simple et mordante, Orwell dénonce la confiscation des idéaux révolutionnaires.', 9.9, 'https://covers.openlibrary.org/b/id/13147152-L.jpg', 'Dystopie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(22, 'Le Meilleur des mondes', 'Dans une société stable en apparence, les êtres humains sont produits en laboratoire, conditionnés dès l\'enfance et maintenus dociles par le plaisir et la consommation. L\'arrivée d\'un homme élevé hors du système révèle la violence cachée sous cette harmonie artificielle. Huxley y propose une critique redoutablement moderne du bonheur imposé et de la standardisation des vies.', 11.9, 'https://covers.openlibrary.org/b/isbn/9782266283038-L.jpg', 'Dystopie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(23, 'La Route', 'Dans un monde dévasté où presque toute vie a disparu, un père et son fils avancent sur une route grise à la recherche d\'un sud hypothétiquement plus clément. Leur survie dépend autant de la prudence que de la capacité à préserver une forme fragile d\'humanité. Le roman, dépouillé et bouleversant, explore l\'amour filial au cœur de l\'effondrement.', 12.9, 'https://covers.openlibrary.org/b/id/12705571-L.jpg', 'Post-Apocalyptique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(24, 'Le Nom du vent', 'Retiré dans une auberge sous une fausse identité, Kvothe accepte de raconter sa vie à un chroniqueur venu recueillir son histoire. Il y retrace son enfance parmi les artistes, ses pertes, sa formation à l\'Université et la naissance de sa légende. Ce premier tome séduit par son écriture fluide, sa construction en récit enchâssé et son équilibre entre magie, musique et quête de savoir.', 15.5, 'https://covers.openlibrary.org/b/id/8118037-L.jpg', 'Fantasy', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(25, 'La Peur du sage', 'Kvothe poursuit son apprentissage tout en se heurtant à de nouveaux dangers, qu\'ils soient politiques, amoureux ou surnaturels. Son voyage le mène bien au-delà de l\'Université, vers des contrées où sa légende continue de se construire et de se compliquer. Ce second volume amplifie le souffle du récit et approfondit la personnalité d\'un héros aussi brillant qu\'imparfait.', 16.5, 'https://covers.openlibrary.org/b/isbn/9782843449529-L.jpg', 'Fantasy', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(26, 'L\'Assassin royal : L\'Apprenti assassin', 'Bâtard royal élevé loin des honneurs, Fitz est introduit à la cour où il reçoit une éducation secrète d\'assassin au service du trône. Son existence reste pourtant marquée par la solitude, les intrigues et des dons qui le rendent à la fois précieux et dangereux. Robin Hobb compose un roman d\'apprentissage fin et sensible, centré sur les loyautés blessées et la construction de soi.', 13.9, 'https://covers.openlibrary.org/b/id/5548302-L.jpg', 'Fantasy', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(27, 'Le Trône de fer', 'Dans le royaume de Westeros, plusieurs grandes familles s\'affrontent pour le pouvoir tandis qu\'une menace plus ancienne et plus terrible s\'éveille au-delà du Mur. En multipliant les points de vue, Martin expose un univers politique complexe où l\'honneur ne suffit pas à survivre. Le roman associe réalisme brutal, ampleur historique et tensions constantes.', 15.5, 'https://covers.openlibrary.org/b/id/9134692-L.jpg', 'Fantasy', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(28, 'Les Misérables', 'Après dix-neuf années de bagne, Jean Valjean tente de reconstruire sa vie grâce à un geste de bonté qui bouleverse son destin. Mais son passé et l\'implacable Javert ne cessent de le rattraper, tandis que la misère sociale frappe autour de lui Fantine, Cosette, Marius et tant d\'autres. Hugo mêle récit romanesque, souffle historique et immense plaidoyer pour la justice et la dignité humaines.', 15.9, 'https://m.media-amazon.com/images/I/613R0HknEEL._SY425_.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(29, 'Notre-Dame de Paris', 'Dans le Paris du XVe siècle, la destinée d\'Esmeralda croise celle de Quasimodo, de Frollo et de Phœbus autour de la cathédrale qui domine la ville et les consciences. Passion, jalousie, désir de possession et exclusion sociale conduisent peu à peu au drame. Le roman célèbre aussi la mémoire de la ville et fait de l\'architecture un véritable personnage.', 13.9, 'https://m.media-amazon.com/images/I/81mypeo8dKL.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(30, 'Madame Bovary', 'Emma Bovary, jeune femme mariée à un médecin de province, rêve d\'une existence plus brillante, plus intense et plus romanesque que celle qu\'elle mène. Cherchant dans l\'amour et la consommation l\'échappatoire à son ennui, elle s\'enferme dans des illusions qui la conduisent à la ruine. Flaubert dresse un portrait acéré du désir d\'ailleurs, de la frustration sociale et de l\'écart entre rêve et réalité.', 11.4, 'https://covers.openlibrary.org/b/id/12986758-L.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(31, 'L\'Éducation sentimentale', 'Frédéric Moreau traverse les années de jeunesse avec des ambitions floues, des élans amoureux incertains et une incapacité chronique à décider de sa vie. Sur fond de Révolution de 1848, il poursuit un idéal sentimental qui se dérobe sans cesse. Le roman peint avec lucidité l\'apprentissage manqué d\'une génération et l\'usure des illusions.', 12.2, 'https://covers.openlibrary.org/b/isbn/9782070360260-L.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(32, 'Le Rouge et le Noir', 'Julien Sorel, fils de charpentier brillant et ambitieux, cherche à s\'élever dans la société française de la Restauration par les études, la séduction et la dissimulation. Son intelligence et son orgueil le mènent dans des milieux où il n\'est jamais vraiment à sa place. Le roman montre la violence des hiérarchies sociales et la fragilité d\'une ambition qui se retourne contre elle-même.', 12.65, 'https://www.recyclivre.com/media/cache/sylius_shop_product_original/bc/74/ffe49e1d0b353c3c718692873a9e.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(33, 'La Chartreuse de Parme', 'Fabrice del Dongo, jeune noble italien romanesque et impulsif, traverse les guerres napoléoniennes puis les intrigues politiques et amoureuses des cours italiennes. Entre l\'élan héroïque et l\'aveuglement amoureux, il découvre un monde où les passions privées se mêlent aux jeux du pouvoir. Stendhal y déploie une écriture vive au service d\'un grand roman de formation.', 12.5, 'https://covers.openlibrary.org/b/id/7040147-L.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(34, 'Germinal', 'Étienne Lantier arrive dans un bassin minier du Nord et découvre la dureté extrême du travail, la pauvreté des familles ouvrières et la violence des rapports de classe. À mesure que grandit la révolte, il devient l\'un des visages de la grève qui secoue la région. Zola compose un roman puissant sur l\'exploitation, la solidarité et les germes d\'un soulèvement collectif.', 13.9, 'https://m.media-amazon.com/images/I/51lLZ2YrY5L._SY445_SX342_ML2_.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(35, 'Thérèse Raquin', 'Dans un milieu étouffant, Thérèse et Laurent succombent à une passion brutale qui les pousse au crime pour se débarrasser du mari encombrant de Thérèse. Mais l\'acte ne les libère pas : la culpabilité, la peur et la décomposition morale envahissent peu à peu leur existence. Ce roman intense dissèque les pulsions, les nerfs et les conséquences psychiques du désir.', 12.8, 'https://covers.openlibrary.org/b/isbn/9782070409846-L.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(36, 'L\'Assommoir', 'Gervaise espère mener à Paris une vie stable et honnête, mais la misère, l\'alcoolisme et les déterminismes sociaux viennent peu à peu défaire ses efforts. À travers son destin, Zola observe l\'écrasement progressif d\'une femme par son environnement. Le roman mêle précision sociale, langue populaire et regard tragique sur l\'usure du quotidien.', 13.5, 'https://covers.openlibrary.org/b/id/9251016-L.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(37, 'Crime et Châtiment', 'Raskolnikov, étudiant pauvre de Saint-Pétersbourg, commet un meurtre qu\'il tente de justifier par une théorie sur les êtres d\'exception. Mais au lieu de l\'émanciper, son crime l\'enferme dans la fièvre, la culpabilité et un combat intérieur incessant. Dostoïevski construit un roman d\'une rare intensité psychologique sur la conscience, la faute et la possibilité du salut.', 16.4, 'https://covers.openlibrary.org/b/isbn/9782070409044-L.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(38, 'Les Frères Karamazov', 'Autour du père Karamazov, homme vulgaire et détesté, ses fils incarnent différentes manières d\'aimer, de douter et de chercher la vérité. Lorsqu\'un drame familial éclate, la question de la responsabilité devient inséparable de celle de la foi, de la liberté et du mal. Monument romanesque, l\'ouvrage conjugue enquête, débat philosophique et profondeur humaine.', 16.9, 'https://static.fnac-static.com/multimedia/PE/Images/FR/NR/33/53/02/152371/1507-1/tsp20241004080219/Les-Freres-Karamazov.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(39, 'L\'Idiot', 'Le prince Mychkine revient en Russie après un long séjour en sanatorium et se trouve plongé dans une société mondaine où sa bonté radicale déroute autant qu\'elle fascine. Pris entre plusieurs figures féminines et de multiples jeux d\'intérêts, il révèle malgré lui la violence morale de son entourage. Le roman interroge ce que devient l\'innocence au contact d\'un monde corrompu.', 15.6, 'https://covers.openlibrary.org/b/id/10318965-L.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(40, 'Anna Karénine', 'Mariée et mère, Anna Karénine s\'éprend du comte Vronski et s\'engage dans une passion qui la met en rupture avec les conventions de son milieu. En parallèle, le parcours de Lévine propose une autre recherche de sens, tournée vers le travail, l\'amour et la vie morale. Tolstoï y peint une vaste fresque sociale où le drame intime dialogue avec les questions essentielles de l\'existence.', 15.9, 'https://covers.openlibrary.org/b/id/5923377-L.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(41, 'Guerre et Paix', 'À travers plusieurs familles de l\'aristocratie russe, le roman suit les bouleversements provoqués par les guerres napoléoniennes et par l\'écoulement du temps. Les destins individuels se croisent entre passions, deuils, illusions héroïques et quête spirituelle. Tolstoï parvient à unir l\'ampleur historique et la vérité des émotions dans une œuvre d\'une richesse exceptionnelle.', 18.5, 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSCQE8R9jVKYwvg85bmxEDmcQ7x4gfMZwkEcK7WwmjRRFszLfGk', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(42, 'Le Comte de Monte-Cristo', 'Trahi, emprisonné puis miraculeusement évadé, Edmond Dantès revient sous une nouvelle identité pour orchestrer une vengeance patiente contre ceux qui ont détruit sa vie. Sa richesse et son intelligence lui permettent de manipuler un monde où chacun cache ses fautes et ses ambitions. Dumas livre un grand roman d\'aventure où le désir de justice côtoie l\'obsession et le pardon.', 14.9, 'https://cdn.cultura.com/cdn-cgi/image/width=380/media/pim/TITELIVE/27_9782322541652_1_75.jpg', 'Aventure', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(43, 'Les Trois Mousquetaires', 'Le jeune d\'Artagnan monte à Paris avec le rêve de devenir mousquetaire et se lie très vite à Athos, Porthos et Aramis. Ensemble, ils affrontent complots politiques, rivalités de cour et missions dangereuses au service du roi et de la reine. Le roman allie panache, amitié, humour et sens du rythme dans une aventure toujours entraînante.', 13.9, 'https://covers.openlibrary.org/b/isbn/9782070409303-L.jpg', 'Aventure', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(44, 'Vingt ans après', 'Vingt ans après leurs exploits passés, les anciens compagnons se retrouvent dans une France et une Angleterre bouleversées par les troubles politiques. L\'amitié qui les unit doit composer avec le temps, les engagements divergents et la nostalgie des combats d\'autrefois. Ce second volet fait mûrir les personnages sans perdre le goût de l\'action.', 13.9, 'https://covers.openlibrary.org/b/id/14557298-L.jpg', 'Aventure', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(45, 'Le Vicomte de Bragelonne', 'Dernier grand cycle des mousquetaires, ce roman suit de nouveaux enjeux de cour et de loyauté, tandis que les héros vieillissent et affrontent la fin d\'une époque. Intrigues sentimentales, secrets d\'État et devoirs contradictoires s\'y entrelacent. Dumas y donne une dimension plus mélancolique à son univers de cape et d\'épée.', 16.5, 'https://m.media-amazon.com/images/I/71ttkFakKrL._AC_UF1000,1000_QL80_.jpg', 'Aventure', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(46, 'Don Quichotte', 'Ayant trop lu de romans de chevalerie, Alonso Quijano décide de devenir chevalier errant sous le nom de Don Quichotte et part sur les routes avec le pragmatique Sancho Panza. Il transforme les auberges en châteaux et les moulins en géants, avec une sincérité qui suscite tour à tour rire, tendresse et réflexion. Cervantès invente ainsi un roman à la fois comique, moderne et profondément humain.', 13.9, 'https://static.fnac-static.com/multimedia/PE/Images/FR/NR/15/ee/28/2682389/1540-1/tsp20240109084623/Don-quichotte.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(47, 'Moby Dick', 'Le narrateur Ishmaël embarque à bord du Pequod sous le commandement du capitaine Achab, obsédé par la baleine blanche qui l\'a mutilé. Ce qui commence comme une campagne de chasse se change vite en poursuite métaphysique où la mer reflète l\'abîme intérieur des hommes. Roman foisonnant, l\'ouvrage mêle aventure maritime, méditation symbolique et critique de l\'obsession.', 14.9, 'https://m.media-amazon.com/images/I/91xNmlf86yL._AC_UF1000,1000_QL80_.jpg', 'Aventure', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(48, 'Jane Eyre', 'Orpheline maltraitée dans son enfance, Jane Eyre conquiert peu à peu son indépendance en devenant gouvernante chez le mystérieux Mr Rochester. L\'amour qui naît entre eux se heurte pourtant à un secret qui menace tout avenir commun. Ce roman conjugue émotion, affirmation de soi et critique des contraintes sociales imposées aux femmes.', 12.9, 'https://static.wikia.nocookie.net/classical-literature/images/8/87/61c1BiBgvdL.jpg/revision/latest?cb=20190526154645', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(49, 'Orgueil et Préjugés', 'Dans l\'Angleterre provinciale, Elizabeth Bennet observe avec ironie les enjeux du mariage, du rang social et des convenances. Sa rencontre avec le fier Mr Darcy donne naissance à une relation faite de malentendus, de jugements hâtifs et de lente reconnaissance mutuelle. Austen signe un roman vif et subtil sur l\'amour, l\'orgueil et les préjugés de classe.', 12.9, 'https://images2.medimops.eu/product/84d3bf/M02352871689-220px.webp', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(50, 'Raison et Sentiments', 'Après la perte de leur sécurité financière, les sœurs Dashwood affrontent les déceptions amoureuses et les contraintes d\'une société qui limite fortement leurs choix. Elinor incarne la retenue, Marianne l\'élan passionné, mais toutes deux doivent apprendre à relire leurs espérances. Le roman met en scène avec finesse les rapports entre émotion, prudence et maturité.', 12.5, 'https://editions-hauteville.fr/media/cache/page_book/86/9791093835686.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(51, 'Emma', 'Convaincue de bien connaître les cœurs humains, Emma Woodhouse s\'improvise entremetteuse et provoque autour d\'elle une série de malentendus sentimentaux. Son assurance l\'empêche longtemps de voir ses propres erreurs et ses véritables sentiments. Austen compose une comédie sociale brillante sur l\'aveuglement de soi et l\'apprentissage de l\'humilité.', 12.5, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSl5RC-iDOqUteqBLxMAVjMZKEZwIEWojFHHl0a6yfuj2U943zjA2fbZzN_3bAHHc7oXQCl1ykDX6-RlfQAcDAoBNxpPQB_alPG6-T7SKA&s=10', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(52, 'Les Hauts de Hurlevent', 'Sur les landes du Yorkshire, la passion violente entre Catherine Earnshaw et Heathcliff traverse les années, les classes sociales et même la mort, en laissant derrière elle un sillage de souffrance. L\'amour s\'y mêle à la vengeance, à l\'orgueil et à la destruction. Le roman fascine par son atmosphère sauvage et par l\'intensité presque mythique de ses personnages.', 12.9, 'https://pictures.abebooks.com/isbn/9782404081328-fr.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(53, 'Dracula', 'À travers journaux, lettres et témoignages, plusieurs personnages reconstituent l\'arrivée en Angleterre du comte Dracula et la menace qu\'il fait peser sur eux. Face à cette figure du mal, ils organisent une lutte où la science moderne rencontre les anciennes croyances. Le roman impose durablement la figure du vampire dans l\'imaginaire occidental.', 11.9, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQySaSHK_wV7fKcOpm6M92Il0ze_aDDAwZZgLx1NDt5X4EW-_tuVi37srPV6d_3S9oXrloVpdH451D7rm68gZC9jbO46dxpjU8ICMNffSc8&s=10', 'Fantastique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(54, 'Frankenstein', 'Victor Frankenstein, jeune savant animé par un désir prométhéen, parvient à donner vie à une créature qu\'il rejette aussitôt avec horreur. Ce refus initial déclenche une chaîne de solitude, de vengeance et de destruction. Mary Shelley interroge ainsi la responsabilité du créateur, les limites de la science et le besoin fondamental de reconnaissance.', 11.5, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSf5PeY7j9RliILLtTcB1uVrOSNyHvUfqQXK8oVy08AUHRv-S0vwSwyMuKbwX0wozTjsZ80oCS38bZjfqQiY3nkbGKLPWSenxMzdjccMA&s=10', 'Fantastique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(55, 'L\'Étrange Cas du Dr Jekyll et de Mr Hyde', 'À Londres, un avocat enquête sur le lien troublant entre le respectable Dr Jekyll et l\'inquiétant Mr Hyde, figure de violence pure. Peu à peu se révèle une expérience destinée à séparer les deux faces de la nature humaine. Stevenson donne une forme mémorable à la dualité morale et à la peur de ce que chacun porte en lui.', 9.9, 'https://covers.openlibrary.org/b/id/3068593-L.jpg', 'Fantastique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(56, 'L\'Île au trésor', 'Le jeune Jim Hawkins découvre une carte menant à un trésor enfoui et embarque dans une expédition maritime pleine de dangers. Très vite, l\'aventure se complique avec la présence à bord de pirates et du fascinant Long John Silver. Ce classique de la littérature d\'aventure conjugue initiation, suspense et imaginaire des mers.', 10.9, 'https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcS6h4zViNFeTRuXBu4Fy2ZG1Gpn6oRQjByLS_qX1vHPNW_EE27mjZBo2x_-XubTTO-ez3Fs2EyqMYzF9imtTJy8SAkCDIHORArksdIAtXrd&usqp=CAc', 'Aventure', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(57, 'Vingt mille lieues sous les mers', 'Invités à traquer un monstre marin, le professeur Aronnax, Conseil et Ned Land découvrent que la créature n\'est autre que le Nautilus, sous-marin commandé par le mystérieux capitaine Nemo. Leur voyage sous les océans devient une exploration scientifique autant qu\'un enfermement. Verne y déploie le goût de la découverte, de la technologie et de l\'évasion.', 12.9, 'https://www.recyclivre.com/media/cache/sylius_shop_product_original/d8/e8/1c36ee7a19e37c3a40d9599cfb71.jpg', 'Science-Fiction', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(58, 'Voyage au centre de la Terre', 'Un savant allemand et son neveu suivent les indications d\'un manuscrit ancien qui promet l\'existence d\'un passage vers les profondeurs du globe. Leur descente les conduit dans un monde souterrain peuplé de paysages et de phénomènes extraordinaires. Le roman transforme la curiosité scientifique en aventure haletante.', 11.9, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQd6dMPAu2lcdTIYhBfsUxvhCgQoDQL187N9t2lUDeqeNZ9stwaUKnYymCyvNrlHp4vdzz6FQ-7NX50Ogo8cUapc2B_sPFiswX5z7COSnYaKw&s=10', 'Aventure', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(59, 'Le Tour du monde en quatre-vingts jours', 'Phileas Fogg parie qu\'il peut accomplir le tour du monde en quatre-vingts jours grâce aux moyens de transport modernes de son époque. Accompagné de son fidèle Passepartout, il enchaîne les contretemps, les rencontres et les exploits logistiques à travers plusieurs continents. Le récit célèbre la précision, le sang-froid et le goût du voyage.', 11.9, 'https://m.media-amazon.com/images/I/918IuQ+-fJL._SY342_.jpg', 'Aventure', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(60, 'Michel Strogoff', 'Messager du tsar, Michel Strogoff doit traverser une Russie immense et dangereuse pour prévenir un proche du souverain d\'une trahison en cours. Poursuivi, éprouvé et blessé, il poursuit sa mission avec une volonté inflexible. Verne compose un roman de route énergique où l\'endurance du héros porte toute la tension.', 12.2, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR32iymKqpmw5jl2CZxQhlYNSYaV3asSWSI5foM4lmM_c0GVIs4ildmk-oqRM1XPNZKISdr_HryPZWw5Xm3PU71mHv0Zuxka5jDwW0Ew7V3&s=10', 'Aventure', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(61, 'Le Petit Prince', 'Perdu dans le désert après une panne d\'avion, un aviateur rencontre un petit prince venu d\'une autre planète. À travers les récits de ses voyages d\'astéroïde en astéroïde, l\'enfant révèle l\'absurdité de certaines attitudes adultes et rappelle la valeur de l\'amitié, de l\'amour et du regard intérieur. Sous sa simplicité apparente, ce conte offre une méditation profonde sur ce qui compte vraiment.', 8.9, 'https://covers.openlibrary.org/b/isbn/9782070408504-L.jpg', 'Conte', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(62, 'L\'Alchimiste', 'Santiago, jeune berger andalou, rêve à plusieurs reprises d\'un trésor caché près des pyramides d\'Égypte. Il quitte alors son existence ordinaire pour suivre ce qu\'il appelle sa Légende personnelle, croisant sur sa route des épreuves, des rencontres et des signes à interpréter. Le roman propose une fable initiatique sur le destin, la confiance et la quête de sens.', 9.9, 'https://covers.openlibrary.org/b/id/994197-L.jpg', 'Roman', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(63, 'Le Vieil Homme et la Mer', 'Santiago, vieux pêcheur cubain, traverse une longue période de malchance lorsqu\'il part seul en mer et engage un combat éprouvant contre un immense poisson. Ce duel silencieux devient une épreuve de résistance physique, de dignité et d\'endurance morale. Dans une langue sobre, Hemingway célèbre la noblesse du combat même lorsque la victoire semble impossible.', 10.9, 'https://covers.openlibrary.org/b/id/10311982-L.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(64, 'Le Soleil se lève aussi', 'Dans l\'Europe de l\'après-guerre, un groupe d\'expatriés américains et britanniques erre entre Paris et l\'Espagne, partageant fêtes, déplacements et désillusions. Derrière l\'élégance des échanges se cachent des blessures, des impasses affectives et une profonde fatigue existentielle. Hemingway y saisit la \"génération perdue\" avec une grande économie de moyens.', 11.5, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Su5kWiPsTaTwpBafRozQwxx5_JAturlQATx4MLaTj3OFEU0Zp28AuaQJjVvQh3Cbaz9MSjjbw4LDuptZrP_Qh6rRbOHX69Ixx9497aIQew&s=10', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(65, 'Sur la route', 'Sal Paradise parcourt les États-Unis avec Dean Moriarty dans une succession de voyages improvisés, de rencontres intenses et de moments de liberté frénétique. Le mouvement devient pour eux une manière de vivre, de se chercher et de fuir les cadres établis. Ce texte emblématique de la Beat Generation fait entendre une énergie de dérive, d\'amitié et de quête intérieure.', 11.9, 'https://covers.openlibrary.org/b/id/968207-L.jpg', 'Roman', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(66, 'Le Parfum', 'Jean-Baptiste Grenouille naît avec un odorat prodigieux mais sans odeur propre, ce qui le rend à la fois exceptionnel et inquiétant. Obnubilé par le désir de créer le parfum absolu, il glisse vers une obsession criminelle où le génie sensoriel s\'allie à l\'absence totale d\'empathie. Le roman fascine par sa puissance d\'évocation et par son exploration du désir de possession.', 12.9, 'https://pictures.abebooks.com/isbn/9782213630380-fr.jpg', 'Roman', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(67, 'L\'Étranger', 'Meursault apprend la mort de sa mère avec une distance qui surprend ceux qui l\'entourent, puis se trouve entraîné dans un meurtre commis presque sans intention claire. Le procès qui suit juge autant son comportement que son acte. Camus compose un roman bref et puissant sur l\'absurde, le regard social et le refus des faux sentiments.', 10.9, 'https://covers.openlibrary.org/b/isbn/9782070360024-L.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(68, 'La Peste', 'À Oran, une épidémie de peste enferme peu à peu la ville et confronte ses habitants à la peur, à la séparation et à la mort. Le docteur Rieux et quelques autres choisissent d\'agir, non par héroïsme abstrait, mais par fidélité à une exigence simple de solidarité. Le roman réfléchit à la condition humaine, à la résistance et à la dignité dans l\'épreuve.', 12.5, 'https://upload.wikimedia.org/wikipedia/commons/c/c6/La_Peste_book_cover.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(69, 'Le Mythe de Sisyphe', 'Dans cet essai majeur, Camus part de la question du suicide pour interroger le sentiment de l\'absurde qui naît du décalage entre le besoin humain de sens et le silence du monde. Plutôt que de fuir cette contradiction, il propose de la regarder en face et d\'en faire le point de départ d\'une révolte lucide. L\'ouvrage éclaire l\'ensemble de son œuvre romanesque et philosophique.', 11.9, 'https://covers.openlibrary.org/b/id/14433181-L.jpg', 'Philosophie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(70, 'L\'Écume des jours', 'Colin et Chloé vivent un amour tendre et inventif dans un univers où les objets semblent répondre aux émotions humaines. Lorsque la maladie frappe, ce monde poétique se déforme progressivement et laisse apparaître sa fragilité. Vian mêle fantaisie, humour, critique sociale et tragédie dans un roman singulier et marquant.', 11.9, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQxSXIJ9Af7o6tTTVWh3_QMey_95BO4CWSvosAvZrpojr6dCPiw3gQr52TBBMhKbB5XstM1E1B85JUZ5WKYBlnhABklC7k_XhpLJL4PojtKw&s=10', 'Roman', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(71, 'Le Grand Meaulnes', 'Dans une campagne française empreinte de mystère, Augustin Meaulnes découvre un domaine étrange où il croit toucher un idéal d\'amour et de fête. Toute sa vie semble ensuite marquée par le désir de retrouver cet instant suspendu. Le roman fait de l\'adolescence un territoire d\'enchantement perdu et de nostalgie durable.', 10.9, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReoGgINHeci4UmHW3bR8bcdipGcmlXZY62e4B5e3kNZvKPaDbRbeg-vMXYx17ERIzHmNSls4xJvCIL9dgLLjF6EVIpNFtKLis0A5D5KT5wcg&s=10', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(72, 'Bel-Ami', 'Georges Duroy, ancien sous-officier sans fortune, comprend vite que dans le Paris mondain et journalistique, le charme et l\'habileté peuvent être plus efficaces que le mérite. Il gravit les échelons sociaux en manipulant les sentiments et les intérêts de son entourage. Maupassant dresse ainsi le portrait incisif d\'un ambitieux opportuniste et d\'une société fascinée par la réussite.', 11.5, 'https://covers.openlibrary.org/b/id/1979391-L.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(73, 'Une vie', 'Jeanne entre dans la vie adulte avec des rêves simples de bonheur conjugal et de douceur, mais la réalité du mariage, des trahisons et des désillusions la frappe durement. Le roman suit le lent effacement de ses illusions à travers les années. Maupassant y déploie une sensibilité sobre et une lucidité poignante sur le temps et la souffrance ordinaire.', 11.2, 'https://librairiegrandscaracteres.fr/wp-content/uploads/2021/09/9782378283360-scaled.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(74, 'Candide', 'Élevé dans l\'idée que tout est pour le mieux dans le meilleur des mondes possibles, Candide est brutalement jeté dans une suite de catastrophes, de violences et d\'absurdités. Ses voyages lui font traverser l\'Europe et l\'Amérique, au contact des pires malheurs comme de quelques rares havres de paix. Voltaire tourne en dérision l\'optimisme naïf et conclut sur un appel à l\'action concrète.', 9.5, 'https://m.media-amazon.com/images/I/41QH91-AvoL._SY445_SX342_ML2_.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(75, 'Les Fleurs du mal', 'Ce recueil majeur explore les tensions entre beauté et corruption, élévation spirituelle et chute, spleen et idéal. Baudelaire y transforme la modernité urbaine, le désir, l\'ennui et la révolte en matière poétique d\'une intensité nouvelle. L\'ouvrage a profondément renouvelé la poésie française par son imaginaire, sa musicalité et sa vision du monde.', 12, 'https://fr.shopping.rakuten.com/pictures/01998f6d-eff8-7300-b2ad-8bc2ef1d758b_L_NOPAD.jpg', 'Poésie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(76, 'Les Confessions', 'Dans cette autobiographie ambitieuse, Rousseau entreprend de se montrer tel qu\'il se croit, sans dissimuler ses faiblesses, ses fautes ni ses contradictions. Il mêle récit de vie, justification de soi et réflexion sur la sincérité. Ce texte a joué un rôle fondateur dans l\'histoire de l\'écriture autobiographique moderne.', 13.4, 'https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1388293814i/12649.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(77, 'Le Procès', 'Joseph K. est arrêté un matin sans savoir de quoi on l\'accuse et se retrouve pris dans une procédure opaque, tentaculaire et profondément déshumanisante. Plus il cherche à comprendre, plus le système se referme sur lui. Kafka met en scène l\'angoisse, l\'absurdité bureaucratique et le sentiment de culpabilité sans cause claire.', 11.9, 'https://m.media-amazon.com/images/I/81yyJq3tleL._SL1500_.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(78, 'Le Château', 'Appelé dans un village dominé par un château inaccessible, K. tente vainement d\'obtenir une reconnaissance officielle de sa présence et de son travail. Son parcours se heurte à des médiations infinies, à des messages ambigus et à une autorité impossible à joindre. Le roman donne une forme saisissante à l\'expérience de l\'exclusion et de l\'incompréhensible.', 11.9, 'https://m.media-amazon.com/images/I/51aNV7rsU8L._SY445_SX342_ML2_.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(79, 'La Métamorphose', 'Gregor Samsa se réveille un matin transformé en un insecte monstrueux, sans qu\'aucune explication ne soit fournie. Très vite, sa famille ne voit plus en lui qu\'un fardeau encombrant et honteux. Cette nouvelle célèbre examine avec une force singulière l\'aliénation, la honte et la fragilité des liens familiaux.', 9.9, 'https://covers.openlibrary.org/b/id/11664004-L.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(80, 'Le Joueur d\'échecs', 'À bord d\'un paquebot, un champion du monde d\'échecs suscite la curiosité des passagers jusqu\'à ce qu\'un inconnu se révèle capable de lui résister. L\'histoire de cet homme conduit au cœur d\'un isolement extrême et d\'une résistance mentale forgée dans la captivité. Zweig livre une novella tendue sur l\'intelligence, l\'obsession et la survie psychique.', 9.9, 'https://covers.openlibrary.org/b/id/11009993-L.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(81, 'Vingt-quatre heures de la vie d\'une femme', 'Une dame âgée raconte un épisode bref mais décisif de son existence, lorsqu\'une rencontre avec un jeune joueur ruiné l\'a menée à agir contre toutes les conventions. En quelques heures, elle a connu l\'élan, le vertige et le trouble d\'une passion inattendue. Zweig excelle ici dans l\'analyse du basculement intérieur.', 9.5, 'https://m.media-amazon.com/images/I/71JbPBZTAXL._SL1500_.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(82, 'Le Monde de Sophie', 'Sophie, adolescente norvégienne, commence à recevoir d\'étranges lettres qui l\'initient pas à pas à l\'histoire de la philosophie. En suivant cette enquête intellectuelle, elle découvre aussi que le cadre même de sa réalité est moins stable qu\'elle ne l\'imaginait. Le livre réussit à vulgariser des idées complexes tout en proposant une intrigue originale.', 12.9, 'https://covers.openlibrary.org/b/id/10648486-L.jpg', 'Philosophie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(83, 'L\'Homme qui prenait sa femme pour un chapeau', 'À partir de cas cliniques étonnants, Oliver Sacks raconte des patients atteints de troubles neurologiques qui modifient profondément leur rapport au corps, au langage ou à la perception. Loin d\'une simple collection d\'anomalies, chaque chapitre révèle une manière singulière d\'habiter le monde malgré la maladie. Le livre marie rigueur médicale, curiosité intellectuelle et immense humanité.', 13.5, 'https://covers.openlibrary.org/b/id/12376985-L.jpg', 'Science & Médecine', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(84, 'Sapiens', 'Harari retrace l\'histoire de l\'humanité depuis l\'apparition d\'Homo sapiens jusqu\'aux transformations contemporaines de la planète par l\'espèce humaine. Il insiste sur le rôle des mythes partagés, des révolutions agricole et scientifique, et des structures sociales imaginées collectivement. L\'ouvrage propose une synthèse vive et accessible qui relie biologie, économie, politique et culture.', 14.9, 'https://covers.openlibrary.org/b/isbn/9782226257017-L.jpg', 'Histoire', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(85, 'Homo Deus', 'Après avoir retracé le passé de l\'humanité, Harari s\'interroge sur ses futurs possibles à l\'ère des biotechnologies, de l\'intelligence artificielle et de l\'exploitation massive des données. Il examine la manière dont la quête de puissance, d\'immortalité et d\'optimisation pourrait transformer l\'idée même d\'être humain. Le livre invite à réfléchir aux enjeux éthiques de nos progrès techniques.', 15.2, 'https://covers.openlibrary.org/b/isbn/9782226393876-L.jpg', 'Essai', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL);
-INSERT INTO `book` (`id`, `title`, `description`, `price`, `image_url`, `category`, `rating`, `quantity`, `status`, `isbn`, `language`, `pages`, `published_year`, `publisher`, `review_count`, `sold_count`, `discount`, `featured`, `stock_alert`, `created_at`, `updated_at`) VALUES
-(86, 'Une brève histoire du temps', 'Stephen Hawking propose une introduction accessible aux grandes questions de la cosmologie moderne : origine de l\'univers, trous noirs, nature du temps et quête d\'une théorie unifiée. Il vulgarise des concepts complexes sans renoncer à leur portée intellectuelle. Le livre a marqué des générations de lecteurs en montrant que la physique fondamentale peut aussi devenir une aventure de pensée.', 13.9, 'https://covers.openlibrary.org/b/id/981327-L.jpg', 'Science', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(87, 'Cosmos', 'Carl Sagan entraîne le lecteur dans une vaste exploration de l\'univers, de l\'histoire des sciences et de la place fragile de l\'humanité sur sa petite planète. Son émerveillement devant la connaissance s\'accompagne d\'un plaidoyer constant pour la curiosité, l\'esprit critique et la responsabilité collective. L\'ouvrage demeure un grand classique de la vulgarisation scientifique.', 14.2, 'https://covers.openlibrary.org/b/id/10601318-L.jpg', 'Science', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(88, 'Le Gène égoïste', 'Richard Dawkins propose une lecture de l\'évolution centrée sur le gène, considéré comme unité de sélection fondamentale. À travers cette perspective, il éclaire autrement les comportements coopératifs, la compétition et la transmission du vivant. Le livre a profondément influencé la biologie évolutive et le débat public sur la théorie de l\'évolution.', 13.5, 'https://covers.openlibrary.org/b/id/985257-L.jpg', 'Science', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(89, 'Gödel, Escher, Bach', 'Douglas Hofstadter relie logique mathématique, musique et arts graphiques pour réfléchir à la conscience, à l\'auto-référence et aux systèmes symboliques. En alternant dialogues ludiques et développements théoriques, il construit une œuvre exigeante mais stimulante. Ce classique intellectuel montre comment des structures abstraites peuvent éclairer l\'esprit humain.', 16.9, 'https://covers.openlibrary.org/b/isbn/9780465026562-L.jpg', 'Science', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(90, 'Thinking, Fast and Slow', 'Daniel Kahneman synthétise des décennies de recherche sur les biais cognitifs en distinguant deux modes de pensée : l\'un rapide, intuitif et automatique, l\'autre plus lent, analytique et contrôlé. Il montre comment nos décisions quotidiennes sont souvent influencées par des raccourcis mentaux imparfaits. Le livre a largement transformé la manière de comprendre le jugement humain.', 14.9, 'https://covers.openlibrary.org/b/isbn/9780374533557-L.jpg', 'Psychologie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(91, 'Influence', 'En s\'appuyant sur de nombreuses observations et expériences, Robert Cialdini explique les grands principes de persuasion qui orientent les comportements : réciprocité, preuve sociale, autorité, rareté et autres mécanismes puissants. L\'ouvrage permet de mieux repérer les techniques d\'influence dans la vie courante comme dans le commerce. Il reste une référence majeure en psychologie sociale appliquée.', 13.9, 'https://covers.openlibrary.org/b/isbn/9780062937650-L.jpg', 'Psychologie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(92, 'Atomic Habits', 'James Clear montre comment de petites habitudes répétées, presque invisibles au départ, peuvent produire sur le long terme des transformations importantes. Il insiste sur le rôle de l\'environnement, des systèmes et des identités que l\'on se construit. Le livre séduit par son approche concrète et progressive du changement de comportement.', 13.9, 'https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg', 'Développement personnel', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(93, 'The 7 Habits of Highly Effective People', 'Stephen Covey propose un cadre de développement personnel et professionnel fondé sur des principes de responsabilité, de clarté des priorités et de coopération durable. Les sept habitudes qu\'il décrit visent à articuler efficacité individuelle et qualité des relations humaines. L\'ouvrage est devenu un classique du leadership et de l\'organisation personnelle.', 14.2, 'https://covers.openlibrary.org/b/isbn/9780743269513-L.jpg', 'Développement personnel', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(94, 'Le Pouvoir du moment présent', 'Eckhart Tolle invite à rompre avec l\'emprise du mental et à revenir à l\'expérience du présent comme lieu d\'apaisement et de transformation intérieure. Son propos, d\'inspiration spirituelle, insiste sur l\'observation de soi plutôt que sur la poursuite incessante d\'objectifs extérieurs. Le livre a rencontré un large public en quête d\'équilibre et de présence.', 12.9, 'https://covers.openlibrary.org/b/id/10501037-L.jpg', 'Bien-être', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(95, 'Méditations', 'Rédigées comme des notes personnelles, les Méditations de Marc Aurèle rassemblent les réflexions d\'un empereur stoïcien sur le devoir, la maîtrise de soi, l\'impermanence et l\'ordre du monde. Loin de toute rhétorique ostentatoire, le texte cherche à fortifier une vie intérieure droite au milieu des responsabilités publiques. Sa sobriété en fait une lecture toujours actuelle.', 11.5, 'https://static.fnac-static.com/multimedia/Images/FR/NR/a8/08/d2/13764776/1540-1/tsp20230725081211/Meditations.jpg', 'Philosophie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(96, 'Lettres à Lucilius', 'Dans ces lettres adressées à un ami plus jeune, Sénèque développe les grands thèmes du stoïcisme : rapport au temps, liberté intérieure, peur de la mort, usage des richesses et maîtrise des passions. Son ton est à la fois concret, pédagogique et exigeant. L\'ensemble constitue l\'une des meilleures introductions à une philosophie de la vie quotidienne.', 12.2, 'https://pictures.abebooks.com/isbn/9782080455314-fr.jpg', 'Philosophie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(97, 'La République', 'À travers une série de dialogues, Platon interroge la justice, l\'éducation, la cité idéale et la place de la vérité dans la vie politique. L\'ouvrage contient notamment l\'allégorie de la caverne, devenue l\'un des symboles les plus célèbres de la philosophie occidentale. Ce texte fondateur reste central pour penser le pouvoir, le savoir et la formation des citoyens.', 12.9, 'https://biblia.lesbelleslettres.com/data/cache/Product/front_cover_picture/big/7/9/1956.1646311264.jpg', 'Philosophie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(98, 'Éthique à Nicomaque', 'Aristote examine ce qu\'est une vie bonne en montrant que le bonheur ne se réduit ni au plaisir ni au succès, mais réside dans l\'activité vertueuse de l\'âme. Il développe une éthique des habitudes, de la juste mesure et de la prudence pratique. L\'ouvrage demeure essentiel pour comprendre une conception exigeante mais profondément humaine de la morale.', 12.9, 'https://m.media-amazon.com/images/I/618aAmwqVcL.jpg', 'Philosophie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(99, 'Le Prince', 'Dans ce court traité politique, Machiavel analyse les conditions réelles de la conquête et de la conservation du pouvoir. Loin d\'un idéal moral abstrait, il observe les comportements efficaces d\'un dirigeant confronté à l\'instabilité, à la peur et à la fortune. Le texte a durablement marqué la pensée politique en imposant une approche lucide des rapports de force.', 9.9, 'https://m.media-amazon.com/images/I/41OhZiQVRyL._SX342_SY445_ML2_.jpg', 'Philosophie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(100, 'Discours de la méthode', 'Descartes y raconte la naissance de sa méthode de pensée et expose les principes qui doivent guider la recherche de la vérité. En mettant l\'accent sur le doute, l\'évidence et l\'enchaînement rigoureux des idées, il ouvre une nouvelle étape de la philosophie moderne. Le texte est à la fois autobiographique, pédagogique et fondateur.', 9.9, 'https://static.fnac-static.com/multimedia/PE/Images/FR/NR/61/ff/17/1572705/1540-1/tsp20251018075708/Discours-de-la-methode.jpg', 'Philosophie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(101, 'Ainsi parlait Zarathoustra', 'Sous la forme d\'un poème philosophique, Nietzsche fait parler Zarathoustra, figure prophétique qui annonce la mort de Dieu, critique les valeurs établies et appelle à un dépassement créateur de l\'humain. Le texte mêle images puissantes, fulgurances et ambiguïtés volontaires. Il demeure l\'une des œuvres les plus célèbres et les plus discutées de son auteur.', 12.5, 'https://m.media-amazon.com/images/I/81R8QHEwzXL.jpg', 'Philosophie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(102, 'Le Deuxième Sexe', 'Simone de Beauvoir analyse la manière dont les sociétés ont construit la femme comme \"Autre\" et montre que les inégalités de genre ne relèvent ni d\'un destin biologique ni d\'une nécessité naturelle. L\'ouvrage articule histoire, philosophie, littérature et témoignages vécus. Il constitue un texte décisif du féminisme moderne.', 15.5, 'https://static.fnac-static.com/multimedia/PE/Images/FR/NR/75/87/01/100213/1507-1/tsp20260305073908/Le-Deuxieme-Sexe.jpg', 'Philosophie', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(103, 'Une chambre à soi', 'À partir d\'une conférence devenue essai, Virginia Woolf montre que les femmes ont longtemps été privées des conditions matérielles et symboliques nécessaires à la création littéraire. Avec une grande liberté de ton, elle lie indépendance économique, espace personnel et possibilité d\'écrire. Le texte reste central pour penser les rapports entre genre, culture et création.', 10.9, 'https://covers.openlibrary.org/b/id/2144401-L.jpg', 'Essai', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(104, 'Mrs Dalloway', 'En une seule journée à Londres, Clarissa Dalloway prépare une réception tout en traversant souvenirs, regrets et impressions fugitives. Parallèlement, le destin de Septimus, ancien soldat traumatisé, introduit une autre face de la vie intérieure. Woolf y maîtrise l\'art du flux de conscience et fait d\'une journée ordinaire un espace de profondeur temporelle.', 11.9, 'https://covers.openlibrary.org/b/isbn/9780156628709-L.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(105, 'To the Lighthouse', 'Autour d\'une maison familiale au bord de la mer, les membres de la famille Ramsay et leurs proches laissent apparaître désirs, frustrations et perceptions fugitives. Le passage du temps, notamment au milieu du roman, transforme radicalement ce qui semblait stable. Woolf explore avec une grande finesse la conscience, la mémoire et les liens invisibles entre les êtres.', 11.9, 'https://covers.openlibrary.org/b/isbn/9780156907392-L.jpg', 'Classique', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(106, 'Cent ans de solitude', 'À Macondo, la famille Buendía traverse plusieurs générations marquées par l\'amour, la guerre, les répétitions du destin et des événements prodigieux accueillis comme ordinaires. Le temps y semble circulaire, la mémoire instable et le réel constamment ouvert au merveilleux. García Márquez crée une fresque inoubliable où l\'histoire d\'un continent se confond avec celle d\'une lignée.', 14.9, 'https://m.media-amazon.com/images/I/91dQd82Wx3L._AC_UF1000,1000_QL80_.jpg', 'Littérature étrangère', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(107, 'Chronique d\'une mort annoncée', 'Tout un village sait qu\'un homme va être tué, et pourtant personne ne parvient réellement à empêcher le drame. En remontant les témoignages et les circonstances, le narrateur cherche à comprendre comment une mort annoncée a pu devenir inévitable. Le roman bref mêle fatalité, enquête et critique sociale.', 10.9, 'https://mapassionleslivres.wordpress.com/wp-content/uploads/2015/04/2011-garciamarquez-chronique.jpg', 'Littérature étrangère', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(108, 'L\'Amour aux temps du choléra', 'Florentino Ariza aime Fermina Daza pendant plus d\'un demi-siècle, à travers les séparations, les mariages et les métamorphoses de la vie. Lorsque le temps semble avoir tout éloigné, le sentiment ancien resurgit sous une autre forme. Ce roman célèbre la persistance du désir et la manière dont l\'amour se transforme avec l\'âge.', 13.9, 'https://pictures.abebooks.com/isbn/9782246844402-fr.jpg', 'Littérature étrangère', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(109, 'Le Nom de la rose', 'Au XIVe siècle, le franciscain Guillaume de Baskerville arrive dans une abbaye bénédictine où plusieurs morts mystérieuses se succèdent. Avec son jeune novice Adso, il mène une enquête qui croise théologie, hérésie, pouvoir et passion du savoir. Eco construit un roman érudit et captivant où la bibliothèque devient le cœur d\'un labyrinthe intellectuel.', 13.9, 'https://m.media-amazon.com/images/I/81W6mh0rv1L.jpg', 'Roman policier', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(110, 'Si c\'est un homme', 'Primo Levi raconte sa déportation à Auschwitz avec une précision sobre qui refuse tout effet inutile. Il décrit l\'organisation du camp, la destruction méthodique de la dignité et les formes ténues de solidarité qui permettent parfois de survivre. Ce témoignage essentiel demeure l\'un des textes les plus lucides sur la déshumanisation concentrationnaire.', 11.9, 'https://covers.openlibrary.org/b/id/979471-L.jpg', 'Témoignage', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(111, 'Journal d\'Anne Frank', 'Réfugiée avec sa famille dans l\'Annexe secrète à Amsterdam, Anne Frank tient un journal où elle raconte la peur, l\'ennui, les tensions quotidiennes et ses propres transformations intérieures. Son écriture vive et intelligente donne un visage profondément humain à la persécution. Ce texte bouleverse par l\'écart entre l\'élan de vie qu\'il contient et le destin qui l\'attend.', 10.9, 'https://m.media-amazon.com/images/I/41auYJvoohL._SY445_SX342_ML2_.jpg', 'Témoignage', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(112, 'Persepolis', 'Dans ce récit autobiographique en noir et blanc, Marjane Satrapi raconte son enfance en Iran au moment de la révolution islamique puis son adolescence en Europe. Le regard de la jeune narratrice mêle gravité politique, humour et lucidité sur les déchirures de l\'exil. L\'œuvre est devenue un classique du roman graphique contemporain.', 13.5, 'https://covers.openlibrary.org/b/id/15167500-L.jpg', 'BD & Romans graphiques', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(113, 'Maus', 'Art Spiegelman raconte l\'histoire de son père, survivant de la Shoah, en représentant les Juifs sous forme de souris et les nazis sous forme de chats. Ce choix graphique n\'allège en rien la violence du témoignage, mais lui donne une puissance symbolique singulière. Maus réfléchit aussi à la transmission familiale et à la difficulté de raconter l\'horreur.', 14.5, 'https://covers.openlibrary.org/b/id/14383494-L.jpg', 'BD & Romans graphiques', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(114, 'Watchmen', 'Dans une Amérique alternative où les super-héros ont modifié l\'histoire politique du XXe siècle, l\'assassinat d\'un ancien justicier relance de vieilles tensions. L\'enquête révèle un monde moralement ambigu où la frontière entre salut collectif et catastrophe devient floue. Watchmen déconstruit brillamment le mythe héroïque et reste un jalon majeur de la bande dessinée moderne.', 15.9, 'https://covers.openlibrary.org/b/isbn/9781779501127-L.jpg', 'Comics', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(115, 'Batman: The Killing Joke', 'Le Joker cherche à prouver qu\'une seule mauvaise journée suffit à faire basculer n\'importe qui dans la folie. Son affrontement avec Batman prend ainsi la forme d\'une expérience cruelle sur la souffrance, l\'identité et la fragilité psychique. Cette histoire courte a profondément marqué l\'imaginaire du personnage.', 11.9, 'https://covers.openlibrary.org/b/id/14485564-L.jpg', 'Comics', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL),
-(116, 'The Sandman: Preludes & Nocturnes', 'Morpheus, incarnation du Rêve, est capturé pendant des décennies avant de retrouver sa liberté et de chercher à reconstruire son royaume. Entre mythologie, fantastique et méditation sur le récit lui-même, cette série ouvre un univers d\'une grande richesse imaginaire. Neil Gaiman y donne une profondeur rare à la bande dessinée fantastique.', 14.2, 'https://m.media-amazon.com/images/I/616DPaonu8L._SY445_SX342_FMwebp_.jpg', 'Comics', 0, 10, 'ACTIVE', NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 5, NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Structure de la table `book_author`
---
-
+LOCK TABLES `book` WRITE;
+/*!40000 ALTER TABLE `book` DISABLE KEYS */;
+INSERT INTO `book` VALUES (1,'Le Seigneur des Anneaux : La Communauté de l\'Anneau','Dans la paisible Comté, Frodon Sacquet hérite d\'un anneau dont il découvre bientôt la nature terrifiante : il s\'agit de l\'Anneau Unique, forgé par Sauron pour soumettre la Terre du Milieu. Entouré d\'alliés venus de peuples différents, il entreprend un voyage périlleux vers l\'est afin d\'empêcher le retour du mal. Ce premier tome mêle aventure, amitié, courage et naissance d\'une mission qui dépasse de loin un simple hobbit.',18.9,'https://covers.openlibrary.org/b/isbn/9782070612888-L.jpg','Fantasy',4,1,'ACTIVE',NULL,NULL,NULL,NULL,NULL,2,1,10,_binary '',5,NULL,'2026-04-05 21:56:41.097350'),(2,'Le Seigneur des Anneaux : Les Deux Tours','Après l\'éclatement de la Communauté, les compagnons suivent des chemins séparés tandis que la guerre s\'étend à toute la Terre du Milieu. Aragorn, Legolas et Gimli poursuivent les forces ennemies, alors que Frodon et Sam avancent vers le Mordor avec l\'aide ambiguë de Gollum. Le roman développe la montée du conflit, le poids du désespoir et la résistance obstinée de ceux qui refusent de céder aux ténèbres.',18.9,'https://covers.openlibrary.org/b/isbn/9782070612895-L.jpg','Fantasy',5,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,1,0,NULL,NULL,5,NULL,NULL),(3,'Le Seigneur des Anneaux : Le Retour du Roi','Alors que les armées de Sauron marchent sur les derniers royaumes libres, les peuples de la Terre du Milieu se rassemblent pour un combat décisif. Pendant que Gandalf et Aragorn défendent l\'espoir des hommes, Frodon et Sam poursuivent leur traversée du Mordor jusqu\'au cœur du danger. Ce dernier tome donne toute son ampleur épique à la trilogie et conclut avec émotion une méditation sur le sacrifice, la fidélité et la fin des anciens mondes.',18.9,'https://covers.openlibrary.org/b/isbn/9782070612901-L.jpg','Fantasy',5,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,1,0,NULL,NULL,5,NULL,NULL),(4,'Le Hobbit','Bilbo Baggins, hobbit amateur de tranquillité, voit son quotidien bouleversé lorsqu\'un magicien et une troupe de nains l\'entraînent dans une expédition contre le dragon Smaug. Le voyage lui fait découvrir des créatures merveilleuses et terrifiantes, mais surtout des ressources qu\'il ignorait posséder. À la fois conte d\'aventure et prélude à l\'univers du Seigneur des Anneaux, le roman allie humour, émerveillement et bravoure.',14.5,'https://m.media-amazon.com/images/I/71wNSrWLp-S._AC_UF1000,1000_QL80_.jpg','Fantasy',4,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,1,0,NULL,NULL,5,NULL,NULL),(5,'Harry Potter à l\'école des sorciers','Le jour de ses onze ans, Harry Potter apprend qu\'il est un sorcier et qu\'il a été admis à Poudlard, une école de magie cachée au monde ordinaire. En découvrant l\'amitié, les rivalités et les secrets du château, il comprend peu à peu que son passé est lié à une menace toujours active. Ce premier tome pose un univers foisonnant où l\'enfance, le mystère et le merveilleux avancent main dans la main.',12.9,'https://covers.openlibrary.org/b/isbn/9782070541270-L.jpg','Fantasy',5,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,1,0,NULL,NULL,5,NULL,NULL),(6,'Harry Potter et la Chambre des secrets','De retour à Poudlard, Harry fait face à une série d\'événements inquiétants : des élèves sont attaqués, une ancienne légende resurgit et une voix mystérieuse semble l\'appeler dans les couloirs du château. Avec Ron et Hermione, il remonte la piste d\'un secret enfoui au cœur de l\'école. Le roman approfondit l\'univers magique tout en jouant avec le suspense et les peurs de l\'adolescence.',13.2,'https://covers.openlibrary.org/b/id/15158614-L.jpg','Fantasy',4,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,1,0,NULL,NULL,5,NULL,NULL),(7,'Harry Potter et le Prisonnier d\'Azkaban','Harry apprend qu\'un dangereux prisonnier, Sirius Black, s\'est évadé d\'Azkaban et semblerait vouloir l\'atteindre. Tandis que Poudlard se couvre de Détraqueurs, il découvre une vérité plus complexe sur ses parents, ses ennemis et ceux qu\'il croyait connaître. Ce troisième volume gagne en profondeur psychologique et marque un tournant vers un univers plus sombre et plus nuancé.',13.5,'https://covers.openlibrary.org/b/isbn/9782070541300-L.jpg','Fantasy',5,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,1,0,NULL,NULL,5,NULL,NULL),(8,'Harry Potter et la Coupe de feu','Contre toute attente, Harry est sélectionné pour participer au Tournoi des Trois Sorciers, une compétition périlleuse entre écoles de magie. Les épreuves spectaculaires cachent pourtant un complot bien plus grave qui le place au centre d\'un retour redouté. Ce tome élargit l\'univers de la saga, multiplie les tensions et conduit à l\'un de ses basculements majeurs.',14.2,'https://covers.openlibrary.org/b/id/15157959-L.jpg','Fantasy',4,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,1,0,NULL,NULL,5,NULL,NULL),(9,'Harry Potter et l\'Ordre du Phénix','Alors que le ministère refuse d\'admettre le retour de Voldemort, Harry se heurte à l\'incrédulité, à la surveillance et à une solitude grandissante. À Poudlard, il fonde avec ses amis un groupe clandestin pour apprendre à se défendre. Ce roman explore la colère, la manipulation politique et le passage douloureux à l\'âge adulte dans un monde de plus en plus menacé.',14.5,'https://ia600404.us.archive.org/view_archive.php?archive=/33/items/l_covers_0010/l_covers_0010_70.zip&file=0010705859-L.jpg','Fantasy',3,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,1,0,NULL,NULL,5,NULL,NULL),(10,'Harry Potter et le Prince de sang-mêlé','Sous la direction de Dumbledore, Harry commence à comprendre l\'histoire intime de Voldemort et les failles qu\'il faudra exploiter pour espérer le vaincre. Pendant ce temps, une atmosphère d\'inquiétude s\'installe à Poudlard, où les alliances se fragilisent et les drames se préparent. Ce sixième tome associe enquête, révélation et montée inexorable vers la guerre.',14.5,'https://ia801705.us.archive.org/view_archive.php?archive=/29/items/l_covers_0008/l_covers_0008_05.zip&file=0008055586-L.jpg','Fantasy',4,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,1,0,NULL,NULL,5,NULL,NULL),(11,'Harry Potter et les Reliques de la Mort','Privés de l\'aide protectrice de Poudlard, Harry, Ron et Hermione partent à la recherche des horcruxes qui maintiennent Voldemort en vie. Leur quête les confronte à la peur, à la perte et à des choix qui les obligent à grandir brutalement. La saga s\'achève dans un affrontement total où se rejoignent les questions de mémoire, de loyauté et de sacrifice.',14.9,'https://covers.openlibrary.org/b/isbn/9782070541348-L.jpg','Fantasy',5,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,1,0,NULL,NULL,5,NULL,NULL),(12,'Dune','Sur Arrakis, planète désertique où se trouve l\'Épice, substance la plus précieuse de l\'univers, le jeune Paul Atréides voit sa famille entraînée dans une lutte politique d\'une violence extrême. Jeté au milieu du désert, il découvre un peuple, une prophétie et un destin qui pourraient renverser l\'ordre galactique. Le roman associe fresque politique, réflexion écologique et dimension spirituelle dans une œuvre majeure de la science-fiction.',16.5,'https://covers.openlibrary.org/b/isbn/9782266320481-L.jpg','Science-Fiction',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(13,'Le Messie de Dune','Devenu empereur, Paul Atréides doit affronter les conséquences de sa propre victoire et le fanatisme qui s\'est développé autour de sa personne. Prisonnier d\'une vision de l\'avenir qu\'il comprend trop bien, il tente d\'éviter le pire tout en voyant se refermer sur lui les pièges du pouvoir. Ce second tome est plus sombre, plus politique et plus méditatif que le précédent.',15.9,'https://covers.openlibrary.org/b/isbn/9782266320498-L.jpg','Science-Fiction',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(14,'Les Enfants de Dune','L\'empire construit par Paul vacille, tandis que ses enfants jumeaux portent en eux un héritage aussi redoutable qu\'exceptionnel. Menacés par les intrigues religieuses et dynastiques, ils doivent comprendre ce qu\'exige réellement l\'avenir d\'Arrakis. Le roman poursuit la réflexion sur la prescience, la responsabilité et les dérives du pouvoir absolu.',15.9,'https://ia800100.us.archive.org/view_archive.php?archive=/5/items/l_covers_0012/l_covers_0012_90.zip&file=0012907001-L.jpg','Science-Fiction',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(15,'Fondation','Hari Seldon, mathématicien génial, prévoit grâce à la psychohistoire l\'effondrement de l\'Empire galactique et des siècles de barbarie. Pour réduire cette longue nuit, il crée Fondation, un foyer de savoir destiné à préserver les connaissances humaines et à guider discrètement l\'avenir. À travers plusieurs crises successives, le roman montre comment l\'intelligence stratégique peut parfois l\'emporter sur la force brute.',14.9,'https://covers.openlibrary.org/b/isbn/9782070360536-L.jpg','Science-Fiction',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(16,'Fondation et Empire','La jeune Fondation doit désormais affronter à la fois les derniers sursauts de l\'Empire et l\'apparition d\'un adversaire imprévisible qui échappe aux calculs de Seldon. Ses certitudes vacillent à mesure qu\'un mutant charismatique bouleverse les équilibres établis. Ce deuxième volume introduit une tension nouvelle en montrant les limites d\'une histoire trop parfaitement anticipée.',14.9,'https://ia800100.us.archive.org/view_archive.php?archive=/5/items/l_covers_0012/l_covers_0012_70.zip&file=0012705571-L.jpg','Science-Fiction',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(17,'Seconde Fondation','La mystérieuse Seconde Fondation, gardienne secrète du plan de Seldon, devient l\'objet de toutes les peurs et de toutes les recherches. Tandis que certains veulent la détruire, d\'autres cherchent à comprendre son influence invisible sur le destin galactique. Asimov y mêle intrigue intellectuelle, manipulation psychique et réflexion sur le contrôle de l\'histoire.',14.9,'https://covers.openlibrary.org/b/isbn/9782070360550-L.jpg','Science-Fiction',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(18,'Neuromancien','Case, hacker déchu, se voit offrir une dernière chance par un employeur aussi puissant qu\'opaque : participer à une opération impossible au cœur du cyberespace. Accompagné d\'alliés troubles, il entre dans un monde où les frontières entre humain, machine et intelligence artificielle deviennent de plus en plus incertaines. Roman fondateur du cyberpunk, l\'ouvrage impose une esthétique urbaine, nerveuse et visionnaire.',13.9,'https://covers.openlibrary.org/b/id/12993489-L.jpg','Science-Fiction',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(19,'Fahrenheit 451','Dans une société où les livres sont interdits, Guy Montag exerce le métier de pompier chargé non pas d\'éteindre les incendies, mais de brûler les ouvrages et les maisons qui les abritent. Une rencontre inattendue fissure pourtant ses certitudes et l\'amène à questionner le vide culturel dans lequel il vit. Le roman défend la lecture, la mémoire et l\'esprit critique contre l\'uniformisation du monde.',11.9,'https://covers.openlibrary.org/b/id/15141082-L.jpg','Dystopie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(20,'1984','Winston Smith vit sous l\'autorité totale du Parti, qui surveille les corps, les mots et jusqu\'aux pensées. Lorsqu\'il tente de préserver une part de vérité intime en aimant Julia et en doutant du régime, il s\'engage dans une rébellion vouée à être écrasée. Ce classique glaçant montre comment une dictature peut déformer la réalité elle-même pour mieux abolir la liberté.',10.5,'https://covers.openlibrary.org/b/isbn/9782070368228-L.jpg','Dystopie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(21,'La Ferme des animaux','Des animaux chassent le fermier qui les exploitaient et rêvent de bâtir une société plus juste. Mais peu à peu, les cochons accaparent le pouvoir, réécrivent les règles et reproduisent les mêmes mécanismes d\'oppression qu\'ils prétendaient combattre. Sous la forme d\'une fable simple et mordante, Orwell dénonce la confiscation des idéaux révolutionnaires.',9.9,'https://covers.openlibrary.org/b/id/13147152-L.jpg','Dystopie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(22,'Le Meilleur des mondes','Dans une société stable en apparence, les êtres humains sont produits en laboratoire, conditionnés dès l\'enfance et maintenus dociles par le plaisir et la consommation. L\'arrivée d\'un homme élevé hors du système révèle la violence cachée sous cette harmonie artificielle. Huxley y propose une critique redoutablement moderne du bonheur imposé et de la standardisation des vies.',11.9,'https://covers.openlibrary.org/b/isbn/9782266283038-L.jpg','Dystopie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(23,'La Route','Dans un monde dévasté où presque toute vie a disparu, un père et son fils avancent sur une route grise à la recherche d\'un sud hypothétiquement plus clément. Leur survie dépend autant de la prudence que de la capacité à préserver une forme fragile d\'humanité. Le roman, dépouillé et bouleversant, explore l\'amour filial au cœur de l\'effondrement.',12.9,'https://covers.openlibrary.org/b/id/12705571-L.jpg','Post-Apocalyptique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(24,'Le Nom du vent','Retiré dans une auberge sous une fausse identité, Kvothe accepte de raconter sa vie à un chroniqueur venu recueillir son histoire. Il y retrace son enfance parmi les artistes, ses pertes, sa formation à l\'Université et la naissance de sa légende. Ce premier tome séduit par son écriture fluide, sa construction en récit enchâssé et son équilibre entre magie, musique et quête de savoir.',15.5,'https://covers.openlibrary.org/b/id/8118037-L.jpg','Fantasy',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(25,'La Peur du sage','Kvothe poursuit son apprentissage tout en se heurtant à de nouveaux dangers, qu\'ils soient politiques, amoureux ou surnaturels. Son voyage le mène bien au-delà de l\'Université, vers des contrées où sa légende continue de se construire et de se compliquer. Ce second volume amplifie le souffle du récit et approfondit la personnalité d\'un héros aussi brillant qu\'imparfait.',16.5,'https://covers.openlibrary.org/b/isbn/9782843449529-L.jpg','Fantasy',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(26,'L\'Assassin royal : L\'Apprenti assassin','Bâtard royal élevé loin des honneurs, Fitz est introduit à la cour où il reçoit une éducation secrète d\'assassin au service du trône. Son existence reste pourtant marquée par la solitude, les intrigues et des dons qui le rendent à la fois précieux et dangereux. Robin Hobb compose un roman d\'apprentissage fin et sensible, centré sur les loyautés blessées et la construction de soi.',13.9,'https://covers.openlibrary.org/b/id/5548302-L.jpg','Fantasy',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(27,'Le Trône de fer','Dans le royaume de Westeros, plusieurs grandes familles s\'affrontent pour le pouvoir tandis qu\'une menace plus ancienne et plus terrible s\'éveille au-delà du Mur. En multipliant les points de vue, Martin expose un univers politique complexe où l\'honneur ne suffit pas à survivre. Le roman associe réalisme brutal, ampleur historique et tensions constantes.',15.5,'https://covers.openlibrary.org/b/id/9134692-L.jpg','Fantasy',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(28,'Les Misérables','Après dix-neuf années de bagne, Jean Valjean tente de reconstruire sa vie grâce à un geste de bonté qui bouleverse son destin. Mais son passé et l\'implacable Javert ne cessent de le rattraper, tandis que la misère sociale frappe autour de lui Fantine, Cosette, Marius et tant d\'autres. Hugo mêle récit romanesque, souffle historique et immense plaidoyer pour la justice et la dignité humaines.',15.9,'https://m.media-amazon.com/images/I/613R0HknEEL._SY425_.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(29,'Notre-Dame de Paris','Dans le Paris du XVe siècle, la destinée d\'Esmeralda croise celle de Quasimodo, de Frollo et de Phœbus autour de la cathédrale qui domine la ville et les consciences. Passion, jalousie, désir de possession et exclusion sociale conduisent peu à peu au drame. Le roman célèbre aussi la mémoire de la ville et fait de l\'architecture un véritable personnage.',13.9,'https://m.media-amazon.com/images/I/81mypeo8dKL.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(30,'Madame Bovary','Emma Bovary, jeune femme mariée à un médecin de province, rêve d\'une existence plus brillante, plus intense et plus romanesque que celle qu\'elle mène. Cherchant dans l\'amour et la consommation l\'échappatoire à son ennui, elle s\'enferme dans des illusions qui la conduisent à la ruine. Flaubert dresse un portrait acéré du désir d\'ailleurs, de la frustration sociale et de l\'écart entre rêve et réalité.',11.4,'https://covers.openlibrary.org/b/id/12986758-L.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(31,'L\'Éducation sentimentale','Frédéric Moreau traverse les années de jeunesse avec des ambitions floues, des élans amoureux incertains et une incapacité chronique à décider de sa vie. Sur fond de Révolution de 1848, il poursuit un idéal sentimental qui se dérobe sans cesse. Le roman peint avec lucidité l\'apprentissage manqué d\'une génération et l\'usure des illusions.',12.2,'https://covers.openlibrary.org/b/isbn/9782070360260-L.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(32,'Le Rouge et le Noir','Julien Sorel, fils de charpentier brillant et ambitieux, cherche à s\'élever dans la société française de la Restauration par les études, la séduction et la dissimulation. Son intelligence et son orgueil le mènent dans des milieux où il n\'est jamais vraiment à sa place. Le roman montre la violence des hiérarchies sociales et la fragilité d\'une ambition qui se retourne contre elle-même.',12.65,'https://www.recyclivre.com/media/cache/sylius_shop_product_original/bc/74/ffe49e1d0b353c3c718692873a9e.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(33,'La Chartreuse de Parme','Fabrice del Dongo, jeune noble italien romanesque et impulsif, traverse les guerres napoléoniennes puis les intrigues politiques et amoureuses des cours italiennes. Entre l\'élan héroïque et l\'aveuglement amoureux, il découvre un monde où les passions privées se mêlent aux jeux du pouvoir. Stendhal y déploie une écriture vive au service d\'un grand roman de formation.',12.5,'https://covers.openlibrary.org/b/id/7040147-L.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(34,'Germinal','Étienne Lantier arrive dans un bassin minier du Nord et découvre la dureté extrême du travail, la pauvreté des familles ouvrières et la violence des rapports de classe. À mesure que grandit la révolte, il devient l\'un des visages de la grève qui secoue la région. Zola compose un roman puissant sur l\'exploitation, la solidarité et les germes d\'un soulèvement collectif.',13.9,'https://m.media-amazon.com/images/I/51lLZ2YrY5L._SY445_SX342_ML2_.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(35,'Thérèse Raquin','Dans un milieu étouffant, Thérèse et Laurent succombent à une passion brutale qui les pousse au crime pour se débarrasser du mari encombrant de Thérèse. Mais l\'acte ne les libère pas : la culpabilité, la peur et la décomposition morale envahissent peu à peu leur existence. Ce roman intense dissèque les pulsions, les nerfs et les conséquences psychiques du désir.',12.8,'https://covers.openlibrary.org/b/isbn/9782070409846-L.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(36,'L\'Assommoir','Gervaise espère mener à Paris une vie stable et honnête, mais la misère, l\'alcoolisme et les déterminismes sociaux viennent peu à peu défaire ses efforts. À travers son destin, Zola observe l\'écrasement progressif d\'une femme par son environnement. Le roman mêle précision sociale, langue populaire et regard tragique sur l\'usure du quotidien.',13.5,'https://covers.openlibrary.org/b/id/9251016-L.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(37,'Crime et Châtiment','Raskolnikov, étudiant pauvre de Saint-Pétersbourg, commet un meurtre qu\'il tente de justifier par une théorie sur les êtres d\'exception. Mais au lieu de l\'émanciper, son crime l\'enferme dans la fièvre, la culpabilité et un combat intérieur incessant. Dostoïevski construit un roman d\'une rare intensité psychologique sur la conscience, la faute et la possibilité du salut.',16.4,'https://covers.openlibrary.org/b/isbn/9782070409044-L.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(38,'Les Frères Karamazov','Autour du père Karamazov, homme vulgaire et détesté, ses fils incarnent différentes manières d\'aimer, de douter et de chercher la vérité. Lorsqu\'un drame familial éclate, la question de la responsabilité devient inséparable de celle de la foi, de la liberté et du mal. Monument romanesque, l\'ouvrage conjugue enquête, débat philosophique et profondeur humaine.',16.9,'https://static.fnac-static.com/multimedia/PE/Images/FR/NR/33/53/02/152371/1507-1/tsp20241004080219/Les-Freres-Karamazov.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(39,'L\'Idiot','Le prince Mychkine revient en Russie après un long séjour en sanatorium et se trouve plongé dans une société mondaine où sa bonté radicale déroute autant qu\'elle fascine. Pris entre plusieurs figures féminines et de multiples jeux d\'intérêts, il révèle malgré lui la violence morale de son entourage. Le roman interroge ce que devient l\'innocence au contact d\'un monde corrompu.',15.6,'https://covers.openlibrary.org/b/id/10318965-L.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(40,'Anna Karénine','Mariée et mère, Anna Karénine s\'éprend du comte Vronski et s\'engage dans une passion qui la met en rupture avec les conventions de son milieu. En parallèle, le parcours de Lévine propose une autre recherche de sens, tournée vers le travail, l\'amour et la vie morale. Tolstoï y peint une vaste fresque sociale où le drame intime dialogue avec les questions essentielles de l\'existence.',15.9,'https://covers.openlibrary.org/b/id/5923377-L.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(41,'Guerre et Paix','À travers plusieurs familles de l\'aristocratie russe, le roman suit les bouleversements provoqués par les guerres napoléoniennes et par l\'écoulement du temps. Les destins individuels se croisent entre passions, deuils, illusions héroïques et quête spirituelle. Tolstoï parvient à unir l\'ampleur historique et la vérité des émotions dans une œuvre d\'une richesse exceptionnelle.',18.5,'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSCQE8R9jVKYwvg85bmxEDmcQ7x4gfMZwkEcK7WwmjRRFszLfGk','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(42,'Le Comte de Monte-Cristo','Trahi, emprisonné puis miraculeusement évadé, Edmond Dantès revient sous une nouvelle identité pour orchestrer une vengeance patiente contre ceux qui ont détruit sa vie. Sa richesse et son intelligence lui permettent de manipuler un monde où chacun cache ses fautes et ses ambitions. Dumas livre un grand roman d\'aventure où le désir de justice côtoie l\'obsession et le pardon.',14.9,'https://cdn.cultura.com/cdn-cgi/image/width=380/media/pim/TITELIVE/27_9782322541652_1_75.jpg','Aventure',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(43,'Les Trois Mousquetaires','Le jeune d\'Artagnan monte à Paris avec le rêve de devenir mousquetaire et se lie très vite à Athos, Porthos et Aramis. Ensemble, ils affrontent complots politiques, rivalités de cour et missions dangereuses au service du roi et de la reine. Le roman allie panache, amitié, humour et sens du rythme dans une aventure toujours entraînante.',13.9,'https://covers.openlibrary.org/b/isbn/9782070409303-L.jpg','Aventure',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(44,'Vingt ans après','Vingt ans après leurs exploits passés, les anciens compagnons se retrouvent dans une France et une Angleterre bouleversées par les troubles politiques. L\'amitié qui les unit doit composer avec le temps, les engagements divergents et la nostalgie des combats d\'autrefois. Ce second volet fait mûrir les personnages sans perdre le goût de l\'action.',13.9,'https://covers.openlibrary.org/b/id/14557298-L.jpg','Aventure',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(45,'Le Vicomte de Bragelonne','Dernier grand cycle des mousquetaires, ce roman suit de nouveaux enjeux de cour et de loyauté, tandis que les héros vieillissent et affrontent la fin d\'une époque. Intrigues sentimentales, secrets d\'État et devoirs contradictoires s\'y entrelacent. Dumas y donne une dimension plus mélancolique à son univers de cape et d\'épée.',16.5,'https://m.media-amazon.com/images/I/71ttkFakKrL._AC_UF1000,1000_QL80_.jpg','Aventure',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(46,'Don Quichotte','Ayant trop lu de romans de chevalerie, Alonso Quijano décide de devenir chevalier errant sous le nom de Don Quichotte et part sur les routes avec le pragmatique Sancho Panza. Il transforme les auberges en châteaux et les moulins en géants, avec une sincérité qui suscite tour à tour rire, tendresse et réflexion. Cervantès invente ainsi un roman à la fois comique, moderne et profondément humain.',13.9,'https://static.fnac-static.com/multimedia/PE/Images/FR/NR/15/ee/28/2682389/1540-1/tsp20240109084623/Don-quichotte.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(47,'Moby Dick','Le narrateur Ishmaël embarque à bord du Pequod sous le commandement du capitaine Achab, obsédé par la baleine blanche qui l\'a mutilé. Ce qui commence comme une campagne de chasse se change vite en poursuite métaphysique où la mer reflète l\'abîme intérieur des hommes. Roman foisonnant, l\'ouvrage mêle aventure maritime, méditation symbolique et critique de l\'obsession.',14.9,'https://m.media-amazon.com/images/I/91xNmlf86yL._AC_UF1000,1000_QL80_.jpg','Aventure',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(48,'Jane Eyre','Orpheline maltraitée dans son enfance, Jane Eyre conquiert peu à peu son indépendance en devenant gouvernante chez le mystérieux Mr Rochester. L\'amour qui naît entre eux se heurte pourtant à un secret qui menace tout avenir commun. Ce roman conjugue émotion, affirmation de soi et critique des contraintes sociales imposées aux femmes.',12.9,'https://static.wikia.nocookie.net/classical-literature/images/8/87/61c1BiBgvdL.jpg/revision/latest?cb=20190526154645','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(49,'Orgueil et Préjugés','Dans l\'Angleterre provinciale, Elizabeth Bennet observe avec ironie les enjeux du mariage, du rang social et des convenances. Sa rencontre avec le fier Mr Darcy donne naissance à une relation faite de malentendus, de jugements hâtifs et de lente reconnaissance mutuelle. Austen signe un roman vif et subtil sur l\'amour, l\'orgueil et les préjugés de classe.',12.9,'https://images2.medimops.eu/product/84d3bf/M02352871689-220px.webp','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(50,'Raison et Sentiments','Après la perte de leur sécurité financière, les sœurs Dashwood affrontent les déceptions amoureuses et les contraintes d\'une société qui limite fortement leurs choix. Elinor incarne la retenue, Marianne l\'élan passionné, mais toutes deux doivent apprendre à relire leurs espérances. Le roman met en scène avec finesse les rapports entre émotion, prudence et maturité.',12.5,'https://editions-hauteville.fr/media/cache/page_book/86/9791093835686.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(51,'Emma','Convaincue de bien connaître les cœurs humains, Emma Woodhouse s\'improvise entremetteuse et provoque autour d\'elle une série de malentendus sentimentaux. Son assurance l\'empêche longtemps de voir ses propres erreurs et ses véritables sentiments. Austen compose une comédie sociale brillante sur l\'aveuglement de soi et l\'apprentissage de l\'humilité.',12.5,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSl5RC-iDOqUteqBLxMAVjMZKEZwIEWojFHHl0a6yfuj2U943zjA2fbZzN_3bAHHc7oXQCl1ykDX6-RlfQAcDAoBNxpPQB_alPG6-T7SKA&s=10','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(52,'Les Hauts de Hurlevent','Sur les landes du Yorkshire, la passion violente entre Catherine Earnshaw et Heathcliff traverse les années, les classes sociales et même la mort, en laissant derrière elle un sillage de souffrance. L\'amour s\'y mêle à la vengeance, à l\'orgueil et à la destruction. Le roman fascine par son atmosphère sauvage et par l\'intensité presque mythique de ses personnages.',12.9,'https://pictures.abebooks.com/isbn/9782404081328-fr.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(53,'Dracula','À travers journaux, lettres et témoignages, plusieurs personnages reconstituent l\'arrivée en Angleterre du comte Dracula et la menace qu\'il fait peser sur eux. Face à cette figure du mal, ils organisent une lutte où la science moderne rencontre les anciennes croyances. Le roman impose durablement la figure du vampire dans l\'imaginaire occidental.',11.9,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQySaSHK_wV7fKcOpm6M92Il0ze_aDDAwZZgLx1NDt5X4EW-_tuVi37srPV6d_3S9oXrloVpdH451D7rm68gZC9jbO46dxpjU8ICMNffSc8&s=10','Fantastique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(54,'Frankenstein','Victor Frankenstein, jeune savant animé par un désir prométhéen, parvient à donner vie à une créature qu\'il rejette aussitôt avec horreur. Ce refus initial déclenche une chaîne de solitude, de vengeance et de destruction. Mary Shelley interroge ainsi la responsabilité du créateur, les limites de la science et le besoin fondamental de reconnaissance.',11.5,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSf5PeY7j9RliILLtTcB1uVrOSNyHvUfqQXK8oVy08AUHRv-S0vwSwyMuKbwX0wozTjsZ80oCS38bZjfqQiY3nkbGKLPWSenxMzdjccMA&s=10','Fantastique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(55,'L\'Étrange Cas du Dr Jekyll et de Mr Hyde','À Londres, un avocat enquête sur le lien troublant entre le respectable Dr Jekyll et l\'inquiétant Mr Hyde, figure de violence pure. Peu à peu se révèle une expérience destinée à séparer les deux faces de la nature humaine. Stevenson donne une forme mémorable à la dualité morale et à la peur de ce que chacun porte en lui.',9.9,'https://covers.openlibrary.org/b/id/3068593-L.jpg','Fantastique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(56,'L\'Île au trésor','Le jeune Jim Hawkins découvre une carte menant à un trésor enfoui et embarque dans une expédition maritime pleine de dangers. Très vite, l\'aventure se complique avec la présence à bord de pirates et du fascinant Long John Silver. Ce classique de la littérature d\'aventure conjugue initiation, suspense et imaginaire des mers.',10.9,'https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcS6h4zViNFeTRuXBu4Fy2ZG1Gpn6oRQjByLS_qX1vHPNW_EE27mjZBo2x_-XubTTO-ez3Fs2EyqMYzF9imtTJy8SAkCDIHORArksdIAtXrd&usqp=CAc','Aventure',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(57,'Vingt mille lieues sous les mers','Invités à traquer un monstre marin, le professeur Aronnax, Conseil et Ned Land découvrent que la créature n\'est autre que le Nautilus, sous-marin commandé par le mystérieux capitaine Nemo. Leur voyage sous les océans devient une exploration scientifique autant qu\'un enfermement. Verne y déploie le goût de la découverte, de la technologie et de l\'évasion.',12.9,'https://www.recyclivre.com/media/cache/sylius_shop_product_original/d8/e8/1c36ee7a19e37c3a40d9599cfb71.jpg','Science-Fiction',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(58,'Voyage au centre de la Terre','Un savant allemand et son neveu suivent les indications d\'un manuscrit ancien qui promet l\'existence d\'un passage vers les profondeurs du globe. Leur descente les conduit dans un monde souterrain peuplé de paysages et de phénomènes extraordinaires. Le roman transforme la curiosité scientifique en aventure haletante.',11.9,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQd6dMPAu2lcdTIYhBfsUxvhCgQoDQL187N9t2lUDeqeNZ9stwaUKnYymCyvNrlHp4vdzz6FQ-7NX50Ogo8cUapc2B_sPFiswX5z7COSnYaKw&s=10','Aventure',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(59,'Le Tour du monde en quatre-vingts jours','Phileas Fogg parie qu\'il peut accomplir le tour du monde en quatre-vingts jours grâce aux moyens de transport modernes de son époque. Accompagné de son fidèle Passepartout, il enchaîne les contretemps, les rencontres et les exploits logistiques à travers plusieurs continents. Le récit célèbre la précision, le sang-froid et le goût du voyage.',11.9,'https://m.media-amazon.com/images/I/918IuQ+-fJL._SY342_.jpg','Aventure',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(60,'Michel Strogoff','Messager du tsar, Michel Strogoff doit traverser une Russie immense et dangereuse pour prévenir un proche du souverain d\'une trahison en cours. Poursuivi, éprouvé et blessé, il poursuit sa mission avec une volonté inflexible. Verne compose un roman de route énergique où l\'endurance du héros porte toute la tension.',12.2,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR32iymKqpmw5jl2CZxQhlYNSYaV3asSWSI5foM4lmM_c0GVIs4ildmk-oqRM1XPNZKISdr_HryPZWw5Xm3PU71mHv0Zuxka5jDwW0Ew7V3&s=10','Aventure',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(61,'Le Petit Prince','Perdu dans le désert après une panne d\'avion, un aviateur rencontre un petit prince venu d\'une autre planète. À travers les récits de ses voyages d\'astéroïde en astéroïde, l\'enfant révèle l\'absurdité de certaines attitudes adultes et rappelle la valeur de l\'amitié, de l\'amour et du regard intérieur. Sous sa simplicité apparente, ce conte offre une méditation profonde sur ce qui compte vraiment.',8.9,'https://covers.openlibrary.org/b/isbn/9782070408504-L.jpg','Conte',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(62,'L\'Alchimiste','Santiago, jeune berger andalou, rêve à plusieurs reprises d\'un trésor caché près des pyramides d\'Égypte. Il quitte alors son existence ordinaire pour suivre ce qu\'il appelle sa Légende personnelle, croisant sur sa route des épreuves, des rencontres et des signes à interpréter. Le roman propose une fable initiatique sur le destin, la confiance et la quête de sens.',9.9,'https://covers.openlibrary.org/b/id/994197-L.jpg','Roman',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(63,'Le Vieil Homme et la Mer','Santiago, vieux pêcheur cubain, traverse une longue période de malchance lorsqu\'il part seul en mer et engage un combat éprouvant contre un immense poisson. Ce duel silencieux devient une épreuve de résistance physique, de dignité et d\'endurance morale. Dans une langue sobre, Hemingway célèbre la noblesse du combat même lorsque la victoire semble impossible.',10.9,'https://covers.openlibrary.org/b/id/10311982-L.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(64,'Le Soleil se lève aussi','Dans l\'Europe de l\'après-guerre, un groupe d\'expatriés américains et britanniques erre entre Paris et l\'Espagne, partageant fêtes, déplacements et désillusions. Derrière l\'élégance des échanges se cachent des blessures, des impasses affectives et une profonde fatigue existentielle. Hemingway y saisit la \"génération perdue\" avec une grande économie de moyens.',11.5,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Su5kWiPsTaTwpBafRozQwxx5_JAturlQATx4MLaTj3OFEU0Zp28AuaQJjVvQh3Cbaz9MSjjbw4LDuptZrP_Qh6rRbOHX69Ixx9497aIQew&s=10','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(65,'Sur la route','Sal Paradise parcourt les États-Unis avec Dean Moriarty dans une succession de voyages improvisés, de rencontres intenses et de moments de liberté frénétique. Le mouvement devient pour eux une manière de vivre, de se chercher et de fuir les cadres établis. Ce texte emblématique de la Beat Generation fait entendre une énergie de dérive, d\'amitié et de quête intérieure.',11.9,'https://covers.openlibrary.org/b/id/968207-L.jpg','Roman',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(66,'Le Parfum','Jean-Baptiste Grenouille naît avec un odorat prodigieux mais sans odeur propre, ce qui le rend à la fois exceptionnel et inquiétant. Obnubilé par le désir de créer le parfum absolu, il glisse vers une obsession criminelle où le génie sensoriel s\'allie à l\'absence totale d\'empathie. Le roman fascine par sa puissance d\'évocation et par son exploration du désir de possession.',12.9,'https://pictures.abebooks.com/isbn/9782213630380-fr.jpg','Roman',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(67,'L\'Étranger','Meursault apprend la mort de sa mère avec une distance qui surprend ceux qui l\'entourent, puis se trouve entraîné dans un meurtre commis presque sans intention claire. Le procès qui suit juge autant son comportement que son acte. Camus compose un roman bref et puissant sur l\'absurde, le regard social et le refus des faux sentiments.',10.9,'https://covers.openlibrary.org/b/isbn/9782070360024-L.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(68,'La Peste','À Oran, une épidémie de peste enferme peu à peu la ville et confronte ses habitants à la peur, à la séparation et à la mort. Le docteur Rieux et quelques autres choisissent d\'agir, non par héroïsme abstrait, mais par fidélité à une exigence simple de solidarité. Le roman réfléchit à la condition humaine, à la résistance et à la dignité dans l\'épreuve.',12.5,'https://upload.wikimedia.org/wikipedia/commons/c/c6/La_Peste_book_cover.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(69,'Le Mythe de Sisyphe','Dans cet essai majeur, Camus part de la question du suicide pour interroger le sentiment de l\'absurde qui naît du décalage entre le besoin humain de sens et le silence du monde. Plutôt que de fuir cette contradiction, il propose de la regarder en face et d\'en faire le point de départ d\'une révolte lucide. L\'ouvrage éclaire l\'ensemble de son œuvre romanesque et philosophique.',11.9,'https://covers.openlibrary.org/b/id/14433181-L.jpg','Philosophie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(70,'L\'Écume des jours','Colin et Chloé vivent un amour tendre et inventif dans un univers où les objets semblent répondre aux émotions humaines. Lorsque la maladie frappe, ce monde poétique se déforme progressivement et laisse apparaître sa fragilité. Vian mêle fantaisie, humour, critique sociale et tragédie dans un roman singulier et marquant.',11.9,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQxSXIJ9Af7o6tTTVWh3_QMey_95BO4CWSvosAvZrpojr6dCPiw3gQr52TBBMhKbB5XstM1E1B85JUZ5WKYBlnhABklC7k_XhpLJL4PojtKw&s=10','Roman',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(71,'Le Grand Meaulnes','Dans une campagne française empreinte de mystère, Augustin Meaulnes découvre un domaine étrange où il croit toucher un idéal d\'amour et de fête. Toute sa vie semble ensuite marquée par le désir de retrouver cet instant suspendu. Le roman fait de l\'adolescence un territoire d\'enchantement perdu et de nostalgie durable.',10.9,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReoGgINHeci4UmHW3bR8bcdipGcmlXZY62e4B5e3kNZvKPaDbRbeg-vMXYx17ERIzHmNSls4xJvCIL9dgLLjF6EVIpNFtKLis0A5D5KT5wcg&s=10','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(72,'Bel-Ami','Georges Duroy, ancien sous-officier sans fortune, comprend vite que dans le Paris mondain et journalistique, le charme et l\'habileté peuvent être plus efficaces que le mérite. Il gravit les échelons sociaux en manipulant les sentiments et les intérêts de son entourage. Maupassant dresse ainsi le portrait incisif d\'un ambitieux opportuniste et d\'une société fascinée par la réussite.',11.5,'https://covers.openlibrary.org/b/id/1979391-L.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(73,'Une vie','Jeanne entre dans la vie adulte avec des rêves simples de bonheur conjugal et de douceur, mais la réalité du mariage, des trahisons et des désillusions la frappe durement. Le roman suit le lent effacement de ses illusions à travers les années. Maupassant y déploie une sensibilité sobre et une lucidité poignante sur le temps et la souffrance ordinaire.',11.2,'https://librairiegrandscaracteres.fr/wp-content/uploads/2021/09/9782378283360-scaled.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(74,'Candide','Élevé dans l\'idée que tout est pour le mieux dans le meilleur des mondes possibles, Candide est brutalement jeté dans une suite de catastrophes, de violences et d\'absurdités. Ses voyages lui font traverser l\'Europe et l\'Amérique, au contact des pires malheurs comme de quelques rares havres de paix. Voltaire tourne en dérision l\'optimisme naïf et conclut sur un appel à l\'action concrète.',9.5,'https://m.media-amazon.com/images/I/41QH91-AvoL._SY445_SX342_ML2_.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(75,'Les Fleurs du mal','Ce recueil majeur explore les tensions entre beauté et corruption, élévation spirituelle et chute, spleen et idéal. Baudelaire y transforme la modernité urbaine, le désir, l\'ennui et la révolte en matière poétique d\'une intensité nouvelle. L\'ouvrage a profondément renouvelé la poésie française par son imaginaire, sa musicalité et sa vision du monde.',12,'https://fr.shopping.rakuten.com/pictures/01998f6d-eff8-7300-b2ad-8bc2ef1d758b_L_NOPAD.jpg','Poésie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(76,'Les Confessions','Dans cette autobiographie ambitieuse, Rousseau entreprend de se montrer tel qu\'il se croit, sans dissimuler ses faiblesses, ses fautes ni ses contradictions. Il mêle récit de vie, justification de soi et réflexion sur la sincérité. Ce texte a joué un rôle fondateur dans l\'histoire de l\'écriture autobiographique moderne.',13.4,'https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1388293814i/12649.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(77,'Le Procès','Joseph K. est arrêté un matin sans savoir de quoi on l\'accuse et se retrouve pris dans une procédure opaque, tentaculaire et profondément déshumanisante. Plus il cherche à comprendre, plus le système se referme sur lui. Kafka met en scène l\'angoisse, l\'absurdité bureaucratique et le sentiment de culpabilité sans cause claire.',11.9,'https://m.media-amazon.com/images/I/81yyJq3tleL._SL1500_.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(78,'Le Château','Appelé dans un village dominé par un château inaccessible, K. tente vainement d\'obtenir une reconnaissance officielle de sa présence et de son travail. Son parcours se heurte à des médiations infinies, à des messages ambigus et à une autorité impossible à joindre. Le roman donne une forme saisissante à l\'expérience de l\'exclusion et de l\'incompréhensible.',11.9,'https://m.media-amazon.com/images/I/51aNV7rsU8L._SY445_SX342_ML2_.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(79,'La Métamorphose','Gregor Samsa se réveille un matin transformé en un insecte monstrueux, sans qu\'aucune explication ne soit fournie. Très vite, sa famille ne voit plus en lui qu\'un fardeau encombrant et honteux. Cette nouvelle célèbre examine avec une force singulière l\'aliénation, la honte et la fragilité des liens familiaux.',9.9,'https://covers.openlibrary.org/b/id/11664004-L.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(80,'Le Joueur d\'échecs','À bord d\'un paquebot, un champion du monde d\'échecs suscite la curiosité des passagers jusqu\'à ce qu\'un inconnu se révèle capable de lui résister. L\'histoire de cet homme conduit au cœur d\'un isolement extrême et d\'une résistance mentale forgée dans la captivité. Zweig livre une novella tendue sur l\'intelligence, l\'obsession et la survie psychique.',9.9,'https://covers.openlibrary.org/b/id/11009993-L.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(81,'Vingt-quatre heures de la vie d\'une femme','Une dame âgée raconte un épisode bref mais décisif de son existence, lorsqu\'une rencontre avec un jeune joueur ruiné l\'a menée à agir contre toutes les conventions. En quelques heures, elle a connu l\'élan, le vertige et le trouble d\'une passion inattendue. Zweig excelle ici dans l\'analyse du basculement intérieur.',9.5,'https://m.media-amazon.com/images/I/71JbPBZTAXL._SL1500_.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(82,'Le Monde de Sophie','Sophie, adolescente norvégienne, commence à recevoir d\'étranges lettres qui l\'initient pas à pas à l\'histoire de la philosophie. En suivant cette enquête intellectuelle, elle découvre aussi que le cadre même de sa réalité est moins stable qu\'elle ne l\'imaginait. Le livre réussit à vulgariser des idées complexes tout en proposant une intrigue originale.',12.9,'https://covers.openlibrary.org/b/id/10648486-L.jpg','Philosophie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(83,'L\'Homme qui prenait sa femme pour un chapeau','À partir de cas cliniques étonnants, Oliver Sacks raconte des patients atteints de troubles neurologiques qui modifient profondément leur rapport au corps, au langage ou à la perception. Loin d\'une simple collection d\'anomalies, chaque chapitre révèle une manière singulière d\'habiter le monde malgré la maladie. Le livre marie rigueur médicale, curiosité intellectuelle et immense humanité.',13.5,'https://covers.openlibrary.org/b/id/12376985-L.jpg','Science & Médecine',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(84,'Sapiens','Harari retrace l\'histoire de l\'humanité depuis l\'apparition d\'Homo sapiens jusqu\'aux transformations contemporaines de la planète par l\'espèce humaine. Il insiste sur le rôle des mythes partagés, des révolutions agricole et scientifique, et des structures sociales imaginées collectivement. L\'ouvrage propose une synthèse vive et accessible qui relie biologie, économie, politique et culture.',14.9,'https://covers.openlibrary.org/b/isbn/9782226257017-L.jpg','Histoire',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(85,'Homo Deus','Après avoir retracé le passé de l\'humanité, Harari s\'interroge sur ses futurs possibles à l\'ère des biotechnologies, de l\'intelligence artificielle et de l\'exploitation massive des données. Il examine la manière dont la quête de puissance, d\'immortalité et d\'optimisation pourrait transformer l\'idée même d\'être humain. Le livre invite à réfléchir aux enjeux éthiques de nos progrès techniques.',15.2,'https://covers.openlibrary.org/b/isbn/9782226393876-L.jpg','Essai',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(86,'Une brève histoire du temps','Stephen Hawking propose une introduction accessible aux grandes questions de la cosmologie moderne : origine de l\'univers, trous noirs, nature du temps et quête d\'une théorie unifiée. Il vulgarise des concepts complexes sans renoncer à leur portée intellectuelle. Le livre a marqué des générations de lecteurs en montrant que la physique fondamentale peut aussi devenir une aventure de pensée.',13.9,'https://covers.openlibrary.org/b/id/981327-L.jpg','Science',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(87,'Cosmos','Carl Sagan entraîne le lecteur dans une vaste exploration de l\'univers, de l\'histoire des sciences et de la place fragile de l\'humanité sur sa petite planète. Son émerveillement devant la connaissance s\'accompagne d\'un plaidoyer constant pour la curiosité, l\'esprit critique et la responsabilité collective. L\'ouvrage demeure un grand classique de la vulgarisation scientifique.',14.2,'https://covers.openlibrary.org/b/id/10601318-L.jpg','Science',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(88,'Le Gène égoïste','Richard Dawkins propose une lecture de l\'évolution centrée sur le gène, considéré comme unité de sélection fondamentale. À travers cette perspective, il éclaire autrement les comportements coopératifs, la compétition et la transmission du vivant. Le livre a profondément influencé la biologie évolutive et le débat public sur la théorie de l\'évolution.',13.5,'https://covers.openlibrary.org/b/id/985257-L.jpg','Science',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(89,'Gödel, Escher, Bach','Douglas Hofstadter relie logique mathématique, musique et arts graphiques pour réfléchir à la conscience, à l\'auto-référence et aux systèmes symboliques. En alternant dialogues ludiques et développements théoriques, il construit une œuvre exigeante mais stimulante. Ce classique intellectuel montre comment des structures abstraites peuvent éclairer l\'esprit humain.',16.9,'https://covers.openlibrary.org/b/isbn/9780465026562-L.jpg','Science',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(90,'Thinking, Fast and Slow','Daniel Kahneman synthétise des décennies de recherche sur les biais cognitifs en distinguant deux modes de pensée : l\'un rapide, intuitif et automatique, l\'autre plus lent, analytique et contrôlé. Il montre comment nos décisions quotidiennes sont souvent influencées par des raccourcis mentaux imparfaits. Le livre a largement transformé la manière de comprendre le jugement humain.',14.9,'https://covers.openlibrary.org/b/isbn/9780374533557-L.jpg','Psychologie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(91,'Influence','En s\'appuyant sur de nombreuses observations et expériences, Robert Cialdini explique les grands principes de persuasion qui orientent les comportements : réciprocité, preuve sociale, autorité, rareté et autres mécanismes puissants. L\'ouvrage permet de mieux repérer les techniques d\'influence dans la vie courante comme dans le commerce. Il reste une référence majeure en psychologie sociale appliquée.',13.9,'https://covers.openlibrary.org/b/isbn/9780062937650-L.jpg','Psychologie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(92,'Atomic Habits','James Clear montre comment de petites habitudes répétées, presque invisibles au départ, peuvent produire sur le long terme des transformations importantes. Il insiste sur le rôle de l\'environnement, des systèmes et des identités que l\'on se construit. Le livre séduit par son approche concrète et progressive du changement de comportement.',13.9,'https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg','Développement personnel',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(93,'The 7 Habits of Highly Effective People','Stephen Covey propose un cadre de développement personnel et professionnel fondé sur des principes de responsabilité, de clarté des priorités et de coopération durable. Les sept habitudes qu\'il décrit visent à articuler efficacité individuelle et qualité des relations humaines. L\'ouvrage est devenu un classique du leadership et de l\'organisation personnelle.',14.2,'https://covers.openlibrary.org/b/isbn/9780743269513-L.jpg','Développement personnel',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(94,'Le Pouvoir du moment présent','Eckhart Tolle invite à rompre avec l\'emprise du mental et à revenir à l\'expérience du présent comme lieu d\'apaisement et de transformation intérieure. Son propos, d\'inspiration spirituelle, insiste sur l\'observation de soi plutôt que sur la poursuite incessante d\'objectifs extérieurs. Le livre a rencontré un large public en quête d\'équilibre et de présence.',12.9,'https://covers.openlibrary.org/b/id/10501037-L.jpg','Bien-être',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(95,'Méditations','Rédigées comme des notes personnelles, les Méditations de Marc Aurèle rassemblent les réflexions d\'un empereur stoïcien sur le devoir, la maîtrise de soi, l\'impermanence et l\'ordre du monde. Loin de toute rhétorique ostentatoire, le texte cherche à fortifier une vie intérieure droite au milieu des responsabilités publiques. Sa sobriété en fait une lecture toujours actuelle.',11.5,'https://static.fnac-static.com/multimedia/Images/FR/NR/a8/08/d2/13764776/1540-1/tsp20230725081211/Meditations.jpg','Philosophie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(96,'Lettres à Lucilius','Dans ces lettres adressées à un ami plus jeune, Sénèque développe les grands thèmes du stoïcisme : rapport au temps, liberté intérieure, peur de la mort, usage des richesses et maîtrise des passions. Son ton est à la fois concret, pédagogique et exigeant. L\'ensemble constitue l\'une des meilleures introductions à une philosophie de la vie quotidienne.',12.2,'https://pictures.abebooks.com/isbn/9782080455314-fr.jpg','Philosophie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(97,'La République','À travers une série de dialogues, Platon interroge la justice, l\'éducation, la cité idéale et la place de la vérité dans la vie politique. L\'ouvrage contient notamment l\'allégorie de la caverne, devenue l\'un des symboles les plus célèbres de la philosophie occidentale. Ce texte fondateur reste central pour penser le pouvoir, le savoir et la formation des citoyens.',12.9,'https://biblia.lesbelleslettres.com/data/cache/Product/front_cover_picture/big/7/9/1956.1646311264.jpg','Philosophie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(98,'Éthique à Nicomaque','Aristote examine ce qu\'est une vie bonne en montrant que le bonheur ne se réduit ni au plaisir ni au succès, mais réside dans l\'activité vertueuse de l\'âme. Il développe une éthique des habitudes, de la juste mesure et de la prudence pratique. L\'ouvrage demeure essentiel pour comprendre une conception exigeante mais profondément humaine de la morale.',12.9,'https://m.media-amazon.com/images/I/618aAmwqVcL.jpg','Philosophie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(99,'Le Prince','Dans ce court traité politique, Machiavel analyse les conditions réelles de la conquête et de la conservation du pouvoir. Loin d\'un idéal moral abstrait, il observe les comportements efficaces d\'un dirigeant confronté à l\'instabilité, à la peur et à la fortune. Le texte a durablement marqué la pensée politique en imposant une approche lucide des rapports de force.',9.9,'https://m.media-amazon.com/images/I/41OhZiQVRyL._SX342_SY445_ML2_.jpg','Philosophie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(100,'Discours de la méthode','Descartes y raconte la naissance de sa méthode de pensée et expose les principes qui doivent guider la recherche de la vérité. En mettant l\'accent sur le doute, l\'évidence et l\'enchaînement rigoureux des idées, il ouvre une nouvelle étape de la philosophie moderne. Le texte est à la fois autobiographique, pédagogique et fondateur.',9.9,'https://static.fnac-static.com/multimedia/PE/Images/FR/NR/61/ff/17/1572705/1540-1/tsp20251018075708/Discours-de-la-methode.jpg','Philosophie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(101,'Ainsi parlait Zarathoustra','Sous la forme d\'un poème philosophique, Nietzsche fait parler Zarathoustra, figure prophétique qui annonce la mort de Dieu, critique les valeurs établies et appelle à un dépassement créateur de l\'humain. Le texte mêle images puissantes, fulgurances et ambiguïtés volontaires. Il demeure l\'une des œuvres les plus célèbres et les plus discutées de son auteur.',12.5,'https://m.media-amazon.com/images/I/81R8QHEwzXL.jpg','Philosophie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(102,'Le Deuxième Sexe','Simone de Beauvoir analyse la manière dont les sociétés ont construit la femme comme \"Autre\" et montre que les inégalités de genre ne relèvent ni d\'un destin biologique ni d\'une nécessité naturelle. L\'ouvrage articule histoire, philosophie, littérature et témoignages vécus. Il constitue un texte décisif du féminisme moderne.',15.5,'https://static.fnac-static.com/multimedia/PE/Images/FR/NR/75/87/01/100213/1507-1/tsp20260305073908/Le-Deuxieme-Sexe.jpg','Philosophie',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(103,'Une chambre à soi','À partir d\'une conférence devenue essai, Virginia Woolf montre que les femmes ont longtemps été privées des conditions matérielles et symboliques nécessaires à la création littéraire. Avec une grande liberté de ton, elle lie indépendance économique, espace personnel et possibilité d\'écrire. Le texte reste central pour penser les rapports entre genre, culture et création.',10.9,'https://covers.openlibrary.org/b/id/2144401-L.jpg','Essai',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(104,'Mrs Dalloway','En une seule journée à Londres, Clarissa Dalloway prépare une réception tout en traversant souvenirs, regrets et impressions fugitives. Parallèlement, le destin de Septimus, ancien soldat traumatisé, introduit une autre face de la vie intérieure. Woolf y maîtrise l\'art du flux de conscience et fait d\'une journée ordinaire un espace de profondeur temporelle.',11.9,'https://covers.openlibrary.org/b/isbn/9780156628709-L.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(105,'To the Lighthouse','Autour d\'une maison familiale au bord de la mer, les membres de la famille Ramsay et leurs proches laissent apparaître désirs, frustrations et perceptions fugitives. Le passage du temps, notamment au milieu du roman, transforme radicalement ce qui semblait stable. Woolf explore avec une grande finesse la conscience, la mémoire et les liens invisibles entre les êtres.',11.9,'https://covers.openlibrary.org/b/isbn/9780156907392-L.jpg','Classique',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(106,'Cent ans de solitude','À Macondo, la famille Buendía traverse plusieurs générations marquées par l\'amour, la guerre, les répétitions du destin et des événements prodigieux accueillis comme ordinaires. Le temps y semble circulaire, la mémoire instable et le réel constamment ouvert au merveilleux. García Márquez crée une fresque inoubliable où l\'histoire d\'un continent se confond avec celle d\'une lignée.',14.9,'https://m.media-amazon.com/images/I/91dQd82Wx3L._AC_UF1000,1000_QL80_.jpg','Littérature étrangère',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(107,'Chronique d\'une mort annoncée','Tout un village sait qu\'un homme va être tué, et pourtant personne ne parvient réellement à empêcher le drame. En remontant les témoignages et les circonstances, le narrateur cherche à comprendre comment une mort annoncée a pu devenir inévitable. Le roman bref mêle fatalité, enquête et critique sociale.',10.9,'https://mapassionleslivres.wordpress.com/wp-content/uploads/2015/04/2011-garciamarquez-chronique.jpg','Littérature étrangère',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(108,'L\'Amour aux temps du choléra','Florentino Ariza aime Fermina Daza pendant plus d\'un demi-siècle, à travers les séparations, les mariages et les métamorphoses de la vie. Lorsque le temps semble avoir tout éloigné, le sentiment ancien resurgit sous une autre forme. Ce roman célèbre la persistance du désir et la manière dont l\'amour se transforme avec l\'âge.',13.9,'https://pictures.abebooks.com/isbn/9782246844402-fr.jpg','Littérature étrangère',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(109,'Le Nom de la rose','Au XIVe siècle, le franciscain Guillaume de Baskerville arrive dans une abbaye bénédictine où plusieurs morts mystérieuses se succèdent. Avec son jeune novice Adso, il mène une enquête qui croise théologie, hérésie, pouvoir et passion du savoir. Eco construit un roman érudit et captivant où la bibliothèque devient le cœur d\'un labyrinthe intellectuel.',13.9,'https://m.media-amazon.com/images/I/81W6mh0rv1L.jpg','Roman policier',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(110,'Si c\'est un homme','Primo Levi raconte sa déportation à Auschwitz avec une précision sobre qui refuse tout effet inutile. Il décrit l\'organisation du camp, la destruction méthodique de la dignité et les formes ténues de solidarité qui permettent parfois de survivre. Ce témoignage essentiel demeure l\'un des textes les plus lucides sur la déshumanisation concentrationnaire.',11.9,'https://covers.openlibrary.org/b/id/979471-L.jpg','Témoignage',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(111,'Journal d\'Anne Frank','Réfugiée avec sa famille dans l\'Annexe secrète à Amsterdam, Anne Frank tient un journal où elle raconte la peur, l\'ennui, les tensions quotidiennes et ses propres transformations intérieures. Son écriture vive et intelligente donne un visage profondément humain à la persécution. Ce texte bouleverse par l\'écart entre l\'élan de vie qu\'il contient et le destin qui l\'attend.',10.9,'https://m.media-amazon.com/images/I/41auYJvoohL._SY445_SX342_ML2_.jpg','Témoignage',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(112,'Persepolis','Dans ce récit autobiographique en noir et blanc, Marjane Satrapi raconte son enfance en Iran au moment de la révolution islamique puis son adolescence en Europe. Le regard de la jeune narratrice mêle gravité politique, humour et lucidité sur les déchirures de l\'exil. L\'œuvre est devenue un classique du roman graphique contemporain.',13.5,'https://covers.openlibrary.org/b/id/15167500-L.jpg','BD & Romans graphiques',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(113,'Maus','Art Spiegelman raconte l\'histoire de son père, survivant de la Shoah, en représentant les Juifs sous forme de souris et les nazis sous forme de chats. Ce choix graphique n\'allège en rien la violence du témoignage, mais lui donne une puissance symbolique singulière. Maus réfléchit aussi à la transmission familiale et à la difficulté de raconter l\'horreur.',14.5,'https://covers.openlibrary.org/b/id/14383494-L.jpg','BD & Romans graphiques',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(114,'Watchmen','Dans une Amérique alternative où les super-héros ont modifié l\'histoire politique du XXe siècle, l\'assassinat d\'un ancien justicier relance de vieilles tensions. L\'enquête révèle un monde moralement ambigu où la frontière entre salut collectif et catastrophe devient floue. Watchmen déconstruit brillamment le mythe héroïque et reste un jalon majeur de la bande dessinée moderne.',15.9,'https://covers.openlibrary.org/b/isbn/9781779501127-L.jpg','Comics',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(115,'Batman: The Killing Joke','Le Joker cherche à prouver qu\'une seule mauvaise journée suffit à faire basculer n\'importe qui dans la folie. Son affrontement avec Batman prend ainsi la forme d\'une expérience cruelle sur la souffrance, l\'identité et la fragilité psychique. Cette histoire courte a profondément marqué l\'imaginaire du personnage.',11.9,'https://covers.openlibrary.org/b/id/14485564-L.jpg','Comics',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL),(116,'The Sandman: Preludes & Nocturnes','Morpheus, incarnation du Rêve, est capturé pendant des décennies avant de retrouver sa liberté et de chercher à reconstruire son royaume. Entre mythologie, fantastique et méditation sur le récit lui-même, cette série ouvre un univers d\'une grande richesse imaginaire. Neil Gaiman y donne une profondeur rare à la bande dessinée fantastique.',14.2,'https://m.media-amazon.com/images/I/616DPaonu8L._SY445_SX342_FMwebp_.jpg','Comics',0,10,'ACTIVE',NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,5,NULL,NULL);
+/*!40000 ALTER TABLE `book` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `book_author`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `book_author` (
   `book_id` bigint NOT NULL,
-  `author` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `author` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  KEY `idx_book_author_book` (`book_id`),
+  CONSTRAINT `fk_book_author_book` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Déchargement des données de la table `book_author`
---
-
-INSERT INTO `book_author` (`book_id`, `author`) VALUES
-(1, 'J.R.R. Tolkien'),
-(2, 'J.R.R. Tolkien'),
-(3, 'J.R.R. Tolkien'),
-(4, 'J.R.R. Tolkien'),
-(5, 'J.K. Rowling'),
-(6, 'J.K. Rowling'),
-(7, 'J.K. Rowling'),
-(8, 'J.K. Rowling'),
-(9, 'J.K. Rowling'),
-(10, 'J.K. Rowling'),
-(11, 'J.K. Rowling'),
-(12, 'Frank Herbert'),
-(13, 'Frank Herbert'),
-(14, 'Frank Herbert'),
-(15, 'Isaac Asimov'),
-(16, 'Isaac Asimov'),
-(17, 'Isaac Asimov'),
-(18, 'William Gibson'),
-(19, 'Ray Bradbury'),
-(20, 'George Orwell'),
-(21, 'George Orwell'),
-(22, 'Aldous Huxley'),
-(23, 'Cormac McCarthy'),
-(24, 'Patrick Rothfuss'),
-(25, 'Patrick Rothfuss'),
-(26, 'Robin Hobb'),
-(27, 'George R. R. Martin'),
-(28, 'Victor Hugo'),
-(29, 'Victor Hugo'),
-(30, 'Gustave Flaubert'),
-(31, 'Gustave Flaubert'),
-(32, 'Stendhal'),
-(33, 'Stendhal'),
-(34, 'Émile Zola'),
-(35, 'Émile Zola'),
-(36, 'Émile Zola'),
-(37, 'Fiodor Dostoïevski'),
-(38, 'Fiodor Dostoïevski'),
-(39, 'Fiodor Dostoïevski'),
-(40, 'Léon Tolstoï'),
-(41, 'Léon Tolstoï'),
-(42, 'Alexandre Dumas'),
-(43, 'Alexandre Dumas'),
-(44, 'Alexandre Dumas'),
-(45, 'Alexandre Dumas'),
-(46, 'Miguel de Cervantès'),
-(47, 'Herman Melville'),
-(48, 'Charlotte Brontë'),
-(49, 'Jane Austen'),
-(50, 'Jane Austen'),
-(51, 'Jane Austen'),
-(52, 'Emily Brontë'),
-(53, 'Bram Stoker'),
-(54, 'Mary Shelley'),
-(55, 'Robert Louis Stevenson'),
-(56, 'Robert Louis Stevenson'),
-(57, 'Jules Verne'),
-(58, 'Jules Verne'),
-(59, 'Jules Verne'),
-(60, 'Jules Verne'),
-(61, 'Antoine de Saint-Exupéry'),
-(62, 'Paulo Coelho'),
-(63, 'Ernest Hemingway'),
-(64, 'Ernest Hemingway'),
-(65, 'Jack Kerouac'),
-(66, 'Patrick Süskind'),
-(67, 'Albert Camus'),
-(68, 'Albert Camus'),
-(69, 'Albert Camus'),
-(70, 'Boris Vian'),
-(71, 'Alain-Fournier'),
-(72, 'Guy de Maupassant'),
-(73, 'Guy de Maupassant'),
-(74, 'Voltaire'),
-(75, 'Charles Baudelaire'),
-(76, 'Jean-Jacques Rousseau'),
-(77, 'Franz Kafka'),
-(78, 'Franz Kafka'),
-(79, 'Franz Kafka'),
-(80, 'Stefan Zweig'),
-(81, 'Stefan Zweig'),
-(82, 'Jostein Gaarder'),
-(83, 'Oliver Sacks'),
-(84, 'Yuval Noah Harari'),
-(85, 'Yuval Noah Harari'),
-(86, 'Stephen Hawking'),
-(87, 'Carl Sagan'),
-(88, 'Richard Dawkins'),
-(89, 'Douglas Hofstadter'),
-(90, 'Daniel Kahneman'),
-(91, 'Robert B. Cialdini'),
-(92, 'James Clear'),
-(93, 'Stephen R. Covey'),
-(94, 'Eckhart Tolle'),
-(95, 'Marc Aurèle'),
-(96, 'Sénèque'),
-(97, 'Platon'),
-(98, 'Aristote'),
-(99, 'Nicolas Machiavel'),
-(100, 'René Descartes'),
-(101, 'Friedrich Nietzsche'),
-(102, 'Simone de Beauvoir'),
-(103, 'Virginia Woolf'),
-(104, 'Virginia Woolf'),
-(105, 'Virginia Woolf'),
-(106, 'Gabriel García Márquez'),
-(107, 'Gabriel García Márquez'),
-(108, 'Gabriel García Márquez'),
-(109, 'Umberto Eco'),
-(110, 'Primo Levi'),
-(111, 'Anne Frank'),
-(112, 'Marjane Satrapi'),
-(113, 'Art Spiegelman'),
-(114, 'Alan Moore'),
-(114, 'Dave Gibbons'),
-(115, 'Alan Moore'),
-(115, 'Brian Bolland'),
-(116, 'Neil Gaiman'),
-(116, 'Sam Kieth'),
-(116, 'Mike Dringenberg');
-
--- --------------------------------------------------------
-
---
--- Structure de la table `book_authors`
---
-
+LOCK TABLES `book_author` WRITE;
+/*!40000 ALTER TABLE `book_author` DISABLE KEYS */;
+INSERT INTO `book_author` VALUES (1,'J.R.R. Tolkien'),(2,'J.R.R. Tolkien'),(3,'J.R.R. Tolkien'),(4,'J.R.R. Tolkien'),(5,'J.K. Rowling'),(6,'J.K. Rowling'),(7,'J.K. Rowling'),(8,'J.K. Rowling'),(9,'J.K. Rowling'),(10,'J.K. Rowling'),(11,'J.K. Rowling'),(12,'Frank Herbert'),(13,'Frank Herbert'),(14,'Frank Herbert'),(15,'Isaac Asimov'),(16,'Isaac Asimov'),(17,'Isaac Asimov'),(18,'William Gibson'),(19,'Ray Bradbury'),(20,'George Orwell'),(21,'George Orwell'),(22,'Aldous Huxley'),(23,'Cormac McCarthy'),(24,'Patrick Rothfuss'),(25,'Patrick Rothfuss'),(26,'Robin Hobb'),(27,'George R. R. Martin'),(28,'Victor Hugo'),(29,'Victor Hugo'),(30,'Gustave Flaubert'),(31,'Gustave Flaubert'),(32,'Stendhal'),(33,'Stendhal'),(34,'Émile Zola'),(35,'Émile Zola'),(36,'Émile Zola'),(37,'Fiodor Dostoïevski'),(38,'Fiodor Dostoïevski'),(39,'Fiodor Dostoïevski'),(40,'Léon Tolstoï'),(41,'Léon Tolstoï'),(42,'Alexandre Dumas'),(43,'Alexandre Dumas'),(44,'Alexandre Dumas'),(45,'Alexandre Dumas'),(46,'Miguel de Cervantès'),(47,'Herman Melville'),(48,'Charlotte Brontë'),(49,'Jane Austen'),(50,'Jane Austen'),(51,'Jane Austen'),(52,'Emily Brontë'),(53,'Bram Stoker'),(54,'Mary Shelley'),(55,'Robert Louis Stevenson'),(56,'Robert Louis Stevenson'),(57,'Jules Verne'),(58,'Jules Verne'),(59,'Jules Verne'),(60,'Jules Verne'),(61,'Antoine de Saint-Exupéry'),(62,'Paulo Coelho'),(63,'Ernest Hemingway'),(64,'Ernest Hemingway'),(65,'Jack Kerouac'),(66,'Patrick Süskind'),(67,'Albert Camus'),(68,'Albert Camus'),(69,'Albert Camus'),(70,'Boris Vian'),(71,'Alain-Fournier'),(72,'Guy de Maupassant'),(73,'Guy de Maupassant'),(74,'Voltaire'),(75,'Charles Baudelaire'),(76,'Jean-Jacques Rousseau'),(77,'Franz Kafka'),(78,'Franz Kafka'),(79,'Franz Kafka'),(80,'Stefan Zweig'),(81,'Stefan Zweig'),(82,'Jostein Gaarder'),(83,'Oliver Sacks'),(84,'Yuval Noah Harari'),(85,'Yuval Noah Harari'),(86,'Stephen Hawking'),(87,'Carl Sagan'),(88,'Richard Dawkins'),(89,'Douglas Hofstadter'),(90,'Daniel Kahneman'),(91,'Robert B. Cialdini'),(92,'James Clear'),(93,'Stephen R. Covey'),(94,'Eckhart Tolle'),(95,'Marc Aurèle'),(96,'Sénèque'),(97,'Platon'),(98,'Aristote'),(99,'Nicolas Machiavel'),(100,'René Descartes'),(101,'Friedrich Nietzsche'),(102,'Simone de Beauvoir'),(103,'Virginia Woolf'),(104,'Virginia Woolf'),(105,'Virginia Woolf'),(106,'Gabriel García Márquez'),(107,'Gabriel García Márquez'),(108,'Gabriel García Márquez'),(109,'Umberto Eco'),(110,'Primo Levi'),(111,'Anne Frank'),(112,'Marjane Satrapi'),(113,'Art Spiegelman'),(114,'Alan Moore'),(114,'Dave Gibbons'),(115,'Alan Moore'),(115,'Brian Bolland'),(116,'Neil Gaiman'),(116,'Sam Kieth'),(116,'Mike Dringenberg');
+/*!40000 ALTER TABLE `book_author` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `book_authors`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `book_authors` (
   `book_id` bigint NOT NULL,
-  `author` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `author` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  KEY `FKs4xm7q8i3uxvaiswj1c35nnxw` (`book_id`),
+  CONSTRAINT `FKs4xm7q8i3uxvaiswj1c35nnxw` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- --------------------------------------------------------
-
---
--- Structure de la table `orders`
---
-
-CREATE TABLE `orders` (
-  `id` bigint NOT NULL,
-  `user_id` bigint DEFAULT NULL,
-  `total_amount` double DEFAULT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `shipping_address` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `payment_method` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `order_date` datetime(6) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Déchargement des données de la table `orders`
---
-
-INSERT INTO `orders` (`id`, `user_id`, `total_amount`, `status`, `shipping_address`, `payment_method`, `order_date`) VALUES
-(1, 1, 46.3, 'LIVREE', 'Abu Dhabi, UAE', 'COD', '2026-03-26 21:45:54.000000'),
-(2, 3, 18.9, 'PREPARATION', '11 bvd paris', 'COD', '2026-03-28 20:16:55.510374');
-
--- --------------------------------------------------------
-
---
--- Structure de la table `orders_items`
---
-
-CREATE TABLE `orders_items` (
-  `order_id` bigint NOT NULL,
-  `items_id` bigint NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Déchargement des données de la table `orders_items`
---
-
-INSERT INTO `orders_items` (`order_id`, `items_id`) VALUES
-(1, 1),
-(1, 2),
-(1, 3);
-
--- --------------------------------------------------------
-
---
--- Structure de la table `order_item`
---
-
+LOCK TABLES `book_authors` WRITE;
+/*!40000 ALTER TABLE `book_authors` DISABLE KEYS */;
+/*!40000 ALTER TABLE `book_authors` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `order_item`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `order_item` (
-  `id` bigint NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `quantity` int DEFAULT NULL,
   `price` double DEFAULT NULL,
   `book_id` bigint DEFAULT NULL,
-  `order_id` bigint DEFAULT NULL
+  `order_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_order_item_book` (`book_id`),
+  KEY `fk_order_item_order` (`order_id`),
+  CONSTRAINT `fk_order_item_book` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_order_item_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `order_item` WRITE;
+/*!40000 ALTER TABLE `order_item` DISABLE KEYS */;
+INSERT INTO `order_item` VALUES (1,1,18.9,1,NULL),(2,1,16.5,13,NULL),(3,1,10.9,66,NULL),(4,1,18.9,2,2),(5,1,18.9,2,3),(6,1,17.009999999999998,1,4),(7,1,17.009999999999998,1,5),(8,1,17.009999999999998,1,6),(9,1,17.009999999999998,1,7);
+/*!40000 ALTER TABLE `order_item` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `orders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `orders` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user_id` bigint DEFAULT NULL,
+  `total_amount` double DEFAULT NULL,
+  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `shipping_address` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `payment_method` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `order_date` datetime(6) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_orders_user` (`user_id`),
+  CONSTRAINT `fk_orders_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `orders` WRITE;
+/*!40000 ALTER TABLE `orders` DISABLE KEYS */;
+INSERT INTO `orders` VALUES (1,1,46.3,'LIVREE','Abu Dhabi, UAE','COD','2026-03-26 21:45:54.000000'),(2,3,18.9,'PREPARATION','11 bvd paris','COD','2026-03-28 20:16:55.510374'),(3,16,18.9,'EN_PREPARATION','Adresse: 35 Rue du Docteur Babinski 93400 Saint-Ouen-sur-Seine\nCommentaire: 4ème étage','COD','2026-04-05 18:55:25.880225'),(4,16,17.009999999999998,'PREPARATION','35 Rue du Docteur Babinski 93400 Saint-Ouen-sur-Seine\nCommentaire: Etage 4','COD','2026-04-05 21:32:19.034031'),(5,2,17.009999999999998,'EN_PREPARATION','35 Rue d\'Entraigues 37000 Tours','COD','2026-04-05 21:34:47.740862'),(6,2,17.009999999999998,'EN_PREPARATION','35 Rue du Docteur Babinski 93400 Saint-Ouen-sur-Seine\nCommentaire: Etage 4','COD','2026-04-05 21:46:31.615709'),(7,2,17.009999999999998,'EN_PREPARATION','35 Rue du Docteur Babinski 93400 Saint-Ouen-sur-Seine\nCommentaire: Etage 5','COD','2026-04-05 21:50:26.820041');
+/*!40000 ALTER TABLE `orders` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `orders_items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `orders_items` (
+  `order_id` bigint NOT NULL,
+  `items_id` bigint NOT NULL,
+  PRIMARY KEY (`order_id`,`items_id`),
+  UNIQUE KEY `uk_orders_items_item` (`items_id`),
+  CONSTRAINT `fk_orders_items_item` FOREIGN KEY (`items_id`) REFERENCES `order_item` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_orders_items_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Déchargement des données de la table `order_item`
---
-
-INSERT INTO `order_item` (`id`, `quantity`, `price`, `book_id`, `order_id`) VALUES
-(1, 1, 18.9, 1, NULL),
-(2, 1, 16.5, 13, NULL),
-(3, 1, 10.9, 66, NULL),
-(4, 1, 18.9, 2, 2);
-
--- --------------------------------------------------------
-
---
--- Structure de la table `review`
---
-
+LOCK TABLES `orders_items` WRITE;
+/*!40000 ALTER TABLE `orders_items` DISABLE KEYS */;
+INSERT INTO `orders_items` VALUES (1,1),(1,2),(1,3);
+/*!40000 ALTER TABLE `orders_items` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `review`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `review` (
-  `id` bigint NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `rating` int NOT NULL,
-  `comment` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `comment` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `book_id` bigint DEFAULT NULL,
-  `user_id` bigint DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `user_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_review_book` (`book_id`),
+  KEY `idx_review_user` (`user_id`),
+  CONSTRAINT `fk_review_book` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_review_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Déchargement des données de la table `review`
---
-
-INSERT INTO `review` (`id`, `rating`, `comment`, `book_id`, `user_id`) VALUES
-(1, 0, 'Sélection incontournable, très bon classique.', 1, 1),
-(2, 0, 'Univers riche et lecture captivante.', 13, 1),
-(3, 0, 'Roman profondément marquant.', 34, 1),
-(4, 0, 'Très belle écriture et excellente immersion.', 45, 1),
-(5, 0, 'Résumé historique et humain exceptionnel.', 104, 1),
-(6, 3, 'test', 1, 3);
-
--- --------------------------------------------------------
-
---
--- Structure de la table `stock_movements`
---
-
+LOCK TABLES `review` WRITE;
+/*!40000 ALTER TABLE `review` DISABLE KEYS */;
+INSERT INTO `review` VALUES (1,0,'Sélection incontournable, très bon classique.',1,1),(2,0,'Univers riche et lecture captivante.',13,1),(3,0,'Roman profondément marquant.',34,1),(4,0,'Très belle écriture et excellente immersion.',45,1),(5,0,'Résumé historique et humain exceptionnel.',104,1),(6,3,'test',1,3),(7,5,'Suite tres solide, rythme excellent du debut a la fin.',2,5),(8,5,'Conclusion epique, tres emouvante et bien ecrite.',3,6),(9,4,'Aventure super agreable, tres bon livre d introduction.',4,7),(10,5,'Magique et fluide, je recommande fortement.',5,8),(11,4,'Tres bon tome, ambiance mysterieuse reussie.',6,9),(12,5,'Un des meilleurs tomes, personnages tres attaches.',7,10),(13,4,'Action constante, epreuves interessantes et prenantes.',8,11),(14,3,'Bon livre mais un peu long par moments.',9,12),(15,4,'Developpement excellent des personnages et du contexte.',10,13),(16,5,'Final parfait, intense et tres satisfaisant.',11,14),(17,5,'J\'aime bien!',1,2);
+/*!40000 ALTER TABLE `review` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `stock_movements`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `stock_movements` (
-  `id` bigint NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `created_at` datetime(6) DEFAULT NULL,
   `order_id` bigint DEFAULT NULL,
-  `performed_by` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `performed_by` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `quantity` int NOT NULL,
-  `reason` text COLLATE utf8mb4_unicode_ci,
+  `reason` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `stock_after` int DEFAULT NULL,
   `stock_before` int DEFAULT NULL,
-  `type` enum('RESTOCK','SALE','RETURN','CORRECTION','LOSS','INITIAL') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `book_id` bigint NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `type` enum('RESTOCK','SALE','RETURN','CORRECTION','LOSS','INITIAL') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `book_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKa3e6tam390rg97br6ti89wsy8` (`book_id`),
+  CONSTRAINT `FKa3e6tam390rg97br6ti89wsy8` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Déchargement des données de la table `stock_movements`
---
-
-INSERT INTO `stock_movements` (`id`, `created_at`, `order_id`, `performed_by`, `quantity`, `reason`, `stock_after`, `stock_before`, `type`, `book_id`) VALUES
-(1, '2026-03-26 22:54:27.159809', NULL, 'admin', 10, '', 20, 10, 'RESTOCK', 1),
-(2, '2026-03-26 23:32:52.951778', NULL, 'admin', 1, '', 21, 20, 'RESTOCK', 1),
-(3, '2026-03-26 23:39:02.867858', NULL, 'admin', 1, '', 22, 21, 'RESTOCK', 1);
-
--- --------------------------------------------------------
-
---
--- Structure de la table `user`
---
-
+LOCK TABLES `stock_movements` WRITE;
+/*!40000 ALTER TABLE `stock_movements` DISABLE KEYS */;
+INSERT INTO `stock_movements` VALUES (1,'2026-03-26 22:54:27.159809',NULL,'admin',10,'',20,10,'RESTOCK',1),(2,'2026-03-26 23:32:52.951778',NULL,'admin',1,'',21,20,'RESTOCK',1),(3,'2026-03-26 23:39:02.867858',NULL,'admin',1,'',22,21,'RESTOCK',1),(4,'2026-04-05 21:50:26.850592',7,NULL,1,'Vente commande #7',0,1,'SALE',1),(5,'2026-04-05 21:56:41.103004',NULL,'admin',1,'',1,0,'RESTOCK',1);
+/*!40000 ALTER TABLE `stock_movements` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
-  `id` bigint NOT NULL,
-  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `role` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `role` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `first_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `last_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_user_username` (`username`),
+  UNIQUE KEY `uk_user_email` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Déchargement des données de la table `user`
---
-
-INSERT INTO `user` (`id`, `username`, `password`, `email`, `role`) VALUES
-(1, 'admin', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhy8', 'admin@bookstore.com', 'ADMIN'),
-(2, 'fyz', '$2a$10$Rji7GIdaFbG9E/xjlagGVebfrhaM6khHbTxV660hzrWvBLtRPeA7i', 'fayezhajjj@gmail.com', 'ADMIN'),
-(3, 'TheNuber', '$2a$10$nFaRkWt567amTwfR1s5ebe/jzitBYFtpaLAyTa0c14711N42qpsgG', 'rubencoll386@gmail.com', 'CLIENT');
-
--- --------------------------------------------------------
-
---
--- Structure de la table `user_addresses`
---
-
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES (1,'admin','$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhy8','admin@bookstore.com','ADMIN',NULL,NULL,NULL),(2,'fyz','$2a$10$gf7niQArzFk9keCRPKjcW.w1p7lvpdGjh2NuUZZFaOG9Pd5WGz1dW','fayezhajjj@gmail.com','ADMIN',NULL,NULL,NULL),(3,'TheNuber','$2a$10$nFaRkWt567amTwfR1s5ebe/jzitBYFtpaLAyTa0c14711N42qpsgG','rubencoll386@gmail.com','CLIENT',NULL,NULL,NULL),(5,'client_amine','$2a$10$nwKk3t8/VPoJFqBB1Eh90OtzeEffwEXxo4h5hrfQnNZpgGq2hIGjC','amine.client01@bookstore.test','CLIENT',NULL,NULL,NULL),(6,'client_sara','$2a$10$nwKk3t8/VPoJFqBB1Eh90OtzeEffwEXxo4h5hrfQnNZpgGq2hIGjC','sara.client02@bookstore.test','CLIENT',NULL,NULL,NULL),(7,'client_yanis','$2a$10$nwKk3t8/VPoJFqBB1Eh90OtzeEffwEXxo4h5hrfQnNZpgGq2hIGjC','yanis.client03@bookstore.test','CLIENT',NULL,NULL,NULL),(8,'client_nour','$2a$10$nwKk3t8/VPoJFqBB1Eh90OtzeEffwEXxo4h5hrfQnNZpgGq2hIGjC','nour.client04@bookstore.test','CLIENT',NULL,NULL,NULL),(9,'client_karim','$2a$10$nwKk3t8/VPoJFqBB1Eh90OtzeEffwEXxo4h5hrfQnNZpgGq2hIGjC','karim.client05@bookstore.test','CLIENT',NULL,NULL,NULL),(10,'client_lina','$2a$10$nwKk3t8/VPoJFqBB1Eh90OtzeEffwEXxo4h5hrfQnNZpgGq2hIGjC','lina.client06@bookstore.test','CLIENT',NULL,NULL,NULL),(11,'client_adam','$2a$10$nwKk3t8/VPoJFqBB1Eh90OtzeEffwEXxo4h5hrfQnNZpgGq2hIGjC','adam.client07@bookstore.test','CLIENT',NULL,NULL,NULL),(12,'client_maya','$2a$10$nwKk3t8/VPoJFqBB1Eh90OtzeEffwEXxo4h5hrfQnNZpgGq2hIGjC','maya.client08@bookstore.test','CLIENT',NULL,NULL,NULL),(13,'client_ryan','$2a$10$nwKk3t8/VPoJFqBB1Eh90OtzeEffwEXxo4h5hrfQnNZpgGq2hIGjC','ryan.client09@bookstore.test','CLIENT',NULL,NULL,NULL),(14,'client_ines','$2a$10$nwKk3t8/VPoJFqBB1Eh90OtzeEffwEXxo4h5hrfQnNZpgGq2hIGjC','ines.client10@bookstore.test','CLIENT',NULL,NULL,NULL),(15,'clientfayez','$2a$10$dhx2BeIUZjt8O9GWX0a.w.ZPbSQfjV17d/qeekC5KYxvgFdG0ONPS','clientfayez@gmail.com','CLIENT',NULL,NULL,NULL),(16,'fayezmrs','$2a$10$Mb2/y2bO3M.S4pAzPYcQb.x5tfN8WMpjbIZy2/BoknHYLYEhPmXsa','fayez.alhajj@etu.univ-amu.fr','CLIENT','Fayez','Alhajj','+33601502151');
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `user_addresses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_addresses` (
   `user_id` bigint NOT NULL,
-  `addresses` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `addresses` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  KEY `idx_user_addresses_user` (`user_id`),
+  CONSTRAINT `fk_user_addresses_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Déchargement des données de la table `user_addresses`
---
-
-INSERT INTO `user_addresses` (`user_id`, `addresses`) VALUES
-(1, 'Abu Dhabi, UAE');
-
--- --------------------------------------------------------
-
---
--- Structure de la table `verification_codes`
---
-
+LOCK TABLES `user_addresses` WRITE;
+/*!40000 ALTER TABLE `user_addresses` DISABLE KEYS */;
+INSERT INTO `user_addresses` VALUES (1,'Abu Dhabi, UAE');
+/*!40000 ALTER TABLE `user_addresses` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `verification_codes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `verification_codes` (
-  `id` bigint NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `code` varchar(6) NOT NULL,
   `email` varchar(255) NOT NULL,
   `expires_at` datetime(6) NOT NULL,
   `type` varchar(255) NOT NULL,
   `used` bit(1) NOT NULL,
-  `username` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `username` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Déchargement des données de la table `verification_codes`
---
+LOCK TABLES `verification_codes` WRITE;
+/*!40000 ALTER TABLE `verification_codes` DISABLE KEYS */;
+INSERT INTO `verification_codes` VALUES (1,'300739','fyz@fyz.fr','2026-03-27 20:49:06.959577','login',_binary '\0','fyz'),(2,'493435','aymane.ryan12@gmail.com','2026-03-27 20:50:49.095661','login',_binary '','fyz'),(3,'555560','fayezhajjj@gmail.com','2026-03-27 20:53:20.082816','login',_binary '','fyz'),(4,'992827','rubencoll386@gmail.com','2026-03-28 15:57:51.269095','signup',_binary '',NULL),(5,'899482','rubencoll386@gmail.com','2026-03-28 15:58:48.352388','login',_binary '','TheNuber'),(6,'874293','fayez.alhajj@etu.univ-amu.fr','2026-04-05 19:02:43.926531','signup',_binary '',NULL);
+/*!40000 ALTER TABLE `verification_codes` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
-INSERT INTO `verification_codes` (`id`, `code`, `email`, `expires_at`, `type`, `used`, `username`) VALUES
-(1, '300739', 'fyz@fyz.fr', '2026-03-27 20:49:06.959577', 'login', b'0', 'fyz'),
-(2, '493435', 'aymane.ryan12@gmail.com', '2026-03-27 20:50:49.095661', 'login', b'1', 'fyz'),
-(3, '555560', 'fayezhajjj@gmail.com', '2026-03-27 20:53:20.082816', 'login', b'1', 'fyz'),
-(4, '992827', 'rubencoll386@gmail.com', '2026-03-28 15:57:51.269095', 'signup', b'1', NULL),
-(5, '899482', 'rubencoll386@gmail.com', '2026-03-28 15:58:48.352388', 'login', b'1', 'TheNuber');
-
---
--- Index pour les tables déchargées
---
-
---
--- Index pour la table `book`
---
-ALTER TABLE `book`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `UK_ehpdfjpu1jm3hijhj4mm0hx9h` (`isbn`);
-
---
--- Index pour la table `book_author`
---
-ALTER TABLE `book_author`
-  ADD KEY `idx_book_author_book` (`book_id`);
-
---
--- Index pour la table `book_authors`
---
-ALTER TABLE `book_authors`
-  ADD KEY `FKs4xm7q8i3uxvaiswj1c35nnxw` (`book_id`);
-
---
--- Index pour la table `orders`
---
-ALTER TABLE `orders`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_orders_user` (`user_id`);
-
---
--- Index pour la table `orders_items`
---
-ALTER TABLE `orders_items`
-  ADD PRIMARY KEY (`order_id`,`items_id`),
-  ADD UNIQUE KEY `uk_orders_items_item` (`items_id`);
-
---
--- Index pour la table `order_item`
---
-ALTER TABLE `order_item`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_order_item_book` (`book_id`),
-  ADD KEY `fk_order_item_order` (`order_id`);
-
---
--- Index pour la table `review`
---
-ALTER TABLE `review`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_review_book` (`book_id`),
-  ADD KEY `idx_review_user` (`user_id`);
-
---
--- Index pour la table `stock_movements`
---
-ALTER TABLE `stock_movements`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `FKa3e6tam390rg97br6ti89wsy8` (`book_id`);
-
---
--- Index pour la table `user`
---
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uk_user_username` (`username`),
-  ADD UNIQUE KEY `uk_user_email` (`email`);
-
---
--- Index pour la table `user_addresses`
---
-ALTER TABLE `user_addresses`
-  ADD KEY `idx_user_addresses_user` (`user_id`);
-
---
--- Index pour la table `verification_codes`
---
-ALTER TABLE `verification_codes`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT pour les tables déchargées
---
-
---
--- AUTO_INCREMENT pour la table `book`
---
-ALTER TABLE `book`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=117;
-
---
--- AUTO_INCREMENT pour la table `orders`
---
-ALTER TABLE `orders`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT pour la table `order_item`
---
-ALTER TABLE `order_item`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT pour la table `review`
---
-ALTER TABLE `review`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT pour la table `stock_movements`
---
-ALTER TABLE `stock_movements`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT pour la table `user`
---
-ALTER TABLE `user`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT pour la table `verification_codes`
---
-ALTER TABLE `verification_codes`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- Contraintes pour les tables déchargées
---
-
---
--- Contraintes pour la table `book_author`
---
-ALTER TABLE `book_author`
-  ADD CONSTRAINT `fk_book_author_book` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`) ON DELETE CASCADE;
-
---
--- Contraintes pour la table `book_authors`
---
-ALTER TABLE `book_authors`
-  ADD CONSTRAINT `FKs4xm7q8i3uxvaiswj1c35nnxw` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`);
-
---
--- Contraintes pour la table `orders`
---
-ALTER TABLE `orders`
-  ADD CONSTRAINT `fk_orders_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE SET NULL;
-
---
--- Contraintes pour la table `orders_items`
---
-ALTER TABLE `orders_items`
-  ADD CONSTRAINT `fk_orders_items_item` FOREIGN KEY (`items_id`) REFERENCES `order_item` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_orders_items_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE;
-
---
--- Contraintes pour la table `order_item`
---
-ALTER TABLE `order_item`
-  ADD CONSTRAINT `fk_order_item_book` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `fk_order_item_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE SET NULL;
-
---
--- Contraintes pour la table `review`
---
-ALTER TABLE `review`
-  ADD CONSTRAINT `fk_review_book` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_review_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE;
-
---
--- Contraintes pour la table `stock_movements`
---
-ALTER TABLE `stock_movements`
-  ADD CONSTRAINT `FKa3e6tam390rg97br6ti89wsy8` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`);
-
---
--- Contraintes pour la table `user_addresses`
---
-ALTER TABLE `user_addresses`
-  ADD CONSTRAINT `fk_user_addresses_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE;
-COMMIT;
-
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+

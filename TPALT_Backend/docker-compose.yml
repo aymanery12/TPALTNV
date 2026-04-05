@@ -9,6 +9,7 @@ services:
       MYSQL_DATABASE: bookstore_db
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
+      TZ: Europe/Paris
     ports:
       - "3306:3306"
     volumes:
@@ -35,6 +36,7 @@ services:
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: root1234
+      TZ: Europe/Paris
     ports:
       - "8081:80"
     networks:
@@ -56,6 +58,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/bookstore_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      TZ: Europe/Paris
+      JAVA_TOOL_OPTIONS: -Duser.timezone=Europe/Paris
     ports:
       - "8080:8080"
     networks:

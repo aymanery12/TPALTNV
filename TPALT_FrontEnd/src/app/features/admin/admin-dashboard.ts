@@ -63,7 +63,14 @@ export interface Order {
     status: string;
     shippingAddress?: string;
     paymentMethod?: string;
+    itemsCount?: number;
     items?: { book?: { title: string }; quantity: number; price: number }[];
+}
+
+interface StockOverview {
+    low: Book[];
+    out: Book[];
+    movements: StockMovement[];
 }
 
 export interface AppUser {
@@ -144,6 +151,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     orderFilter = '';
     selectedOrder: Order | null = null;
     showOrderModal = false;
+    private ordersRefreshTimer: ReturnType<typeof setTimeout> | null = null;
+    private ordersRetryAttempts = 0;
+    private readonly maxOrdersRetryAttempts = 5;
 
     // ── Utilisateurs ─────────────────────────────────────────────────────────
     users: AppUser[] = [];
@@ -167,6 +177,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
         this.chartInstance?.destroy();
         this.donutInstance?.destroy();
+        this.stopOrdersAutoRefresh();
     }
 
     private headers(): HttpHeaders {
@@ -178,6 +189,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         this.activeView = view;
         this.errorMsg = '';
         this.successMsg = '';
+        if (view !== 'orders') {
+            this.stopOrdersAutoRefresh();
+            this.ordersRetryAttempts = 0;
+        }
         switch (view) {
             case 'dashboard':   this.loadDashboard(); break;
             case 'books':       this.loadBooks(); break;
@@ -213,8 +228,15 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
         this.http.get<Book[]>(`${this.base}/books`, { headers: this.headers() })
             .pipe(takeUntil(this.destroy$)).subscribe({
-            next: books => { this.books = books; this.applyBookFilters();  },
-            error: () => {  this.errorMsg = 'Erreur lors du chargement des livres.'; }
+            next: books => {
+                this.books = books;
+                this.applyBookFilters();
+                this.cdr.detectChanges();
+            },
+            error: () => {
+                this.errorMsg = 'Erreur lors du chargement des livres.';
+                this.cdr.detectChanges();
+            }
         });
     }
 
@@ -308,17 +330,19 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     // ── STOCK ─────────────────────────────────────────────────────────────────
     loadStock(): void {
 
-        forkJoin({
-            low:       this.http.get<Book[]>(`${this.base}/stock/low`, { headers: this.headers() }).pipe(catchError(() => of([] as Book[]))),
-            out:       this.http.get<Book[]>(`${this.base}/stock/out`, { headers: this.headers() }).pipe(catchError(() => of([] as Book[]))),
-            movements: this.http.get<StockMovement[]>(`${this.base}/stock/recent-movements`, { headers: this.headers() }).pipe(catchError(() => of([] as StockMovement[]))),
-        }).pipe(takeUntil(this.destroy$)).subscribe({
+        this.http.get<StockOverview>(`${this.base}/stock/overview`, { headers: this.headers() })
+            .pipe(takeUntil(this.destroy$), catchError(() => of({ low: [], out: [], movements: [] } as StockOverview)))
+            .subscribe({
             next: ({ low, out, movements }) => {
-                this.lowStockBooks   = low;
+                this.lowStockBooks = low;
                 this.outOfStockBooks = out;
-                this.stockMovements  = movements;
+                this.stockMovements = movements;
+                this.cdr.detectChanges();
             },
-            error: () => {  this.errorMsg = 'Erreur lors du chargement du stock.'; }
+            error: () => {
+                this.errorMsg = 'Erreur lors du chargement du stock.';
+                this.cdr.detectChanges();
+            }
         });
     }
 
@@ -350,9 +374,53 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             : `${this.base}/orders`;
         this.http.get<Order[]>(url, { headers: this.headers() })
             .pipe(takeUntil(this.destroy$)).subscribe({
-            next: orders => { this.orders = orders;  },
-            error: () => {  this.errorMsg = 'Erreur lors du chargement des commandes.'; }
+            next: orders => {
+                this.orders = orders;
+                this.cdr.detectChanges();
+
+                if (orders.length > 0) {
+                    this.ordersRetryAttempts = 0;
+                    this.stopOrdersAutoRefresh();
+                    return;
+                }
+
+                if (this.ordersRetryAttempts < this.maxOrdersRetryAttempts) {
+                    this.startOrdersAutoRefresh();
+                } else {
+                    this.stopOrdersAutoRefresh();
+                }
+            },
+            error: () => {
+                this.stopOrdersAutoRefresh();
+                this.errorMsg = 'Erreur lors du chargement des commandes.';
+                this.cdr.detectChanges();
+            }
         });
+    }
+
+    private startOrdersAutoRefresh(): void {
+        this.stopOrdersAutoRefresh();
+        this.ordersRefreshTimer = setTimeout(() => {
+            if (this.activeView !== 'orders') {
+                this.stopOrdersAutoRefresh();
+                return;
+            }
+
+            this.ordersRetryAttempts += 1;
+            if (this.ordersRetryAttempts > this.maxOrdersRetryAttempts) {
+                this.stopOrdersAutoRefresh();
+                return;
+            }
+
+            this.loadOrders();
+        }, 900);
+    }
+
+    private stopOrdersAutoRefresh(): void {
+        if (this.ordersRefreshTimer) {
+            clearTimeout(this.ordersRefreshTimer);
+            this.ordersRefreshTimer = null;
+        }
     }
 
     updateOrderStatus(order: Order, status: string): void {
@@ -365,8 +433,15 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     }
 
     viewOrder(order: Order): void {
-        this.selectedOrder = order;
-        this.showOrderModal = true;
+        this.http.get<Order>(`${this.base}/orders/${order.id}`, { headers: this.headers() })
+            .pipe(
+                takeUntil(this.destroy$),
+                catchError(() => of(order))
+            )
+            .subscribe(fullOrder => {
+                this.selectedOrder = fullOrder;
+                this.showOrderModal = true;
+            });
     }
 
     // ── UTILISATEURS ──────────────────────────────────────────────────────────
@@ -374,8 +449,14 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
         this.http.get<AppUser[]>(`${this.base}/users`, { headers: this.headers() })
             .pipe(takeUntil(this.destroy$)).subscribe({
-            next: users => { this.users = users;  },
-            error: () => {  this.errorMsg = 'Erreur lors du chargement des utilisateurs.'; }
+            next: users => {
+                this.users = users;
+                this.cdr.detectChanges();
+            },
+            error: () => {
+                this.errorMsg = 'Erreur lors du chargement des utilisateurs.';
+                this.cdr.detectChanges();
+            }
         });
     }
 
@@ -437,6 +518,14 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             RESTOCK: 'restock', SALE: 'sale', RETURN: 'return',
             CORRECTION: 'correction', LOSS: 'loss', INITIAL: 'initial'
         } as any)[t] ?? '';
+    }
+    getSignedMovementQuantity(mv: StockMovement): number {
+        const qty = Math.abs(Number(mv?.quantity ?? 0));
+        const type = (mv?.type ?? '').toUpperCase();
+
+        if (type === 'SALE' || type === 'LOSS') return -qty;
+        if (type === 'RESTOCK' || type === 'RETURN' || type === 'INITIAL') return qty;
+        return Number(mv?.quantity ?? 0);
     }
     getStockPct(qty: number, alert: number = 20): number {
         return Math.min(Math.round((qty / Math.max(alert * 4, 20)) * 100), 100);

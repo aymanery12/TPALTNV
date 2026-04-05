@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -6,8 +6,13 @@ import { Navbar } from '../../../layout/navbar/navbar';
 import { Footer } from '../../../layout/footer/footer';
 import { CartService } from '../../../core/services/cart.service';
 import { OrderService } from '../../../core/services/order.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { CartItem } from '../../../shared/models/cart.model';
+import { Book } from '../../../shared/models/book.model';
 import { LanguageService } from '../../../core/services/language.service';
+import { AddressAutocompleteService } from '../../../core/services/address-autocomplete.service';
+import { Subject, of } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, map, switchMap, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-cart-page',
@@ -54,16 +59,21 @@ import { LanguageService } from '../../../core/services/language.service';
                     <button class="w-7 h-7 rounded flex items-center justify-center hover:bg-slate-600 transition-colors font-bold"
                             (click)="changeQty(item, -1)">−</button>
                     <span class="w-8 text-center text-sm font-bold">{{ item.quantity }}</span>
-                    <button class="w-7 h-7 rounded flex items-center justify-center hover:bg-slate-600 transition-colors font-bold"
+                    <button class="w-7 h-7 rounded flex items-center justify-center transition-colors font-bold disabled:opacity-40 disabled:cursor-not-allowed"
+                            [disabled]="isQtyIncreaseBlocked(item)"
+                            [title]="isQtyIncreaseBlocked(item) ? t('cart.maxQtyReached').replace('{{count}}', stockCountLabel(item)) : ''"
                             (click)="changeQty(item, 1)">+</button>
                   </div>
                   <button class="text-xs text-red-400 hover:text-red-300 transition-colors"
                       (click)="remove(item)">{{ t('cart.remove') }}</button>
                 </div>
+                <p *ngIf="isQtyIncreaseBlocked(item)" class="text-xs text-amber-300 mt-2">
+                  {{ t('cart.maxQtyReached').replace('{{count}}', stockCountLabel(item)) }}
+                </p>
               </div>
               <div class="text-right shrink-0">
                 <span class="text-amber-400 font-bold text-lg">
-                  {{ (item.book.price * item.quantity) | number: '1.2-2' }} €
+                  {{ itemLineTotal(item) | number: '1.2-2' }} €
                 </span>
               </div>
             </div>
@@ -82,6 +92,10 @@ import { LanguageService } from '../../../core/services/language.service';
                   <span>{{ t('cart.delivery') }}</span>
                   <span class="text-green-400">{{ t('cart.freeDelivery') }}</span>
                 </div>
+                <div class="flex justify-between text-slate-300">
+                  <span>{{ t('cart.paymentMethod') }}</span>
+                  <span class="text-amber-300">{{ t('cart.cashOnDelivery') }}</span>
+                </div>
                 <hr class="border-slate-600 my-3">
                 <div class="flex justify-between font-bold text-white text-base">
                   <span>{{ t('cart.total') }}</span>
@@ -90,14 +104,36 @@ import { LanguageService } from '../../../core/services/language.service';
               </div>
 
               <!-- Address form (shown when orderMode=true) -->
-              <div *ngIf="orderMode" class="mb-4">
+              <div *ngIf="orderMode" class="mb-4 relative">
                 <label class="block text-sm font-medium text-slate-300 mb-2">{{ t('cart.shippingAddress') }}</label>
-                <textarea
-                  [(ngModel)]="shippingAddress"
-                  rows="3"
+                <input
+                  [ngModel]="shippingAddress"
+                  (ngModelChange)="onShippingAddressInput($event)"
+                  (focus)="onAddressFocus()"
+                  (blur)="onAddressBlur()"
                   [placeholder]="t('cart.shippingPlaceholder')"
+                  autocomplete="street-address"
+                  class="w-full bg-slate-700 border border-slate-600 text-white text-sm rounded-xl px-3 py-2 placeholder-slate-500 focus:outline-none focus:border-amber-400 transition-colors">
+
+                <div *ngIf="isAddressLoading" class="text-xs text-slate-400 mt-2">{{ t('cart.addressSearching') }}</div>
+
+                <ul *ngIf="showAddressSuggestions"
+                    class="absolute z-20 left-0 right-0 mt-2 max-h-56 overflow-auto rounded-xl border border-slate-600 bg-slate-800 shadow-xl">
+                  <li *ngFor="let suggestion of addressSuggestions"
+                      (mousedown)="selectAddressSuggestion(suggestion)"
+                      class="px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 cursor-pointer transition-colors">
+                    {{ suggestion }}
+                  </li>
+                </ul>
+
+                <label class="block text-sm font-medium text-slate-300 mt-3 mb-2">{{ t('cart.comment') }}</label>
+                <textarea
+                  [(ngModel)]="deliveryComment"
+                  rows="3"
+                  [placeholder]="t('cart.commentPlaceholder')"
                   class="w-full bg-slate-700 border border-slate-600 text-white text-sm rounded-xl px-3 py-2 resize-none placeholder-slate-500 focus:outline-none focus:border-amber-400 transition-colors">
                 </textarea>
+
                 <p *ngIf="orderError" class="text-red-400 text-xs mt-1">{{ orderError }}</p>
               </div>
 
@@ -110,7 +146,7 @@ import { LanguageService } from '../../../core/services/language.service';
 
               <div *ngIf="orderMode" class="flex flex-col gap-2 mb-3">
                 <button class="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3 rounded-xl transition-colors shadow-lg disabled:opacity-50"
-                        [disabled]="isOrdering || !shippingAddress.trim()"
+                        [disabled]="isOrdering || !canSubmitOrder()"
                         (click)="placeOrder()">
                   <span *ngIf="!isOrdering">{{ t('cart.confirmOrder') }}</span>
                   <span *ngIf="isOrdering">{{ t('cart.processing') }}</span>
@@ -136,19 +172,29 @@ import { LanguageService } from '../../../core/services/language.service';
   `,
   styleUrl: './cart-page.scss'
 })
-export class CartPage implements OnInit {
+export class CartPage implements OnInit, OnDestroy {
   items: CartItem[] = [];
   total = 0;
   totalItems = 0;
 
   orderMode = false;
   shippingAddress = '';
+  deliveryComment = '';
+  addressSuggestions: string[] = [];
+  isAddressLoading = false;
+  showAddressSuggestions = false;
   isOrdering = false;
   orderError = '';
+
+  private readonly addressInput$ = new Subject<string>();
+  private readonly destroy$ = new Subject<void>();
+  private readonly addressCache = new Map<string, string[]>();
 
   constructor(
     private cartService: CartService,
     private orderService: OrderService,
+    private authService: AuthService,
+    private addressAutocompleteService: AddressAutocompleteService,
     private router: Router,
     private cdr: ChangeDetectorRef,
     private languageService: LanguageService
@@ -157,36 +203,134 @@ export class CartPage implements OnInit {
   ngOnInit(): void {
     this.cartService.getCartItems().subscribe(items => {
       this.items = items;
-      this.total = items.reduce((s, i) => s + i.book.price * i.quantity, 0);
+      this.total = items.reduce((s, i) => s + this.itemLineTotal(i), 0);
       this.totalItems = items.reduce((s, i) => s + i.quantity, 0);
       setTimeout(() => this.cdr.detectChanges(), 0);
     });
+
+    this.addressInput$
+      .pipe(
+        debounceTime(160),
+        distinctUntilChanged(),
+        switchMap(query => this.addressAutocompleteService.searchFrenchAddresses(query).pipe(
+          map(suggestions => ({ query, suggestions })),
+          catchError(() => of({ query, suggestions: [] as string[] }))
+        )),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(({ query, suggestions }) => {
+        this.addressCache.set(query.toLowerCase(), suggestions);
+        this.addressSuggestions = suggestions;
+        this.showAddressSuggestions = this.shippingAddress.trim().length >= 3 && suggestions.length > 0;
+        this.isAddressLoading = false;
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  onShippingAddressInput(value: string): void {
+    this.shippingAddress = value;
+    const trimmedValue = value.trim();
+    const cacheKey = trimmedValue.toLowerCase();
+
+    if (trimmedValue.length < 3) {
+      this.addressSuggestions = [];
+      this.showAddressSuggestions = false;
+      this.isAddressLoading = false;
+      return;
+    }
+
+    const cachedSuggestions = this.addressCache.get(cacheKey);
+    if (cachedSuggestions) {
+      this.addressSuggestions = cachedSuggestions;
+      this.showAddressSuggestions = cachedSuggestions.length > 0;
+      this.isAddressLoading = false;
+      return;
+    }
+
+    this.isAddressLoading = true;
+    this.addressInput$.next(trimmedValue);
+  }
+
+  onAddressFocus(): void {
+    if (this.addressSuggestions.length > 0) {
+      this.showAddressSuggestions = true;
+    }
+  }
+
+  onAddressBlur(): void {
+    // Delay is needed so click events on suggestion items can run first.
+    setTimeout(() => {
+      this.showAddressSuggestions = false;
+      this.cdr.detectChanges();
+    }, 120);
+  }
+
+  selectAddressSuggestion(address: string): void {
+    this.shippingAddress = address;
+    this.addressSuggestions = [];
+    this.showAddressSuggestions = false;
   }
 
   placeOrder(): void {
-    if (!this.shippingAddress.trim()) return;
+    if (!this.authService.isLoggedInSnapshot()) {
+      this.isOrdering = false;
+      this.orderError = this.t('cart.loginRequired');
+      return;
+    }
+
+    if (!this.canSubmitOrder()) {
+      this.orderError = this.t('cart.addressRequired');
+      return;
+    }
+
     this.isOrdering = true;
     this.orderError = '';
 
     const order = {
-      shippingAddress: this.shippingAddress.trim(),
+      shippingAddress: this.buildShippingPayload(),
       items: this.items.map(i => ({
         book: { id: i.book.id },
         quantity: i.quantity,
-        price: i.book.price
+        price: this.effectiveUnitPrice(i.book)
       }))
     };
 
     this.orderService.createOrder(order).subscribe({
-      next: () => {
+      next: (createdOrder) => {
         this.cartService.clearCart();
-        this.router.navigate(['/orders']);
+        this.router.navigate(['/orders'], {
+          state: {
+            justOrdered: true,
+            createdOrderId: createdOrder?.id ?? null,
+            orderedAt: Date.now()
+          }
+        });
       },
-      error: () => {
+      error: (err) => {
         this.isOrdering = false;
-        this.orderError = this.t('cart.orderError');
+        this.orderError = (err?.status === 401 || err?.status === 403)
+          ? this.t('cart.loginRequired')
+          : this.t('cart.orderError');
       }
     });
+  }
+
+  canSubmitOrder(): boolean {
+    return !!this.shippingAddress.trim();
+  }
+
+  private buildShippingPayload(): string {
+    const lines: string[] = [this.shippingAddress.trim()];
+
+    if (this.deliveryComment.trim()) {
+      lines.push(`${this.t('cart.commentPrefix')}: ${this.deliveryComment.trim()}`);
+    }
+
+    return lines.join('\n');
   }
 
   t(key: string): string {
@@ -194,6 +338,14 @@ export class CartPage implements OnInit {
   }
 
   changeQty(item: CartItem, delta: number): void {
+    if (delta > 0) {
+      const maxStock = item.book.quantity;
+      if (typeof maxStock === 'number' && Number.isFinite(maxStock) && item.quantity >= maxStock) {
+        this.orderError = this.t('cart.maxQtyReached').replace('{{count}}', String(maxStock));
+        return;
+      }
+    }
+    this.orderError = '';
     this.cartService.updateQuantity(item.id, item.quantity + delta);
   }
 
@@ -203,5 +355,25 @@ export class CartPage implements OnInit {
 
   clearCart(): void {
     this.cartService.clearCart();
+  }
+
+  isQtyIncreaseBlocked(item: CartItem): boolean {
+    const maxStock = item.book.quantity;
+    return typeof maxStock === 'number' && Number.isFinite(maxStock) && item.quantity >= maxStock;
+  }
+
+  stockCountLabel(item: CartItem): string {
+    const maxStock = item.book.quantity;
+    return typeof maxStock === 'number' && Number.isFinite(maxStock) ? String(maxStock) : '0';
+  }
+
+  effectiveUnitPrice(book: Book): number {
+    const basePrice = Number(book.price) || 0;
+    const discount = Math.min(100, Math.max(0, Number(book.discount) || 0));
+    return basePrice * (1 - discount / 100);
+  }
+
+  itemLineTotal(item: CartItem): number {
+    return this.effectiveUnitPrice(item.book) * item.quantity;
   }
 }

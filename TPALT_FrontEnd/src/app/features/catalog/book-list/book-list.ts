@@ -231,8 +231,8 @@ export class BookList implements OnInit, OnDestroy {
           ...b,
           coverImageUrl: b.imageUrl,
           authors: b.author ? b.author.map((name, i) => ({ id: String(i), name })) : [],
-          reviewCount: 0,
-          inStock: true
+          reviewCount: b.reviewCount ?? 0,
+          inStock: (b.quantity ?? 0) > 0 && (b.status ?? 'ACTIVE') !== 'OUT_OF_STOCK' && (b.status ?? 'ACTIVE') !== 'DISCONTINUED'
         }));
 
         // Extraire les catégories uniques
@@ -374,7 +374,15 @@ export class BookList implements OnInit, OnDestroy {
   }
 
   onAddToCart(book: Book): void {
-    this.cartService.addToCart(book);
+    const result = this.cartService.addToCart(book);
+    if (!result.added) {
+      if (result.reason === 'OUT_OF_STOCK') {
+        this.showToast(this.t('bookCard.soldOut'));
+      } else {
+        this.showToast(this.t('cart.stockLimitError').replace('{{count}}', String(result.maxAvailable ?? 0)));
+      }
+      return;
+    }
     this.showToast(`"${book.title}" ajouté au panier !`);
   }
 
