@@ -156,11 +156,14 @@ export class HomePage implements OnInit, OnDestroy {
         const localAvg = this.computeAverageRatingFromBooks(this.books);
         this.bookService.getAverageReviewRating().subscribe({
           next: (avg) => {
-            this.averageReviewRating = Number.isFinite(avg) && avg > 0 ? avg : localAvg;
+            queueMicrotask(() => {
+              this.averageReviewRating = Number.isFinite(avg) && avg > 0 ? avg : localAvg;
+            });
           },
           error: () => {
-            this.averageReviewRating = localAvg;
-            this.cdr.detectChanges();
+            queueMicrotask(() => {
+              this.averageReviewRating = localAvg;
+            });
           }
         });
         this.cdr.detectChanges();
