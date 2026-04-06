@@ -27,11 +27,17 @@ public class BookController {
     @GetMapping("/categories")
     public List<String> getCategories() {
         return repository.findAll().stream()
-                .map(Book::getCategory)
-                .filter(c -> c != null && !c.isBlank())
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList());
+            .map(Book::getCategory)
+            .filter(c -> c != null && !c.isBlank())
+            .collect(Collectors.toMap(
+                String::toLowerCase,
+                c -> c,
+                (existing, replacement) -> existing
+            ))
+            .values()
+            .stream()
+            .sorted()
+            .collect(Collectors.toList());
     }
 
     // GET /api/books/search?keyword=aventure

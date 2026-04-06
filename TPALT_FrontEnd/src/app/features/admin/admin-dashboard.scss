@@ -27,7 +27,6 @@ $sidebar-collapsed: 64px;
   display: grid;
   grid-template-columns: $sidebar-w 1fr;
   min-height: 100vh;
-  background: $bg;
   color: $text;
   font-family: 'Segoe UI', system-ui, sans-serif;
   font-size: 14px;
@@ -141,6 +140,7 @@ $sidebar-collapsed: 64px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: $bg;
 }
 
 .topbar {
@@ -206,6 +206,7 @@ $sidebar-collapsed: 64px;
   flex: 1;
   padding: 1.5rem;
   overflow-y: auto;
+  background: $bg;
 }
 
 // ─── KPI Grid ─────────────────────────────────────────────────────────────────
@@ -247,7 +248,7 @@ $sidebar-collapsed: 64px;
   background: $surface;
   border: 1px solid $border;
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .card-header {
@@ -500,6 +501,10 @@ $sidebar-collapsed: 64px;
   position: relative;
   display: inline-flex;
   align-items: center;
+}
+
+.users-search-wrapper {
+  margin-top: 1rem;
 }
 
 .search-icon {
@@ -886,10 +891,18 @@ $sidebar-collapsed: 64px;
 }
 
 .tracking-cell {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  vertical-align: middle;
   min-width: 160px;
+  white-space: nowrap;
+}
+
+.tracking-cell-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .tracking-link {
@@ -899,10 +912,24 @@ $sidebar-collapsed: 64px;
   color: $blue;
   text-decoration: none;
   letter-spacing: 0.5px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1;
   &:hover { text-decoration: underline; }
+}
+
+.tracking-cell .icon-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .theme-toggle-btn {
@@ -1085,6 +1112,7 @@ $light-muted:   #64748b;
 
   // View content
   .view-content { background: $light-bg; }
+  .main-area { background: $light-bg; }
 
   // Tracking
   .tracking-link { color: $blue; }

@@ -452,22 +452,24 @@
                             </app-custom-dropdown>
                         </td>
                         <td class="tracking-cell">
-                            <ng-container *ngIf="order.trackingNumber; else noTracking">
-                                <a [href]="chronopostUrl(order.trackingNumber)" target="_blank"
-                                   class="tracking-link" title="Suivre sur Chronopost">
-                                    <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;">local_shipping</span>
-                                    {{ order.trackingNumber }}
-                                </a>
-                                <button class="icon-btn" (click)="regenerateTracking(order)" title="Régénérer">
-                                    <span class="material-symbols-outlined" style="font-size:15px;">refresh</span>
-                                </button>
-                            </ng-container>
-                            <ng-template #noTracking>
-                                <button class="btn-sm" (click)="regenerateTracking(order)" *ngIf="order.status === 'EXPEDIEE'">
-                                    Générer
-                                </button>
-                                <span class="muted" *ngIf="order.status !== 'EXPEDIEE'">—</span>
-                            </ng-template>
+                            <div class="tracking-cell-content">
+                                <ng-container *ngIf="order.trackingNumber; else noTracking">
+                                    <a [href]="chronopostUrl(order.trackingNumber)" target="_blank"
+                                       class="tracking-link" title="Suivre sur Chronopost">
+                                        <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;">local_shipping</span>
+                                        {{ order.trackingNumber }}
+                                    </a>
+                                    <button class="icon-btn" (click)="regenerateTracking(order)" title="Régénérer">
+                                        <span class="material-symbols-outlined" style="font-size:15px;">refresh</span>
+                                    </button>
+                                </ng-container>
+                                <ng-template #noTracking>
+                                    <button class="btn-sm" (click)="regenerateTracking(order)" *ngIf="order.status === 'EXPEDIEE'">
+                                        Générer
+                                    </button>
+                                    <span class="muted" *ngIf="order.status !== 'EXPEDIEE'">—</span>
+                                </ng-template>
+                            </div>
                         </td>
                         <td>
                             <button class="icon-btn" (click)="viewOrder(order)" title="Détails">
@@ -488,19 +490,33 @@
                 <div class="card-header">
                     <span class="card-title">
                         <span class="material-symbols-outlined" style="vertical-align:middle;margin-right:4px">group</span>
-                        {{ users.length }} utilisateur(s)
+                        {{ filteredUsers.length }} utilisateur(s)
                     </span>
                     <button class="btn-sm" (click)="loadUsers()">
                         <span class="material-symbols-outlined" style="font-size:15px;vertical-align:middle">refresh</span>
                         Rafraîchir
                     </button>
                 </div>
+
+                <div class="toolbar" style="padding: 0 1.25rem 1rem; margin-bottom: 0;">
+                    <div class="toolbar-left">
+                        <div class="search-wrapper users-search-wrapper">
+                            <span class="material-symbols-outlined search-icon">search</span>
+                            <input
+                                class="search-input"
+                                [(ngModel)]="userSearch"
+                                (ngModelChange)="applyUserFilters()"
+                                placeholder="Rechercher un utilisateur..." />
+                        </div>
+                    </div>
+                </div>
+
                 <table class="data-table">
                     <thead>
                     <tr><th>ID</th><th>Nom d'utilisateur</th><th>Email</th><th>Rôle</th><th>Actions</th></tr>
                     </thead>
                     <tbody>
-                    <tr *ngFor="let user of users">
+                    <tr *ngFor="let user of filteredUsers">
                         <td class="muted mono">{{ user.id }}</td>
                         <td class="bold">{{ user.username }}</td>
                         <td class="muted">{{ user.email }}</td>
@@ -516,6 +532,11 @@
                             <button class="icon-btn delete" (click)="deleteUser(user)" title="Supprimer">
                                 <span class="material-symbols-outlined">delete</span>
                             </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="filteredUsers.length === 0">
+                        <td colspan="5">
+                            <div class="empty-state">Aucun utilisateur trouvé.</div>
                         </td>
                     </tr>
                     </tbody>

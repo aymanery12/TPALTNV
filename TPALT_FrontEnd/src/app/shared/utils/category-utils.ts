@@ -28,3 +28,16 @@ export function getUniqueCategoriesFromBooks<T extends { category?: string | nul
         })
         .map(b => b.category!);
 }
+
+/**
+ * Deduplicate a list of category strings (case-insensitive, preserving first occurrence's casing).
+ */
+export function getUniqueCategoryStrings(categories: string[]): string[] {
+    const seen = new Set<string>();
+    return categories.filter(cat => {
+        const normalized = normalizeCategoryForComparison(cat);
+        if (seen.has(normalized)) return false;
+        seen.add(normalized);
+        return true;
+    });
+}

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { LanguageService } from '../../core/services/language.service';
-import { isCategoryEqual } from '../../shared/utils/category-utils';
+import { isCategoryEqual, getUniqueCategoryStrings } from '../../shared/utils/category-utils';
 
 export interface PriceRange { min?: number; max?: number; label: string; }
 
@@ -36,7 +36,7 @@ export class SidebarFilters implements OnInit {
 
   ngOnInit(): void {
     this.http.get<string[]>(`${environment.apiUrl}/books/categories`).subscribe({
-      next: cats => { this.categories = [this.offersCategoryValue, ...cats]; },
+      next: cats => { this.categories = [this.offersCategoryValue, ...getUniqueCategoryStrings(cats)]; },
       error: ()  => { this.categories = [this.offersCategoryValue]; }
     });
   }

@@ -201,6 +201,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
     // ── Utilisateurs ─────────────────────────────────────────────────────────
     users: AppUser[] = [];
+    filteredUsers: AppUser[] = [];
+    userSearch = '';
 
     constructor(
         private http: HttpClient,
@@ -535,6 +537,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$)).subscribe({
             next: users => {
                 this.users = users;
+                this.applyUserFilters();
                 this.cdr.detectChanges();
             },
             error: () => {
@@ -550,6 +553,21 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$)).subscribe({
             next: () => { user.role = role; this.successMsg = 'Rôle mis à jour.'; },
             error: () => { this.errorMsg = 'Erreur lors de la mise à jour du rôle.'; }
+        });
+    }
+
+    applyUserFilters(): void {
+        const query = this.userSearch.trim().toLowerCase();
+        if (!query) {
+            this.filteredUsers = [...this.users];
+            return;
+        }
+
+        this.filteredUsers = this.users.filter(user => {
+            const role = (user.role ?? '').toLowerCase();
+            const username = (user.username ?? '').toLowerCase();
+            const email = (user.email ?? '').toLowerCase();
+            return username.includes(query) || email.includes(query) || role.includes(query);
         });
     }
 

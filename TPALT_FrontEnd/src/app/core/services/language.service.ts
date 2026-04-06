@@ -44,7 +44,7 @@ export class LanguageService {
       'Classique': 'Classics',
       'Dystopie': 'Dystopia',
       'Post-Apocalyptique': 'Post-apocalyptic',
-      'Fantastique': 'Fantasy',
+       'Fantastique': 'Fantastic',
       'Aventure': 'Adventure',
       'Conte': 'Fairy tale',
       'Roman': 'Novel',
