@@ -60,21 +60,6 @@ LOCK TABLES `book_author` WRITE;
 INSERT INTO `book_author` VALUES (1,'J.R.R. Tolkien'),(2,'J.R.R. Tolkien'),(3,'J.R.R. Tolkien'),(4,'J.R.R. Tolkien'),(5,'J.K. Rowling'),(6,'J.K. Rowling'),(7,'J.K. Rowling'),(8,'J.K. Rowling'),(9,'J.K. Rowling'),(10,'J.K. Rowling'),(11,'J.K. Rowling'),(12,'Frank Herbert'),(13,'Frank Herbert'),(14,'Frank Herbert'),(15,'Isaac Asimov'),(16,'Isaac Asimov'),(17,'Isaac Asimov'),(18,'William Gibson'),(19,'Ray Bradbury'),(20,'George Orwell'),(21,'George Orwell'),(22,'Aldous Huxley'),(23,'Cormac McCarthy'),(24,'Patrick Rothfuss'),(25,'Patrick Rothfuss'),(26,'Robin Hobb'),(27,'George R. R. Martin'),(28,'Victor Hugo'),(29,'Victor Hugo'),(30,'Gustave Flaubert'),(31,'Gustave Flaubert'),(32,'Stendhal'),(33,'Stendhal'),(34,'Émile Zola'),(35,'Émile Zola'),(36,'Émile Zola'),(37,'Fiodor Dostoïevski'),(38,'Fiodor Dostoïevski'),(39,'Fiodor Dostoïevski'),(40,'Léon Tolstoï'),(41,'Léon Tolstoï'),(42,'Alexandre Dumas'),(43,'Alexandre Dumas'),(44,'Alexandre Dumas'),(45,'Alexandre Dumas'),(46,'Miguel de Cervantès'),(47,'Herman Melville'),(48,'Charlotte Brontë'),(49,'Jane Austen'),(50,'Jane Austen'),(51,'Jane Austen'),(52,'Emily Brontë'),(53,'Bram Stoker'),(54,'Mary Shelley'),(55,'Robert Louis Stevenson'),(56,'Robert Louis Stevenson'),(57,'Jules Verne'),(58,'Jules Verne'),(59,'Jules Verne'),(60,'Jules Verne'),(61,'Antoine de Saint-Exupéry'),(62,'Paulo Coelho'),(63,'Ernest Hemingway'),(64,'Ernest Hemingway'),(65,'Jack Kerouac'),(66,'Patrick Süskind'),(67,'Albert Camus'),(68,'Albert Camus'),(69,'Albert Camus'),(70,'Boris Vian'),(71,'Alain-Fournier'),(72,'Guy de Maupassant'),(73,'Guy de Maupassant'),(74,'Voltaire'),(75,'Charles Baudelaire'),(76,'Jean-Jacques Rousseau'),(77,'Franz Kafka'),(78,'Franz Kafka'),(79,'Franz Kafka'),(80,'Stefan Zweig'),(81,'Stefan Zweig'),(82,'Jostein Gaarder'),(83,'Oliver Sacks'),(84,'Yuval Noah Harari'),(85,'Yuval Noah Harari'),(86,'Stephen Hawking'),(87,'Carl Sagan'),(88,'Richard Dawkins'),(89,'Douglas Hofstadter'),(90,'Daniel Kahneman'),(91,'Robert B. Cialdini'),(92,'James Clear'),(93,'Stephen R. Covey'),(94,'Eckhart Tolle'),(95,'Marc Aurèle'),(96,'Sénèque'),(97,'Platon'),(98,'Aristote'),(99,'Nicolas Machiavel'),(100,'René Descartes'),(101,'Friedrich Nietzsche'),(102,'Simone de Beauvoir'),(103,'Virginia Woolf'),(104,'Virginia Woolf'),(105,'Virginia Woolf'),(106,'Gabriel García Márquez'),(107,'Gabriel García Márquez'),(108,'Gabriel García Márquez'),(109,'Umberto Eco'),(110,'Primo Levi'),(111,'Anne Frank'),(112,'Marjane Satrapi'),(113,'Art Spiegelman'),(114,'Alan Moore'),(114,'Dave Gibbons'),(115,'Alan Moore'),(115,'Brian Bolland'),(116,'Neil Gaiman'),(116,'Sam Kieth'),(116,'Mike Dringenberg');
 /*!40000 ALTER TABLE `book_author` ENABLE KEYS */;
 UNLOCK TABLES;
-DROP TABLE IF EXISTS `book_authors`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `book_authors` (
-  `book_id` bigint NOT NULL,
-  `author` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  KEY `FKs4xm7q8i3uxvaiswj1c35nnxw` (`book_id`),
-  CONSTRAINT `FKs4xm7q8i3uxvaiswj1c35nnxw` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-LOCK TABLES `book_authors` WRITE;
-/*!40000 ALTER TABLE `book_authors` DISABLE KEYS */;
-/*!40000 ALTER TABLE `book_authors` ENABLE KEYS */;
-UNLOCK TABLES;
 DROP TABLE IF EXISTS `order_item`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -119,24 +104,6 @@ LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
 INSERT INTO `orders` (`id`,`user_id`,`total_amount`,`status`,`shipping_address`,`payment_method`,`order_date`) VALUES (1,1,46.3,'LIVREE','Abu Dhabi, UAE','COD','2026-03-26 21:45:54.000000'),(2,3,18.9,'EN_PREPARATION','11 bvd paris','COD','2026-03-28 20:16:55.510374'),(3,16,18.9,'EN_PREPARATION','Adresse: 35 Rue du Docteur Babinski 93400 Saint-Ouen-sur-Seine\nCommentaire: 4ème étage','COD','2026-04-05 18:55:25.880225'),(4,16,17.009999999999998,'EN_PREPARATION','35 Rue du Docteur Babinski 93400 Saint-Ouen-sur-Seine\nCommentaire: Etage 4','COD','2026-04-05 21:32:19.034031'),(5,2,17.009999999999998,'EN_PREPARATION','35 Rue d\'Entraigues 37000 Tours','COD','2026-04-05 21:34:47.740862'),(6,2,17.009999999999998,'EN_PREPARATION','35 Rue du Docteur Babinski 93400 Saint-Ouen-sur-Seine\nCommentaire: Etage 4','COD','2026-04-05 21:46:31.615709'),(7,2,17.009999999999998,'EN_PREPARATION','35 Rue du Docteur Babinski 93400 Saint-Ouen-sur-Seine\nCommentaire: Etage 5','COD','2026-04-05 21:50:26.820041');
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
-UNLOCK TABLES;
-DROP TABLE IF EXISTS `orders_items`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `orders_items` (
-  `order_id` bigint NOT NULL,
-  `items_id` bigint NOT NULL,
-  PRIMARY KEY (`order_id`,`items_id`),
-  UNIQUE KEY `uk_orders_items_item` (`items_id`),
-  CONSTRAINT `fk_orders_items_item` FOREIGN KEY (`items_id`) REFERENCES `order_item` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_orders_items_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-LOCK TABLES `orders_items` WRITE;
-/*!40000 ALTER TABLE `orders_items` DISABLE KEYS */;
-INSERT INTO `orders_items` VALUES (1,1),(1,2),(1,3);
-/*!40000 ALTER TABLE `orders_items` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `review`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
