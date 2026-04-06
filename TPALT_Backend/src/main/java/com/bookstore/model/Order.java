@@ -22,6 +22,7 @@ public class Order {
     private double totalAmount;
     private String shippingAddress;
     private String paymentMethod;
+    private String trackingNumber;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

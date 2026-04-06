@@ -65,6 +65,7 @@ export interface Order {
     paymentMethod?: string;
     itemsCount?: number;
     items?: { book?: { title: string }; quantity: number; price: number }[];
+    trackingNumber?: string;
 }
 
 interface StockOverview {
@@ -424,12 +425,38 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     }
 
     updateOrderStatus(order: Order, status: string): void {
-        this.http.patch(`${this.base}/orders/${order.id}/status`,
+        this.http.patch<{ orderId: number; status: string; trackingNumber?: string }>(
+            `${this.base}/orders/${order.id}/status`,
             { status }, { headers: this.headers() })
             .pipe(takeUntil(this.destroy$)).subscribe({
-            next: () => { order.status = status; this.successMsg = 'Statut mis à jour.'; },
-            error: () => { this.errorMsg = 'Erreur lors de la mise à jour.'; }
+            next: (res) => {
+                order.status = status;
+                if (res.trackingNumber) order.trackingNumber = res.trackingNumber;
+                this.successMsg = status === 'EXPEDIEE' && res.trackingNumber
+                    ? `Statut mis à jour — N° suivi : ${res.trackingNumber}`
+                    : 'Statut mis à jour.';
+                this.cdr.detectChanges();
+            },
+            error: () => { this.errorMsg = 'Erreur lors de la mise à jour.'; this.cdr.detectChanges(); }
         });
+    }
+
+    regenerateTracking(order: Order): void {
+        this.http.patch<{ orderId: number; trackingNumber: string }>(
+            `${this.base}/orders/${order.id}/tracking`,
+            {}, { headers: this.headers() })
+            .pipe(takeUntil(this.destroy$)).subscribe({
+            next: (res) => {
+                order.trackingNumber = res.trackingNumber;
+                this.successMsg = `Numéro de suivi régénéré : ${res.trackingNumber}`;
+                this.cdr.detectChanges();
+            },
+            error: () => { this.errorMsg = 'Erreur lors de la génération du suivi.'; this.cdr.detectChanges(); }
+        });
+    }
+
+    chronopostUrl(trackingNumber: string): string {
+        return `https://www.chronopost.fr/tracking-no-redux/track?listeNumerosLT=${trackingNumber}`;
     }
 
     viewOrder(order: Order): void {
@@ -478,6 +505,175 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         });
     }
 
+    // ── EXPORT ────────────────────────────────────────────────────────────────
+
+    exportCsv(): void {
+        let rows: string[][] = [];
+        let filename = 'export';
+
+        switch (this.activeView) {
+            case 'books':
+            case 'promotions':
+                filename = 'livres';
+                rows = [
+                    ['ID','Titre','Auteurs','Catégorie','Prix (€)','Prix final (€)','Stock','Alerte stock','Statut','Note','Vendus','En avant','Remise (%)','ISBN'],
+                    ...this.filteredBooks.map(b => [
+                        String(b.id), b.title,
+                        (b.author || []).join(' / '),
+                        b.category, String(b.price),
+                        String(b.discount > 0 ? (b.price * (1 - b.discount / 100)).toFixed(2) : b.price),
+                        String(b.quantity), String(b.stockAlert ?? ''),
+                        b.status, String(b.rating), String(b.soldCount),
+                        b.featured ? 'Oui' : 'Non',
+                        String(b.discount ?? 0), b.isbn ?? ''
+                    ])
+                ];
+                break;
+            case 'orders':
+                filename = 'commandes';
+                rows = [
+                    ['ID','Client','Date','Total (€)','Statut','Adresse','Paiement'],
+                    ...this.orders.map(o => [
+                        String(o.id),
+                        o.user?.username ?? o.username ?? '',
+                        o.orderDate ? new Date(o.orderDate).toLocaleString('fr-FR') : '',
+                        String(o.totalAmount),
+                        o.status,
+                        (o.shippingAddress ?? '').replace(/\n/g, ' '),
+                        o.paymentMethod ?? ''
+                    ])
+                ];
+                break;
+            case 'stock':
+                filename = 'mouvements_stock';
+                rows = [
+                    ['ID','Date','Livre','Type','Quantité','Stock avant','Stock après','Raison','Admin'],
+                    ...this.stockMovements.map(m => [
+                        String(m.id),
+                        m.createdAt ? new Date(m.createdAt).toLocaleString('fr-FR') : '',
+                        m.book?.title ?? '',
+                        this.getMovementLabel(m.type),
+                        String(m.quantity),
+                        String(m.stockBefore),
+                        String(m.stockAfter),
+                        m.reason ?? '',
+                        m.performedBy ?? ''
+                    ])
+                ];
+                break;
+            case 'users':
+                filename = 'utilisateurs';
+                rows = [
+                    ['ID','Username','Email','Rôle'],
+                    ...this.users.map(u => [
+                        String(u.id), u.username, u.email, u.role
+                    ])
+                ];
+                break;
+            default:
+                return;
+        }
+
+        const csv = rows.map(r => r.map(cell => `"${(cell ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+        const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href     = url;
+        a.download = `${filename}_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    exportPdf(): void {
+        let title = 'Export';
+        let headers: string[] = [];
+        let rows: string[][] = [];
+
+        switch (this.activeView) {
+            case 'books':
+            case 'promotions':
+                title = 'Catalogue des livres';
+                headers = ['ID','Titre','Catégorie','Prix','Stock','Statut','Note'];
+                rows = this.filteredBooks.map(b => [
+                    String(b.id), b.title, b.category,
+                    `${b.price.toFixed(2)} €`, String(b.quantity),
+                    this.getBookStatusLabel(b.status), String(b.rating)
+                ]);
+                break;
+            case 'orders':
+                title = 'Liste des commandes';
+                headers = ['ID','Client','Date','Total','Statut','Adresse'];
+                rows = this.orders.map(o => [
+                    String(o.id),
+                    o.user?.username ?? o.username ?? '',
+                    o.orderDate ? new Date(o.orderDate).toLocaleDateString('fr-FR') : '',
+                    `${o.totalAmount.toFixed(2)} €`,
+                    o.status,
+                    (o.shippingAddress ?? '').replace(/\n/g, ' ')
+                ]);
+                break;
+            case 'stock':
+                title = 'Mouvements de stock';
+                headers = ['Date','Livre','Type','Qté','Avant','Après','Raison'];
+                rows = this.stockMovements.map(m => [
+                    m.createdAt ? new Date(m.createdAt).toLocaleDateString('fr-FR') : '',
+                    m.book?.title ?? '',
+                    this.getMovementLabel(m.type),
+                    String(m.quantity),
+                    String(m.stockBefore),
+                    String(m.stockAfter),
+                    m.reason ?? ''
+                ]);
+                break;
+            case 'users':
+                title = 'Liste des utilisateurs';
+                headers = ['ID','Username','Email','Rôle'];
+                rows = this.users.map(u => [String(u.id), u.username, u.email, u.role]);
+                break;
+            default:
+                return;
+        }
+
+        const date = new Date().toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
+        const thHtml = headers.map(h => `<th>${h}</th>`).join('');
+        const rowsHtml = rows.map(r =>
+            `<tr>${r.map(c => `<td>${c ?? ''}</td>`).join('')}</tr>`
+        ).join('');
+
+        const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
+<title>${title}</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; font-size: 12px; color: #1e293b; padding: 24px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; border-bottom: 2px solid #f59e0b; padding-bottom: 12px; }
+  .header h1 { font-size: 18px; font-weight: bold; color: #0f172a; }
+  .header .meta { font-size: 11px; color: #64748b; text-align: right; }
+  .store { font-size: 13px; font-weight: bold; color: #f59e0b; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #1e293b; color: #fff; padding: 8px 10px; text-align: left; font-size: 11px; font-weight: 600; }
+  td { padding: 7px 10px; border-bottom: 1px solid #e2e8f0; font-size: 11px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  .footer { margin-top: 16px; font-size: 10px; color: #94a3b8; text-align: center; }
+  @media print { body { padding: 0; } }
+</style>
+</head><body>
+<div class="header">
+  <div><div class="store">BookStore Admin</div><h1>${title}</h1></div>
+  <div class="meta">Exporté le ${date}<br>Total : ${rows.length} ligne(s)</div>
+</div>
+<table><thead><tr>${thHtml}</tr></thead><tbody>${rowsHtml}</tbody></table>
+<div class="footer">BookStore — Document généré automatiquement</div>
+<script>window.onload = () => { window.print(); }<\/script>
+</body></html>`;
+
+        const win = window.open('', '_blank');
+        if (win) { win.document.write(html); win.document.close(); }
+    }
+
+    get canExport(): boolean {
+        return ['books','promotions','orders','stock','users'].includes(this.activeView);
+    }
+
     // ── HELPERS ───────────────────────────────────────────────────────────────
     formatCurrency(v: number): string {
         return (v || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
@@ -492,10 +688,27 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     }
 
     getStatusLabel(s: string): string {
-        return ({ LIVREE: 'Livrée', LIVRAISON: 'En livraison', PREPARATION: 'Préparation', ANNULEE: 'Annulée' } as any)[s] ?? s;
+        const map: Record<string, string> = {
+            EN_PREPARATION: 'En préparation',
+            EXPEDIEE:       'Expédiée',
+            LIVREE:         'Livrée',
+            ANNULEE:        'Annulée',
+            // anciens alias conservés pour données historiques
+            PREPARATION:    'En préparation',
+            LIVRAISON:      'Expédiée',
+        };
+        return map[s] ?? s;
     }
     getStatusClass(s: string): string {
-        return ({ LIVREE: 'delivered', LIVRAISON: 'shipping', PREPARATION: 'preparing', ANNULEE: 'cancelled' } as any)[s] ?? '';
+        const map: Record<string, string> = {
+            EN_PREPARATION: 'preparing',
+            EXPEDIEE:       'shipping',
+            LIVREE:         'delivered',
+            ANNULEE:        'cancelled',
+            PREPARATION:    'preparing',
+            LIVRAISON:      'shipping',
+        };
+        return map[s] ?? '';
     }
     getBookStatusLabel(s: string): string {
         return ({

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginPage } from './features/auth/login-page/login-page';
 import { AdminDashboardComponent } from './features/admin/admin-dashboard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -25,7 +26,8 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    component: AdminDashboardComponent
+    component: AdminDashboardComponent,
+    canActivate: [adminGuard]
   },
   {
     path: 'profile',

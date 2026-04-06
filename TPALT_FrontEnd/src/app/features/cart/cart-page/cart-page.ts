@@ -61,14 +61,17 @@ import { catchError, debounceTime, distinctUntilChanged, map, switchMap, takeUnt
                     <span class="w-8 text-center text-sm font-bold">{{ item.quantity }}</span>
                     <button class="w-7 h-7 rounded flex items-center justify-center transition-colors font-bold disabled:opacity-40 disabled:cursor-not-allowed"
                             [disabled]="isQtyIncreaseBlocked(item)"
-                            [title]="isQtyIncreaseBlocked(item) ? t('cart.maxQtyReached').replace('{{count}}', stockCountLabel(item)) : ''"
                             (click)="changeQty(item, 1)">+</button>
                   </div>
                   <button class="text-xs text-red-400 hover:text-red-300 transition-colors"
                       (click)="remove(item)">{{ t('cart.remove') }}</button>
                 </div>
-                <p *ngIf="isQtyIncreaseBlocked(item)" class="text-xs text-amber-300 mt-2">
-                  {{ t('cart.maxQtyReached').replace('{{count}}', stockCountLabel(item)) }}
+                <p *ngIf="stockStatusMessage(item)"
+                   class="text-xs mt-2 flex items-center gap-1"
+                   [class.text-red-400]="isOutOfStock(item)"
+                   [class.text-amber-300]="!isOutOfStock(item)">
+                  <span class="material-symbols-outlined text-sm">{{ isOutOfStock(item) ? 'inventory_2' : 'warning' }}</span>
+                  {{ stockStatusMessage(item) }}
                 </p>
               </div>
               <div class="text-right shrink-0">
@@ -338,12 +341,8 @@ export class CartPage implements OnInit, OnDestroy {
   }
 
   changeQty(item: CartItem, delta: number): void {
-    if (delta > 0) {
-      const maxStock = item.book.quantity;
-      if (typeof maxStock === 'number' && Number.isFinite(maxStock) && item.quantity >= maxStock) {
-        this.orderError = this.t('cart.maxQtyReached').replace('{{count}}', String(maxStock));
-        return;
-      }
+    if (delta > 0 && this.isQtyIncreaseBlocked(item)) {
+      return;
     }
     this.orderError = '';
     this.cartService.updateQuantity(item.id, item.quantity + delta);
@@ -358,13 +357,37 @@ export class CartPage implements OnInit, OnDestroy {
   }
 
   isQtyIncreaseBlocked(item: CartItem): boolean {
-    const maxStock = item.book.quantity;
-    return typeof maxStock === 'number' && Number.isFinite(maxStock) && item.quantity >= maxStock;
+    const status = (item.book.status ?? 'ACTIVE').toUpperCase();
+    if (status === 'OUT_OF_STOCK' || status === 'DISCONTINUED') return true;
+    const stock = item.book.quantity;
+    if (typeof stock === 'number' && stock <= 0) return true;
+    return typeof stock === 'number' && Number.isFinite(stock) && item.quantity >= stock;
   }
 
-  stockCountLabel(item: CartItem): string {
-    const maxStock = item.book.quantity;
-    return typeof maxStock === 'number' && Number.isFinite(maxStock) ? String(maxStock) : '0';
+  isOutOfStock(item: CartItem): boolean {
+    const status = (item.book.status ?? 'ACTIVE').toUpperCase();
+    if (status === 'OUT_OF_STOCK' || status === 'DISCONTINUED') return true;
+    const stock = item.book.quantity;
+    return typeof stock === 'number' && stock <= 0;
+  }
+
+  stockStatusMessage(item: CartItem): string {
+    const stock = item.book.quantity;
+    const status = (item.book.status ?? 'ACTIVE').toUpperCase();
+
+    if (status === 'OUT_OF_STOCK' || status === 'DISCONTINUED') {
+      return 'Rupture de stock';
+    }
+    if (typeof stock === 'number' && stock <= 0) {
+      return 'Rupture de stock';
+    }
+    if (typeof stock === 'number' && stock === 1) {
+      return 'Dernière unité disponible';
+    }
+    if (typeof stock === 'number' && Number.isFinite(stock) && item.quantity >= stock) {
+      return `Maximum atteint — ${stock} unités en stock`;
+    }
+    return '';
   }
 
   effectiveUnitPrice(book: Book): number {

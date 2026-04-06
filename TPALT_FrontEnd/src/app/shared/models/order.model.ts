@@ -16,4 +16,5 @@ export interface Order {
   shippingAddress: string;
   paymentMethod?: string; // 'COD'
   orderDate?: string;
+  trackingNumber?: string;
 }

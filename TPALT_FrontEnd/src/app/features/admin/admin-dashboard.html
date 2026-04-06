@@ -69,6 +69,17 @@
                 <span class="today">{{ getTodayDate() }}</span>
             </div>
             <div class="topbar-right">
+                <!-- Boutons export (visibles uniquement sur les vues exportables) -->
+                <ng-container *ngIf="canExport">
+                    <button class="export-btn" (click)="exportCsv()" title="Exporter en CSV">
+                        <span class="material-symbols-outlined" style="font-size:16px">table_view</span>
+                        CSV
+                    </button>
+                    <button class="export-btn" (click)="exportPdf()" title="Exporter en PDF">
+                        <span class="material-symbols-outlined" style="font-size:16px">picture_as_pdf</span>
+                        PDF
+                    </button>
+                </ng-container>
                 <button class="theme-toggle-btn" (click)="toggleTheme()" [title]="isDark ? 'Passer en mode clair' : 'Passer en mode sombre'">
                     <span class="material-symbols-outlined">{{ isDark ? 'light_mode' : 'dark_mode' }}</span>
                 </button>
@@ -413,10 +424,10 @@
                 <div class="toolbar-left">
                     <select class="filter-select" [(ngModel)]="orderFilter" (ngModelChange)="loadOrders()">
                         <option value="">Tous les statuts</option>
-                        <option value="PREPARATION">En préparation</option>
-                        <option value="LIVRAISON">En livraison</option>
-                        <option value="LIVREE">Livrées</option>
-                        <option value="ANNULEE">Annulées</option>
+                        <option value="EN_PREPARATION">En préparation</option>
+                        <option value="EXPEDIEE">Expédiée</option>
+                        <option value="LIVREE">Livrée</option>
+                        <option value="ANNULEE">Annulée</option>
                     </select>
                 </div>
                 <span class="results-count">{{ orders.length }} commande(s)</span>
@@ -425,7 +436,7 @@
             <div class="card">
                 <table class="data-table">
                     <thead>
-                    <tr><th>#</th><th>Client</th><th>Articles</th><th>Montant</th><th>Date</th><th>Statut</th><th>Actions</th></tr>
+                    <tr><th>#</th><th>Client</th><th>Articles</th><th>Montant</th><th>Date</th><th>Statut</th><th>N° Suivi</th><th>Actions</th></tr>
                     </thead>
                     <tbody>
                     <tr *ngFor="let order of orders">
@@ -436,11 +447,29 @@
                         <td class="muted">{{ order.orderDate | date:'dd/MM/yy HH:mm' }}</td>
                         <td>
                             <select class="status-select" [value]="order.status" (change)="updateOrderStatus(order, $any($event.target).value)">
-                                <option value="PREPARATION">Préparation</option>
-                                <option value="LIVRAISON">En livraison</option>
+                                <option value="EN_PREPARATION">En préparation</option>
+                                <option value="EXPEDIEE">Expédiée</option>
                                 <option value="LIVREE">Livrée</option>
                                 <option value="ANNULEE">Annulée</option>
                             </select>
+                        </td>
+                        <td class="tracking-cell">
+                            <ng-container *ngIf="order.trackingNumber; else noTracking">
+                                <a [href]="chronopostUrl(order.trackingNumber)" target="_blank"
+                                   class="tracking-link" title="Suivre sur Chronopost">
+                                    <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;">local_shipping</span>
+                                    {{ order.trackingNumber }}
+                                </a>
+                                <button class="icon-btn" (click)="regenerateTracking(order)" title="Régénérer">
+                                    <span class="material-symbols-outlined" style="font-size:15px;">refresh</span>
+                                </button>
+                            </ng-container>
+                            <ng-template #noTracking>
+                                <button class="btn-sm" (click)="regenerateTracking(order)" *ngIf="order.status === 'EXPEDIEE'">
+                                    Générer
+                                </button>
+                                <span class="muted" *ngIf="order.status !== 'EXPEDIEE'">—</span>
+                            </ng-template>
                         </td>
                         <td>
                             <button class="icon-btn" (click)="viewOrder(order)" title="Détails">

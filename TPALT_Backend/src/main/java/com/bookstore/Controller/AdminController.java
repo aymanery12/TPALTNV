@@ -2,6 +2,7 @@ package com.bookstore.Controller;
 
 import com.bookstore.model.*;
 import com.bookstore.repository.*;
+import com.bookstore.service.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,15 +27,18 @@ public class AdminController {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final StockMovementRepository stockMovementRepository;
+    private final EmailService emailService;
 
     public AdminController(BookRepository bookRepository,
                            OrderRepository orderRepository,
                            UserRepository userRepository,
-                           StockMovementRepository stockMovementRepository) {
+                           StockMovementRepository stockMovementRepository,
+                           EmailService emailService) {
         this.bookRepository          = bookRepository;
         this.orderRepository         = orderRepository;
         this.userRepository          = userRepository;
         this.stockMovementRepository = stockMovementRepository;
+        this.emailService            = emailService;
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -400,7 +405,16 @@ public class AdminController {
             String newStatus = body.get("status").toUpperCase();
             String oldStatus = order.getStatus();
             order.setStatus(newStatus);
+
+            // Auto-generate Chronopost tracking number when order is shipped
+            if ("EXPEDIEE".equals(newStatus) && !"EXPEDIEE".equals(oldStatus)
+                    && (order.getTrackingNumber() == null || order.getTrackingNumber().isBlank())) {
+                order.setTrackingNumber(generateChronopostNumber(order.getId()));
+            }
+
             orderRepository.save(order);
+
+            emailService.sendOrderStatusUpdate(order, newStatus);
 
             if ("ANNULEE".equals(newStatus) && !"ANNULEE".equals(oldStatus) && order.getItems() != null) {
                 order.getItems().forEach(item -> {
@@ -412,8 +426,33 @@ public class AdminController {
                     }
                 });
             }
-            return ResponseEntity.ok(Map.of("orderId", id, "status", newStatus));
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("orderId", id);
+            response.put("status", newStatus);
+            if (order.getTrackingNumber() != null) response.put("trackingNumber", order.getTrackingNumber());
+            return ResponseEntity.ok(response);
         }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/orders/{id}/tracking")
+    public ResponseEntity<?> setTrackingNumber(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        return orderRepository.findById(id).map(order -> {
+            String tracking = body.getOrDefault("trackingNumber", "").trim();
+            if (tracking.isBlank()) {
+                // Regenerate automatically
+                tracking = generateChronopostNumber(order.getId());
+            }
+            order.setTrackingNumber(tracking);
+            orderRepository.save(order);
+            return ResponseEntity.ok(Map.of("orderId", id, "trackingNumber", tracking));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    private String generateChronopostNumber(Long orderId) {
+        // Chronopost format: CP + 9 digits + FR  (e.g. CP004200173FR)
+        int random = ThreadLocalRandom.current().nextInt(10000, 99999);
+        return String.format("CP%05d%05dFR", orderId, random);
     }
 
     // ══════════════════════════════════════════════════════════════════════════

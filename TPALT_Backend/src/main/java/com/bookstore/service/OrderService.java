@@ -23,13 +23,16 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final BookRepository bookRepository;
     private final StockMovementRepository stockMovementRepository;
+    private final EmailService emailService;
 
     public OrderService(OrderRepository orderRepository,
                         BookRepository bookRepository,
-                        StockMovementRepository stockMovementRepository) {
+                        StockMovementRepository stockMovementRepository,
+                        EmailService emailService) {
         this.orderRepository = orderRepository;
         this.bookRepository = bookRepository;
         this.stockMovementRepository = stockMovementRepository;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -101,6 +104,8 @@ public class OrderService {
             movement.setOrderId(savedOrder.getId());
             stockMovementRepository.save(movement);
         }
+
+        emailService.sendOrderConfirmation(savedOrder);
 
         return savedOrder;
     }

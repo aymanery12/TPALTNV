@@ -51,6 +51,14 @@ import { Order } from '../../../shared/models/order.model';
                   {{ getStatusLabel(order.status) }}
                 </span>
                 <p class="text-amber-400 font-bold text-lg">{{ order.totalAmount | number:'1.2-2' }} €</p>
+                <a *ngIf="order.trackingNumber"
+                   [href]="'https://www.chronopost.fr/tracking-no-redux/track?listeNumerosLT=' + order.trackingNumber"
+                   target="_blank"
+                   class="inline-flex items-center gap-1 mt-1 text-blue-400 hover:text-blue-300 text-xs font-mono font-bold transition-colors"
+                   title="Suivre sur Chronopost">
+                  <span class="material-symbols-outlined" style="font-size:13px;">local_shipping</span>
+                  {{ order.trackingNumber }}
+                </a>
               </div>
             </div>
 

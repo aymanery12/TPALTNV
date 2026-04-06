@@ -775,6 +775,47 @@ $sidebar-collapsed: 64px;
 }
 
 // ─── Theme toggle button ──────────────────────────────────────────────────────
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid $border;
+  background: $surface2;
+  color: $muted;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover {
+    background: rgba($accent, 0.12);
+    border-color: rgba($accent, 0.4);
+    color: $accent;
+  }
+}
+
+.tracking-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 160px;
+}
+
+.tracking-link {
+  font-size: 11px;
+  font-family: monospace;
+  font-weight: 700;
+  color: $blue;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  &:hover { text-decoration: underline; }
+}
+
 .theme-toggle-btn {
   display: flex;
   align-items: center;

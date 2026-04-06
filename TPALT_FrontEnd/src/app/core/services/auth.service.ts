@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { AuthRequest, AuthResponse, RegisterRequest, User } from '../../shared/models/user.model';
 import { CartService } from './cart.service';
+import { WishlistService } from './wishlist.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,13 +14,19 @@ export class AuthService {
   private apiUrl = environment.apiUrl;
   private isAuthenticated$ = new BehaviorSubject<boolean>(this.hasToken());
 
-  constructor(private http: HttpClient, private router: Router, private cartService: CartService) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private cartService: CartService,
+    private wishlistService: WishlistService
+  ) {}
 
-  // Restore persisted auth/cart context on hard refresh.
+  // Restore persisted auth/cart/wishlist context on hard refresh.
   initializeSessionOnAppStart(): void {
     const username = localStorage.getItem('auth_username');
     this.isAuthenticated$.next(this.hasToken());
     this.cartService.switchUser(username);
+    this.wishlistService.switchUser(username);
   }
 
   // Force une session propre à chaque redémarrage de l'application.
@@ -29,6 +36,7 @@ export class AuthService {
     localStorage.removeItem('auth_username');
     this.isAuthenticated$.next(false);
     this.cartService.switchUser(null);
+    this.wishlistService.switchUser(null);
   }
 
   // Connexion : vérifie identifiants + retourne JWT directement
@@ -40,6 +48,7 @@ export class AuthService {
           localStorage.setItem('auth_username', response.username);
           this.isAuthenticated$.next(true);
           this.cartService.switchUser(response.username);
+          this.wishlistService.switchUser(response.username);
         })
     );
   }
@@ -58,6 +67,7 @@ export class AuthService {
           localStorage.setItem('auth_username', response.username);
           this.isAuthenticated$.next(true);
           this.cartService.switchUser(response.username);
+          this.wishlistService.switchUser(response.username);
         })
     );
   }

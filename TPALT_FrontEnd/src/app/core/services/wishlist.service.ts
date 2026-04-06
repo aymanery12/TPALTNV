@@ -5,8 +5,20 @@ import { Book } from '../../shared/models/book.model';
 
 @Injectable({ providedIn: 'root' })
 export class WishlistService {
-  private readonly KEY = 'bookstore_wishlist';
+  private currentUsername: string | null = localStorage.getItem('auth_username');
   private items$ = new BehaviorSubject<Book[]>(this._load());
+
+  private getKey(): string {
+    return this.currentUsername
+      ? `bookstore_wishlist_${this.currentUsername}`
+      : 'bookstore_wishlist_guest';
+  }
+
+  /** Appelé à la connexion/inscription/déconnexion pour charger la bonne wishlist */
+  switchUser(username: string | null): void {
+    this.currentUsername = username;
+    this.items$.next(this._load());
+  }
 
   getWishlist(): Observable<Book[]> {
     return this.items$.asObservable();
@@ -38,12 +50,12 @@ export class WishlistService {
   }
 
   private _load(): Book[] {
-    try { return JSON.parse(localStorage.getItem(this.KEY) || '[]'); }
+    try { return JSON.parse(localStorage.getItem(this.getKey()) || '[]'); }
     catch { return []; }
   }
 
   private _save(books: Book[]): void {
-    localStorage.setItem(this.KEY, JSON.stringify(books));
+    localStorage.setItem(this.getKey(), JSON.stringify(books));
     this.items$.next(books);
   }
 }

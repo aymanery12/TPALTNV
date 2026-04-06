@@ -15,7 +15,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/books/{bookId}/reviews")
-@CrossOrigin("*")
 public class ReviewController {
 
     private final ReviewRepository reviewRepository;

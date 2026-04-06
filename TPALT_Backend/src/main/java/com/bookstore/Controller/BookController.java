@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/books")
-@CrossOrigin("*")
 public class BookController {
 
     private final BookRepository repository;
