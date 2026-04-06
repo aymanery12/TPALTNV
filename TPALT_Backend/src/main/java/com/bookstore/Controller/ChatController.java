@@ -147,11 +147,24 @@ public class ChatController {
         }
 
         if (containsAny(normalized, "plus vendus", "meilleures ventes", "best seller", "best-seller")) {
+            Map<Long, Book> booksById = books.stream()
+                .collect(Collectors.toMap(Book::getId, b -> b, (existing, replacement) -> existing));
+
+            List<Book> realtimeBestSellers = bookRepository.findBestSellersRealtime().stream()
+                .map(row -> booksById.get(((Number) row[0]).longValue()))
+                .filter(b -> b != null)
+                .limit(20)
+                .toList();
+
+            if (!realtimeBestSellers.isEmpty()) {
+            return realtimeBestSellers;
+            }
+
             return books.stream()
-                    .filter(b -> safeInt(b.getSoldCount()) > 0)
-                    .sorted(Comparator.comparing((Book b) -> safeInt(b.getSoldCount())).reversed())
-                    .limit(20)
-                    .toList();
+                .filter(b -> safeInt(b.getSoldCount()) > 0)
+                .sorted(Comparator.comparing((Book b) -> safeInt(b.getSoldCount())).reversed())
+                .limit(20)
+                .toList();
         }
 
         if (containsAny(normalized, "moins de 20", "pas cher", "petit budget", "< 20")) {

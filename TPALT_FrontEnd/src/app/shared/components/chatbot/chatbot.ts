@@ -6,6 +6,7 @@ import { ChatService } from '../../../core/services/chat.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { BookService } from '../../../core/services/book.service';
+import { BestSellerBook } from '../../../core/services/book.service';
 import { OrderService } from '../../../core/services/order.service';
 import { Book } from '../../models/book.model';
 import { Order } from '../../models/order.model';
@@ -159,7 +160,8 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
     messages: ChatMessage[] = [];
     lastTopRatedBooks: Book[] = [];
     lastOfferBooks: Book[] = [];
-    lastBestSellerBooks: Book[] = [];
+    lastBestSellerBooks: BestSellerBook[] = [];
+    lastContextBook: { id: number; title: string } | null = null;
 
     suggestions = [
         '📚 Recommande-moi un roman',
@@ -240,7 +242,17 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
         }
 
         if (this.isBestSellersRequest(text)) {
-            this.handleBestSellersRequest();
+            this.handleBestSellersRequest(text);
+            return;
+        }
+
+        if (this.isFollowUpPriceRequest(text)) {
+            this.handleFollowUpPriceRequest();
+            return;
+        }
+
+        if (this.isFollowUpRatingRequest(text)) {
+            this.handleFollowUpRatingRequest();
             return;
         }
 
@@ -342,6 +354,7 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
             .replace(/[\u0300-\u036f]/g, '');
 
         return normalized.includes('plus vendus')
+            || normalized.includes('plus vendu')
             || normalized.includes('meilleures ventes')
             || normalized.includes('best seller')
             || normalized.includes('best sellers')
@@ -374,6 +387,49 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
 
         return normalized.includes('recommande')
             && (normalized.includes('mes commandes') || normalized.includes('commande'));
+    }
+
+    private isFollowUpPriceRequest(text: string): boolean {
+        const normalized = text
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+
+        const asksPrice = normalized.includes('prix') || normalized.includes('coute');
+        const usesContextPronoun = normalized.includes('son')
+            || normalized.includes('sont')
+            || normalized.includes('sa')
+            || normalized.includes('ce livre')
+            || normalized.includes('ce bouquin');
+
+        return ((asksPrice && usesContextPronoun)
+            || normalized.includes('c est quoi le prix')
+            || normalized.includes('prix de ce livre')
+            || normalized.includes('combien il coute')
+            || normalized.includes('combien coute'))
+            && !normalized.includes('titre')
+            && !normalized.includes('id du livre');
+    }
+
+    private isFollowUpRatingRequest(text: string): boolean {
+        const normalized = text
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+
+        const asksRating = normalized.includes('rating')
+            || normalized.includes('note')
+            || normalized.includes('etoiles');
+
+        const usesContextPronoun = normalized.includes('son')
+            || normalized.includes('sont')
+            || normalized.includes('sa')
+            || normalized.includes('ses')
+            || normalized.includes('ce livre')
+            || normalized.includes('ce bouquin')
+            || normalized.includes('celui');
+
+        return asksRating && usesContextPronoun;
     }
 
     private handleTopRatedRequest(): void {
@@ -547,18 +603,24 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
         this.cdr.detectChanges();
     }
 
-    private handleBestSellersRequest(): void {
-        this.bookService.getBooks()
+    private handleBestSellersRequest(userText: string): void {
+        const normalized = userText
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+        const askedPlural = normalized.includes('livres') || normalized.includes('plus vendus') || normalized.includes('meilleures ventes') || normalized.includes('best sellers') || normalized.includes('best-sellers');
+
+        this.bookService.getBestSellers(5)
             .pipe(timeout(15000))
             .subscribe({
                 next: (books) => {
-                    const ranked = [...books]
-                        .filter((book) => (book.soldCount ?? 0) > 0)
-                        .sort((a, b) => (b.soldCount ?? 0) - (a.soldCount ?? 0))
-                        .slice(0, 5);
+                    const ranked = [...books];
 
                     this.lastBestSellerBooks = ranked;
-                    this.messages.push({ role: 'bot', text: this.formatBestSellersResponse(ranked) });
+                    if (ranked.length > 0 && (!askedPlural || ranked.length === 1)) {
+                        this.lastContextBook = { id: ranked[0].id, title: ranked[0].title };
+                    }
+                    this.messages.push({ role: 'bot', text: this.formatBestSellersResponse(ranked, askedPlural) });
                     this.isLoading = false;
                     this.cdr.detectChanges();
                 },
@@ -637,6 +699,8 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
                     .filter((title): title is string => !!title)
                     .slice(0, 8);
 
+                this.lastContextBook = { id: recommendation.id, title: recommendation.title };
+
                 const prompt = [
                     'Tu es un assistant libraire. Recommande exactement un livre en francais.',
                     `Utilisateur: ${this.authService.getUsername() ?? 'client'}.`,
@@ -674,6 +738,77 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
                 this.cdr.detectChanges();
             }
         });
+    }
+
+    private handleFollowUpPriceRequest(): void {
+        if (!this.lastContextBook) {
+            this.messages.push({
+                role: 'bot',
+                text: 'Je peux vous donner le prix, mais j\'ai besoin du titre du livre.'
+            });
+            this.isLoading = false;
+            this.cdr.detectChanges();
+            return;
+        }
+
+        this.bookService.getBookById(this.lastContextBook.id)
+            .pipe(timeout(10000))
+            .subscribe({
+                next: (book) => {
+                    const finalPrice = this.computeFinalPrice(book);
+                    const discount = book.discount ?? 0;
+                    const discountSuffix = discount > 0 ? ` (avec -${discount.toFixed(0)}%)` : '';
+
+                    this.messages.push({
+                        role: 'bot',
+                        text: `Le prix de "${book.title}" est ${finalPrice.toFixed(2)}EUR${discountSuffix}.`
+                    });
+                    this.isLoading = false;
+                    this.cdr.detectChanges();
+                },
+                error: () => {
+                    this.messages.push({
+                        role: 'bot',
+                        text: `Je n'arrive pas a recuperer le prix de "${this.lastContextBook?.title}" pour le moment.`
+                    });
+                    this.isLoading = false;
+                    this.cdr.detectChanges();
+                }
+            });
+    }
+
+    private handleFollowUpRatingRequest(): void {
+        if (!this.lastContextBook) {
+            this.messages.push({
+                role: 'bot',
+                text: 'Je peux vous donner la note, mais j\'ai besoin du titre du livre.'
+            });
+            this.isLoading = false;
+            this.cdr.detectChanges();
+            return;
+        }
+
+        this.bookService.getBookById(this.lastContextBook.id)
+            .pipe(timeout(10000))
+            .subscribe({
+                next: (book) => {
+                    const rating = Number.isFinite(book.rating) ? book.rating.toFixed(1) : '0.0';
+                    this.messages.push({
+                        role: 'bot',
+                        text: `La note de "${book.title}" est ${rating}/5.`
+                    });
+                    this.isLoading = false;
+                    this.cdr.detectChanges();
+                },
+                error: () => {
+                    this.messages.push({
+                        role: 'bot',
+                        text: `Je n'arrive pas a recuperer la note de "${this.lastContextBook?.title}" pour le moment.`
+                    });
+                    this.isLoading = false;
+                    this.cdr.detectChanges();
+                }
+            });
     }
 
     private computeRecommendationFromOrders(orders: Order[], books: Book[]): Book | null {
@@ -753,6 +888,9 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
         if (!orders.length) {
             return "Vous n'avez pas de commande en cours actuellement.";
         }
+        const header = orders.length > 1
+            ? 'Voici vos commandes en cours :'
+            : 'Voici votre commande en cours :';
 
         const lines = orders.map((order, index) => {
             const id = order.id ?? '-';
@@ -764,7 +902,7 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
             return `${index + 1}. Commande #${id} - ${status} - ${amount} - ${date}`;
         });
 
-        return `Voici vos commandes en cours :\n${lines.join('\n')}`;
+        return `${header}\n${lines.join('\n')}`;
     }
 
     private formatTopRatedResponse(books: Book[]): string {
@@ -800,6 +938,8 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
             return 'Aucune offre active pour le moment dans le catalogue en temps reel.';
         }
 
+        const bookWord = books.length > 1 ? 'livres' : 'livre';
+
         const lines = books.map((book, index) => {
             const discount = (book.discount ?? 0).toFixed(0);
             const finalPrice = Number.isFinite(book.price)
@@ -809,19 +949,26 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
             return `${index + 1}. ${book.title} - -${discount}% - ${finalPrice}EUR`;
         });
 
-        return `Oui, il y a ${books.length} livre(s) en offre actuellement :\n${lines.join('\n')}`;
+        return `Oui, il y a ${books.length} ${bookWord} en offre actuellement :\n${lines.join('\n')}`;
     }
 
-    private formatBestSellersResponse(books: Book[]): string {
+    private formatBestSellersResponse(books: BestSellerBook[], askedPlural: boolean): string {
         if (!books.length) {
             return 'Aucune donnee de ventes disponible pour le moment.';
         }
 
+        const header = books.length === 1
+            ? (askedPlural
+                ? 'Il y a actuellement un seul livre vendu :'
+                : 'Voici le livre le plus vendu actuellement :')
+            : 'Voici les livres les plus vendus actuellement :';
+
         const lines = books.map((book, index) => {
             const sold = book.soldCount ?? 0;
-            return `${index + 1}. ${book.title} - ${sold} ventes`;
+            const salesWord = sold > 1 ? 'ventes' : 'vente';
+            return `${index + 1}. ${book.title} - ${sold} ${salesWord}`;
         });
 
-        return `Voici les livres les plus vendus actuellement :\n${lines.join('\n')}`;
+        return `${header}\n${lines.join('\n')}`;
     }
 }

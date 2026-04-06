@@ -62,4 +62,21 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Query("SELECT b FROM Book b ORDER BY b.soldCount DESC")
     List<Book> findTop10ByOrderBySoldCountDesc();
+
+        @Query(value = """
+                        SELECT
+                                b.id,
+                                b.title,
+                                COALESCE(SUM(oi.quantity), 0) AS sold_qty,
+                                b.price,
+                                b.discount,
+                                b.rating
+                        FROM book b
+                        JOIN order_item oi ON oi.book_id = b.id
+                        JOIN orders o ON o.id = oi.order_id
+                        WHERE UPPER(COALESCE(o.status, '')) <> 'ANNULEE'
+                        GROUP BY b.id, b.title, b.price, b.discount, b.rating
+                        ORDER BY sold_qty DESC
+                        """, nativeQuery = true)
+        List<Object[]> findBestSellersRealtime();
 }

@@ -4,6 +4,15 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Book, BookReview } from '../../shared/models/book.model';
 
+export interface BestSellerBook {
+  id: number;
+  title: string;
+  soldCount: number;
+  price: number;
+  finalPrice: number;
+  rating: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -30,6 +39,11 @@ export class BookService {
   // GET /api/books/category/{category}
   getBooksByCategory(category: string): Observable<Book[]> {
     return this.http.get<Book[]>(`${this.apiUrl}/books/category/${category}`);
+  }
+
+  // GET /api/books/best-sellers?limit=...
+  getBestSellers(limit = 5): Observable<BestSellerBook[]> {
+    return this.http.get<BestSellerBook[]>(`${this.apiUrl}/books/best-sellers?limit=${limit}`);
   }
 
   // GET /api/books/{bookId}/reviews
