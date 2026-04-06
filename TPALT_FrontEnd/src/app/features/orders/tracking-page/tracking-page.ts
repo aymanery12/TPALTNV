@@ -1,17 +1,15 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { Navbar } from '../../../layout/navbar/navbar';
 import { Footer } from '../../../layout/footer/footer';
 import { OrderService } from '../../../core/services/order.service';
+import { LanguageService } from '../../../core/services/language.service';
 import { Order } from '../../../shared/models/order.model';
 
 interface TrackStep {
   key: string;
-  label: string;
   icon: string;
-  description: string;
-  dateLabel?: string;
 }
 
 @Component({
@@ -28,7 +26,7 @@ interface TrackStep {
         <a routerLink="/orders"
            class="inline-flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors mb-8">
           <span class="material-symbols-outlined text-base">arrow_back</span>
-          Retour à mes commandes
+          {{ t('tracking.backToOrders') }}
         </a>
 
         <!-- Loading -->
@@ -49,14 +47,14 @@ interface TrackStep {
           <div class="bg-white dark:bg-[#1a1a2e] rounded-2xl border border-slate-200 dark:border-white/10 p-6 mb-6 shadow-sm">
             <div class="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <p class="text-xs text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider mb-1">Commande</p>
+                <p class="text-xs text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider mb-1">{{ t('tracking.order') }}</p>
                 <h1 class="text-2xl font-bold text-slate-900 dark:text-white">#{{ order.id }}</h1>
                 <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                  Passée le {{ order.orderDate | date:'dd MMMM yyyy à HH:mm':'':'fr' }}
+                  {{ t('tracking.placedOn') }} {{ order.orderDate | date:orderDateFormat:'':dateLocale }}
                 </p>
               </div>
               <div class="text-right">
-                <p class="text-xs text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider mb-1">Total</p>
+                <p class="text-xs text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider mb-1">{{ t('tracking.total') }}</p>
                 <p class="text-2xl font-bold text-amber-500 dark:text-amber-400">{{ order.totalAmount | number:'1.2-2' }} €</p>
               </div>
             </div>
@@ -66,8 +64,8 @@ interface TrackStep {
                  class="mt-5 flex items-center gap-3 bg-red-100 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 rounded-xl px-4 py-3">
               <span class="material-symbols-outlined text-red-500 dark:text-red-400">cancel</span>
               <div>
-                <p class="font-bold text-red-600 dark:text-red-400 text-sm">Commande annulée</p>
-                <p class="text-xs text-red-500/80 dark:text-red-400/70 mt-0.5">Cette commande a été annulée. Le stock a été restitué.</p>
+                <p class="font-bold text-red-600 dark:text-red-400 text-sm">{{ t('tracking.cancelledTitle') }}</p>
+                <p class="text-xs text-red-500/80 dark:text-red-400/70 mt-0.5">{{ t('tracking.cancelledHint') }}</p>
               </div>
             </div>
 
@@ -77,13 +75,13 @@ interface TrackStep {
               <div class="flex items-center gap-3">
                 <span class="material-symbols-outlined text-blue-500 dark:text-blue-400 text-2xl">local_shipping</span>
                 <div>
-                  <p class="text-xs text-blue-500/70 dark:text-blue-400/70 font-semibold uppercase tracking-wider">Numéro de suivi Chronopost</p>
+                  <p class="text-xs text-blue-500/70 dark:text-blue-400/70 font-semibold uppercase tracking-wider">{{ t('tracking.chronopostNumber') }}</p>
                   <p class="font-mono font-bold text-blue-600 dark:text-blue-300 text-lg tracking-widest">{{ order.trackingNumber }}</p>
                 </div>
               </div>
               <a [href]="chronopostUrl" target="_blank"
                  class="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors">
-                Suivre sur Chronopost
+                {{ t('tracking.followChronopost') }}
                 <span class="material-symbols-outlined text-base">open_in_new</span>
               </a>
             </div>
@@ -93,7 +91,7 @@ interface TrackStep {
           <div *ngIf="order.status !== 'ANNULEE'"
                class="bg-white dark:bg-[#1a1a2e] rounded-2xl border border-slate-200 dark:border-white/10 p-6 mb-6 shadow-sm">
             <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-8">
-              Suivi de votre commande
+              {{ t('tracking.orderTracking') }}
             </h2>
 
             <div class="relative">
@@ -139,9 +137,9 @@ interface TrackStep {
                        [class.dark:text-amber-400]="getStepState(i) === 'active'"
                        [class.text-slate-400]="getStepState(i) === 'pending'"
                        [class.dark:text-slate-500]="getStepState(i) === 'pending'">
-                      {{ step.label }}
+                      {{ getStepLabel(step.key) }}
                     </p>
-                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5 md:max-w-[120px]">{{ step.description }}</p>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5 md:max-w-[120px]">{{ getStepDescription(step.key) }}</p>
                   </div>
                 </div>
               </div>
@@ -154,7 +152,7 @@ interface TrackStep {
             <div class="bg-white dark:bg-[#1a1a2e] rounded-2xl border border-slate-200 dark:border-white/10 p-5 shadow-sm">
               <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">
                 <span class="material-symbols-outlined text-base align-middle mr-1">location_on</span>
-                Adresse de livraison
+                {{ t('tracking.deliveryAddress') }}
               </p>
               <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">{{ formatAddress(order.shippingAddress) }}</p>
             </div>
@@ -162,10 +160,10 @@ interface TrackStep {
             <div class="bg-white dark:bg-[#1a1a2e] rounded-2xl border border-slate-200 dark:border-white/10 p-5 shadow-sm">
               <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">
                 <span class="material-symbols-outlined text-base align-middle mr-1">payments</span>
-                Paiement
+                {{ t('tracking.payment') }}
               </p>
-              <p class="text-sm text-slate-700 dark:text-slate-300">Paiement à la livraison (COD)</p>
-              <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">Aucun paiement en ligne requis</p>
+              <p class="text-sm text-slate-700 dark:text-slate-300">{{ t('tracking.paymentCod') }}</p>
+              <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">{{ t('tracking.paymentNoOnline') }}</p>
             </div>
           </div>
 
@@ -173,7 +171,7 @@ interface TrackStep {
           <div class="bg-white dark:bg-[#1a1a2e] rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-sm">
             <div class="px-6 py-4 border-b border-slate-200 dark:border-white/10">
               <p class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                {{ order.items.length }} article(s)
+                {{ order.items.length }} {{ t('tracking.items') }}
               </p>
             </div>
             <div class="divide-y divide-slate-100 dark:divide-white/5">
@@ -195,7 +193,7 @@ interface TrackStep {
               </div>
             </div>
             <div class="px-6 py-4 border-t border-slate-200 dark:border-white/10 flex justify-between items-center">
-              <span class="text-sm text-slate-500 dark:text-slate-400">Total</span>
+              <span class="text-sm text-slate-500 dark:text-slate-400">{{ t('tracking.total') }}</span>
               <span class="font-bold text-amber-500 dark:text-amber-400 text-lg">{{ order.totalAmount | number:'1.2-2' }} €</span>
             </div>
           </div>
@@ -216,21 +214,15 @@ export class TrackingPage implements OnInit {
   readonly steps: TrackStep[] = [
     {
       key: 'EN_PREPARATION',
-      label: 'Commande reçue',
-      icon: 'inventory_2',
-      description: 'En cours de préparation'
+      icon: 'inventory_2'
     },
     {
       key: 'EXPEDIEE',
-      label: 'Expédiée',
-      icon: 'local_shipping',
-      description: 'Colis en route'
+      icon: 'local_shipping'
     },
     {
       key: 'LIVREE',
-      label: 'Livrée',
-      icon: 'check_circle',
-      description: 'Commande reçue'
+      icon: 'check_circle'
     }
   ];
 
@@ -238,6 +230,8 @@ export class TrackingPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private orderService: OrderService,
+    private languageService: LanguageService,
+    private ngZone: NgZone,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -247,16 +241,46 @@ export class TrackingPage implements OnInit {
 
     this.orderService.getOrderById(id).subscribe({
       next: (order) => {
-        this.order = order;
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this.ngZone.run(() => {
+          this.order = order;
+          this.isLoading = false;
+          this.scheduleViewSync();
+        });
       },
       error: () => {
-        this.errorMsg = 'Commande introuvable.';
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this.ngZone.run(() => {
+          this.errorMsg = 'Commande introuvable.';
+          this.isLoading = false;
+          this.scheduleViewSync();
+        });
       }
     });
+  }
+
+  private scheduleViewSync(): void {
+    setTimeout(() => this.cdr.detectChanges(), 0);
+  }
+
+  t(key: string): string {
+    return this.languageService.t(key);
+  }
+
+  get dateLocale(): string {
+    return this.languageService.currentLanguage === 'en' ? 'en-US' : 'fr';
+  }
+
+  get orderDateFormat(): string {
+    return this.languageService.currentLanguage === 'en'
+      ? 'MMMM dd, yyyy HH:mm'
+      : 'dd MMMM yyyy à HH:mm';
+  }
+
+  getStepLabel(stepKey: string): string {
+    return this.t(`tracking.step.${stepKey}.label`);
+  }
+
+  getStepDescription(stepKey: string): string {
+    return this.t(`tracking.step.${stepKey}.description`);
   }
 
   get currentStepIndex(): number {

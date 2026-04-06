@@ -54,7 +54,7 @@ import { Order } from '../../../shared/models/order.model';
                 <a [routerLink]="['/orders', order.id, 'tracking']"
                    class="inline-flex items-center gap-1 mt-2 text-amber-500 hover:text-amber-400 text-xs font-bold transition-colors">
                   <span class="material-symbols-outlined" style="font-size:14px;">track_changes</span>
-                  Suivre ma commande
+                  {{ t('orders.trackOrder') }}
                 </a>
               </div>
             </div>
