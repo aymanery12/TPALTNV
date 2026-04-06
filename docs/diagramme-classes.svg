@@ -1,178 +1,184 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1300 960" font-family="Segoe UI, Arial, sans-serif">
   <defs>
     <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#64748b"/></marker>
-    <marker id="diamond" markerWidth="12" markerHeight="8" refX="0" refY="4" orient="auto"><polygon points="0 4,6 0,12 4,6 8" fill="#f59e0b"/></marker>
-    <marker id="tri" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="none" stroke="#64748b" stroke-width="1"/></marker>
+    <marker id="diamond" markerWidth="14" markerHeight="9" refX="1" refY="4.5" orient="auto"><polygon points="0 4.5,7 0,14 4.5,7 9" fill="none" stroke="#d97706" stroke-width="1.5"/></marker>
   </defs>
-  <rect width="1200" height="900" fill="#0f1117"/>
-  <text x="600" y="36" text-anchor="middle" font-size="20" font-weight="bold" fill="#f1f5f9">Diagramme de Classes — BookStore App</text>
-  <text x="600" y="56" text-anchor="middle" font-size="12" fill="#64748b">Entités JPA / Hibernate · Spring Boot 3.2</text>
-  <line x1="80" y1="66" x2="1120" y2="66" stroke="#ffffff15" stroke-width="1"/>
+
+  <rect width="1300" height="960" fill="#f8fafc"/>
+  <text x="650" y="36" text-anchor="middle" font-size="20" font-weight="bold" fill="#0f172a">Diagramme de Classes — BookStore App</text>
+  <text x="650" y="56" text-anchor="middle" font-size="12" fill="#64748b">Entités JPA / Hibernate · Spring Boot 3.2</text>
+  <line x1="60" y1="66" x2="1240" y2="66" stroke="#cbd5e1" stroke-width="1.5"/>
 
   <!-- ══ USER ══ -->
-  <rect x="30" y="90" width="240" height="260" rx="10" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
-  <rect x="30" y="90" width="240" height="32" rx="10" fill="#1d4ed8"/>
-  <rect x="30" y="108" width="240" height="14" fill="#1d4ed8"/>
-  <text x="150" y="111" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">User</text>
-  <line x1="30" y1="122" x2="270" y2="122" stroke="#3b82f640" stroke-width="1"/>
-  <text x="46" y="140" font-size="10" fill="#94a3b8">- id : Long</text>
-  <text x="46" y="156" font-size="10" fill="#94a3b8">- username : String  {unique}</text>
-  <text x="46" y="172" font-size="10" fill="#94a3b8">- password : String  @JsonIgnore</text>
-  <text x="46" y="188" font-size="10" fill="#94a3b8">- email : String  {unique}</text>
-  <text x="46" y="204" font-size="10" fill="#94a3b8">- firstName : String</text>
-  <text x="46" y="220" font-size="10" fill="#94a3b8">- lastName : String</text>
-  <text x="46" y="236" font-size="10" fill="#94a3b8">- phoneNumber : String</text>
-  <text x="46" y="252" font-size="10" fill="#94a3b8">- role : String  (USER / ADMIN)</text>
-  <text x="46" y="268" font-size="10" fill="#94a3b8">- addresses : List&lt;String&gt;  @ElementCollection</text>
-  <line x1="30" y1="278" x2="270" y2="278" stroke="#3b82f640" stroke-width="1"/>
-  <text x="46" y="296" font-size="10" fill="#60a5fa">+ getUsername() : String</text>
-  <text x="46" y="312" font-size="10" fill="#60a5fa">+ getEmail() : String</text>
-  <text x="46" y="328" font-size="10" fill="#60a5fa">+ getRole() : String</text>
+  <rect x="30" y="82" width="250" height="278" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.8"/>
+  <rect x="30" y="82" width="250" height="32" rx="10" fill="#2563eb"/>
+  <rect x="30" y="100" width="250" height="14" fill="#2563eb"/>
+  <text x="155" y="103" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">User</text>
+  <line x1="30" y1="114" x2="280" y2="114" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="46" y="132" font-size="10" fill="#1e3a5f">- id : Long  @Id @GeneratedValue</text>
+  <text x="46" y="149" font-size="10" fill="#1e3a5f">- username : String  {unique, not null}</text>
+  <text x="46" y="166" font-size="10" fill="#1e3a5f">- password : String  @JsonIgnore</text>
+  <text x="46" y="183" font-size="10" fill="#1e3a5f">- email : String  {unique}</text>
+  <text x="46" y="200" font-size="10" fill="#1e3a5f">- firstName : String</text>
+  <text x="46" y="217" font-size="10" fill="#1e3a5f">- lastName : String</text>
+  <text x="46" y="234" font-size="10" fill="#1e3a5f">- phoneNumber : String</text>
+  <text x="46" y="251" font-size="10" fill="#1e3a5f">- role : String  (USER | ADMIN)</text>
+  <text x="46" y="268" font-size="10" fill="#1e3a5f">- addresses : List&lt;String&gt;  @ElementCollection</text>
+  <line x1="30" y1="278" x2="280" y2="278" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="46" y="296" font-size="10" fill="#2563eb">+ getUsername() : String</text>
+  <text x="46" y="312" font-size="10" fill="#2563eb">+ getEmail() : String</text>
+  <text x="46" y="328" font-size="10" fill="#2563eb">+ getRole() : String</text>
+  <text x="46" y="344" font-size="10" fill="#2563eb">+ getAddresses() : List&lt;String&gt;</text>
 
   <!-- ══ BOOK ══ -->
-  <rect x="320" y="90" width="260" height="388" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
-  <rect x="320" y="90" width="260" height="32" rx="10" fill="#065f46"/>
-  <rect x="320" y="108" width="260" height="14" fill="#065f46"/>
-  <text x="450" y="111" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">Book</text>
-  <line x1="320" y1="122" x2="580" y2="122" stroke="#10b98140" stroke-width="1"/>
-  <text x="336" y="140" font-size="10" fill="#94a3b8">- id : Long</text>
-  <text x="336" y="156" font-size="10" fill="#94a3b8">- title : String  {not null}</text>
-  <text x="336" y="172" font-size="10" fill="#94a3b8">- author : List&lt;String&gt;  @ElementCollection</text>
-  <text x="336" y="188" font-size="10" fill="#94a3b8">- description : String  @Column(TEXT)</text>
-  <text x="336" y="204" font-size="10" fill="#94a3b8">- price : Double  {not null}</text>
-  <text x="336" y="220" font-size="10" fill="#94a3b8">- imageUrl : String</text>
-  <text x="336" y="236" font-size="10" fill="#94a3b8">- category : String</text>
-  <text x="336" y="252" font-size="10" fill="#94a3b8">- isbn : String  {unique}</text>
-  <text x="336" y="268" font-size="10" fill="#94a3b8">- publisher : String</text>
-  <text x="336" y="284" font-size="10" fill="#94a3b8">- publishedYear : Integer</text>
-  <text x="336" y="300" font-size="10" fill="#94a3b8">- pages : Integer</text>
-  <text x="336" y="316" font-size="10" fill="#94a3b8">- language : String  = "Français"</text>
-  <text x="336" y="332" font-size="10" fill="#94a3b8">- rating : Double  = 0.0</text>
-  <text x="336" y="348" font-size="10" fill="#94a3b8">- reviewCount : Integer  = 0</text>
-  <text x="336" y="364" font-size="10" fill="#94a3b8">- quantity : Integer  (stock)</text>
-  <text x="336" y="380" font-size="10" fill="#94a3b8">- soldCount : Integer</text>
-  <text x="336" y="396" font-size="10" fill="#94a3b8">- status : BookStatus  (AVAILABLE/OUT_OF_STOCK)</text>
-  <text x="336" y="412" font-size="10" fill="#94a3b8">- featured : Boolean</text>
-  <text x="336" y="428" font-size="10" fill="#94a3b8">- discount : Double  · stockAlert : Integer</text>
-  <line x1="320" y1="438" x2="580" y2="438" stroke="#10b98140" stroke-width="1"/>
-  <text x="336" y="456" font-size="10" fill="#6ee7b7">+ getFinalPrice() : Double</text>
-  <text x="336" y="472" font-size="10" fill="#6ee7b7">enum BookStatus { AVAILABLE, OUT_OF_STOCK }</text>
+  <rect x="340" y="82" width="270" height="440" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.8"/>
+  <rect x="340" y="82" width="270" height="32" rx="10" fill="#15803d"/>
+  <rect x="340" y="100" width="270" height="14" fill="#15803d"/>
+  <text x="475" y="103" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">Book</text>
+  <line x1="340" y1="114" x2="610" y2="114" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="356" y="132" font-size="10" fill="#14532d">- id : Long</text>
+  <text x="356" y="149" font-size="10" fill="#14532d">- title : String  {not null}</text>
+  <text x="356" y="166" font-size="10" fill="#14532d">- author : List&lt;String&gt;  @ElementCollection EAGER</text>
+  <text x="356" y="183" font-size="10" fill="#14532d">- description : String  @Column(TEXT)</text>
+  <text x="356" y="200" font-size="10" fill="#14532d">- price : Double  {not null}</text>
+  <text x="356" y="217" font-size="10" fill="#14532d">- imageUrl : String</text>
+  <text x="356" y="234" font-size="10" fill="#14532d">- category : String</text>
+  <text x="356" y="251" font-size="10" fill="#14532d">- isbn : String  {unique}</text>
+  <text x="356" y="268" font-size="10" fill="#14532d">- publisher : String</text>
+  <text x="356" y="285" font-size="10" fill="#14532d">- publishedYear : Integer</text>
+  <text x="356" y="302" font-size="10" fill="#14532d">- pages : Integer</text>
+  <text x="356" y="319" font-size="10" fill="#14532d">- language : String = "Français"</text>
+  <text x="356" y="336" font-size="10" fill="#14532d">- rating : Double = 0.0</text>
+  <text x="356" y="353" font-size="10" fill="#14532d">- reviewCount : Integer = 0</text>
+  <text x="356" y="370" font-size="10" fill="#14532d">- quantity : Integer  (stock)</text>
+  <text x="356" y="387" font-size="10" fill="#14532d">- soldCount : Integer</text>
+  <text x="356" y="404" font-size="10" fill="#14532d">- status : BookStatus</text>
+  <text x="356" y="421" font-size="10" fill="#14532d">- featured : Boolean</text>
+  <text x="356" y="438" font-size="10" fill="#14532d">- discount : Double · stockAlert : Integer</text>
+  <text x="356" y="455" font-size="10" fill="#14532d">- finalPrice : Double  (calculé)</text>
+  <line x1="340" y1="466" x2="610" y2="466" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="356" y="484" font-size="10" fill="#15803d">+ getFinalPrice() : Double</text>
+  <text x="356" y="500" font-size="10" fill="#15803d">enum BookStatus { AVAILABLE, OUT_OF_STOCK }</text>
 
   <!-- ══ ORDER ══ -->
-  <rect x="640" y="90" width="260" height="296" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
-  <rect x="640" y="90" width="260" height="32" rx="10" fill="#92400e"/>
-  <rect x="640" y="108" width="260" height="14" fill="#92400e"/>
-  <text x="770" y="111" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">Order</text>
-  <line x1="640" y1="122" x2="900" y2="122" stroke="#f59e0b40" stroke-width="1"/>
-  <text x="656" y="140" font-size="10" fill="#94a3b8">- id : Long</text>
-  <text x="656" y="156" font-size="10" fill="#94a3b8">- orderDate : LocalDateTime</text>
-  <text x="656" y="172" font-size="10" fill="#94a3b8">- status : String  (EN_PREPARATION / EXPEDIEE</text>
-  <text x="656" y="186" font-size="10" fill="#94a3b8">                   LIVREE / ANNULEE)</text>
-  <text x="656" y="202" font-size="10" fill="#94a3b8">- totalAmount : double</text>
-  <text x="656" y="218" font-size="10" fill="#94a3b8">- shippingAddress : String</text>
-  <text x="656" y="234" font-size="10" fill="#94a3b8">- paymentMethod : String  = "COD"</text>
-  <text x="656" y="250" font-size="10" fill="#94a3b8">- trackingNumber : String  (Chronopost)</text>
-  <text x="656" y="266" font-size="10" fill="#94a3b8">- user : User  @ManyToOne</text>
-  <text x="656" y="282" font-size="10" fill="#94a3b8">- items : List&lt;OrderItem&gt;  @OneToMany EAGER</text>
-  <line x1="640" y1="294" x2="900" y2="294" stroke="#f59e0b40" stroke-width="1"/>
-  <text x="656" y="312" font-size="10" fill="#fbbf24">+ getUsername() : String</text>
-  <text x="656" y="328" font-size="10" fill="#fbbf24">+ getStatus() : String</text>
-  <text x="656" y="344" font-size="10" fill="#fbbf24">+ getTrackingNumber() : String</text>
-  <text x="656" y="360" font-size="10" fill="#fbbf24">Zone: Europe/Paris · @Transactional</text>
+  <rect x="680" y="82" width="270" height="320" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="1.8"/>
+  <rect x="680" y="82" width="270" height="32" rx="10" fill="#b45309"/>
+  <rect x="680" y="100" width="270" height="14" fill="#b45309"/>
+  <text x="815" y="103" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">Order</text>
+  <line x1="680" y1="114" x2="950" y2="114" stroke="#fde68a" stroke-width="1"/>
+  <text x="696" y="132" font-size="10" fill="#78350f">- id : Long</text>
+  <text x="696" y="149" font-size="10" fill="#78350f">- orderDate : LocalDateTime  (ZoneId Paris)</text>
+  <text x="696" y="166" font-size="10" fill="#78350f">- status : String</text>
+  <text x="696" y="180" font-size="10" fill="#92400e">  EN_PREPARATION | EXPEDIEE | LIVREE | ANNULEE</text>
+  <text x="696" y="197" font-size="10" fill="#78350f">- totalAmount : double</text>
+  <text x="696" y="214" font-size="10" fill="#78350f">- shippingAddress : String</text>
+  <text x="696" y="231" font-size="10" fill="#78350f">- paymentMethod : String = "COD"</text>
+  <text x="696" y="248" font-size="10" fill="#78350f">- trackingNumber : String  (Chronopost)</text>
+  <text x="696" y="265" font-size="10" fill="#78350f">- user : User  @ManyToOne @JsonIgnoreProperties</text>
+  <text x="696" y="282" font-size="10" fill="#78350f">- items : List&lt;OrderItem&gt;  @OneToMany EAGER</text>
+  <text x="696" y="299" font-size="10" fill="#78350f">  cascade=ALL, orphanRemoval=true</text>
+  <line x1="680" y1="312" x2="950" y2="312" stroke="#fde68a" stroke-width="1"/>
+  <text x="696" y="330" font-size="10" fill="#b45309">+ getUsername() : String</text>
+  <text x="696" y="347" font-size="10" fill="#b45309">+ getTrackingNumber() : String</text>
+  <text x="696" y="364" font-size="10" fill="#b45309">+ getItems() : List&lt;OrderItem&gt;</text>
+  <text x="696" y="381" font-size="10" fill="#92400e">table: orders · @Transactional(readOnly=true)</text>
 
   <!-- ══ ORDER ITEM ══ -->
-  <rect x="960" y="90" width="220" height="220" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="1.2"/>
-  <rect x="960" y="90" width="220" height="32" rx="10" fill="#78350f"/>
-  <rect x="960" y="108" width="220" height="14" fill="#78350f"/>
-  <text x="1070" y="111" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">OrderItem</text>
-  <line x1="960" y1="122" x2="1180" y2="122" stroke="#f59e0b40" stroke-width="1"/>
-  <text x="976" y="140" font-size="10" fill="#94a3b8">- id : Long</text>
-  <text x="976" y="156" font-size="10" fill="#94a3b8">- order : Order  @ManyToOne @JsonIgnore</text>
-  <text x="976" y="172" font-size="10" fill="#94a3b8">- book : Book  @ManyToOne EAGER</text>
-  <text x="976" y="188" font-size="10" fill="#94a3b8">- quantity : Integer  {not null}</text>
-  <text x="976" y="204" font-size="10" fill="#94a3b8">- price : Double  {not null}</text>
-  <line x1="960" y1="216" x2="1180" y2="216" stroke="#f59e0b40" stroke-width="1"/>
-  <text x="976" y="234" font-size="10" fill="#fbbf24">+ getBook() : Book</text>
-  <text x="976" y="250" font-size="10" fill="#fbbf24">+ getQuantity() : Integer</text>
-  <text x="976" y="266" font-size="10" fill="#fbbf24">+ getPrice() : Double</text>
-  <text x="976" y="284" font-size="10" fill="#f59e0b90">cascade = ALL · orphanRemoval</text>
-  <text x="976" y="300" font-size="10" fill="#f59e0b90">fetch = LAZY (order) / EAGER (book)</text>
+  <rect x="1020" y="82" width="250" height="280" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <rect x="1020" y="82" width="250" height="32" rx="10" fill="#92400e"/>
+  <rect x="1020" y="100" width="250" height="14" fill="#92400e"/>
+  <text x="1145" y="103" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">OrderItem</text>
+  <line x1="1020" y1="114" x2="1270" y2="114" stroke="#fde68a" stroke-width="1"/>
+  <text x="1036" y="132" font-size="10" fill="#78350f">- id : Long</text>
+  <text x="1036" y="149" font-size="10" fill="#78350f">- order : Order  @ManyToOne LAZY @JsonIgnore</text>
+  <text x="1036" y="166" font-size="10" fill="#78350f">- book : Book  @ManyToOne EAGER</text>
+  <text x="1036" y="183" font-size="10" fill="#78350f">- quantity : Integer  {not null}</text>
+  <text x="1036" y="200" font-size="10" fill="#78350f">- price : Double  {not null}</text>
+  <line x1="1020" y1="212" x2="1270" y2="212" stroke="#fde68a" stroke-width="1"/>
+  <text x="1036" y="230" font-size="10" fill="#b45309">+ getBook() : Book</text>
+  <text x="1036" y="247" font-size="10" fill="#b45309">+ getQuantity() : Integer</text>
+  <text x="1036" y="264" font-size="10" fill="#b45309">+ getPrice() : Double</text>
+  <text x="1036" y="281" font-size="10" fill="#92400e">table: order_item</text>
+  <text x="1036" y="298" font-size="10" fill="#92400e">FK: book_id, order_id</text>
+  <text x="1036" y="315" font-size="10" fill="#92400e">@JsonIgnore sur order → no circular ref</text>
+  <text x="1036" y="332" font-size="10" fill="#92400e">@JsonIgnoreProperties sur user → no loop</text>
 
   <!-- ══ REVIEW ══ -->
-  <rect x="30" y="400" width="240" height="200" rx="10" fill="#1e293b" stroke="#8b5cf6" stroke-width="1.5"/>
-  <rect x="30" y="400" width="240" height="32" rx="10" fill="#4c1d95"/>
-  <rect x="30" y="418" width="240" height="14" fill="#4c1d95"/>
-  <text x="150" y="421" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">Review</text>
-  <line x1="30" y1="432" x2="270" y2="432" stroke="#8b5cf640" stroke-width="1"/>
-  <text x="46" y="450" font-size="10" fill="#94a3b8">- id : Long</text>
-  <text x="46" y="466" font-size="10" fill="#94a3b8">- rating : int  (1 à 5)</text>
-  <text x="46" y="482" font-size="10" fill="#94a3b8">- comment : String</text>
-  <text x="46" y="498" font-size="10" fill="#94a3b8">- book : Book  @ManyToOne</text>
-  <text x="46" y="514" font-size="10" fill="#94a3b8">- user : User  @ManyToOne</text>
-  <line x1="30" y1="526" x2="270" y2="526" stroke="#8b5cf640" stroke-width="1"/>
-  <text x="46" y="544" font-size="10" fill="#a78bfa">+ getRating() : int</text>
-  <text x="46" y="560" font-size="10" fill="#a78bfa">+ getComment() : String</text>
-  <text x="46" y="576" font-size="10" fill="#a78bfa">+ getBook() : Book</text>
+  <rect x="30" y="440" width="250" height="215" rx="10" fill="#faf5ff" stroke="#7c3aed" stroke-width="1.8"/>
+  <rect x="30" y="440" width="250" height="32" rx="10" fill="#6d28d9"/>
+  <rect x="30" y="458" width="250" height="14" fill="#6d28d9"/>
+  <text x="155" y="461" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">Review</text>
+  <line x1="30" y1="472" x2="280" y2="472" stroke="#ddd6fe" stroke-width="1"/>
+  <text x="46" y="490" font-size="10" fill="#3b0764">- id : Long</text>
+  <text x="46" y="507" font-size="10" fill="#3b0764">- rating : int  (1 à 5)</text>
+  <text x="46" y="524" font-size="10" fill="#3b0764">- comment : String</text>
+  <text x="46" y="541" font-size="10" fill="#3b0764">- book : Book  @ManyToOne</text>
+  <text x="46" y="558" font-size="10" fill="#3b0764">- user : User  @ManyToOne</text>
+  <line x1="30" y1="570" x2="280" y2="570" stroke="#ddd6fe" stroke-width="1"/>
+  <text x="46" y="588" font-size="10" fill="#6d28d9">+ getRating() : int</text>
+  <text x="46" y="605" font-size="10" fill="#6d28d9">+ getComment() : String</text>
+  <text x="46" y="622" font-size="10" fill="#6d28d9">+ getBook() : Book</text>
+  <text x="46" y="639" font-size="10" fill="#7c3aed">table: review</text>
 
   <!-- ══ STOCK MOVEMENT ══ -->
-  <rect x="320" y="530" width="260" height="310" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="1.5"/>
-  <rect x="320" y="530" width="260" height="32" rx="10" fill="#7f1d1d"/>
-  <rect x="320" y="548" width="260" height="14" fill="#7f1d1d"/>
-  <text x="450" y="551" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">StockMovement</text>
-  <line x1="320" y1="562" x2="580" y2="562" stroke="#ef444440" stroke-width="1"/>
-  <text x="336" y="580" font-size="10" fill="#94a3b8">- id : Long</text>
-  <text x="336" y="596" font-size="10" fill="#94a3b8">- book : Book  @ManyToOne EAGER</text>
-  <text x="336" y="612" font-size="10" fill="#94a3b8">- type : MovementType</text>
-  <text x="336" y="628" font-size="10" fill="#94a3b8">- quantity : Integer  {not null}</text>
-  <text x="336" y="644" font-size="10" fill="#94a3b8">- stockBefore : Integer</text>
-  <text x="336" y="660" font-size="10" fill="#94a3b8">- stockAfter : Integer</text>
-  <text x="336" y="676" font-size="10" fill="#94a3b8">- reason : String  @Column(TEXT)</text>
-  <text x="336" y="692" font-size="10" fill="#94a3b8">- performedBy : String</text>
-  <text x="336" y="708" font-size="10" fill="#94a3b8">- orderId : Long</text>
-  <text x="336" y="724" font-size="10" fill="#94a3b8">- createdAt : LocalDateTime  @PrePersist</text>
-  <line x1="320" y1="736" x2="580" y2="736" stroke="#ef444440" stroke-width="1"/>
-  <text x="336" y="754" font-size="10" fill="#fca5a5">enum MovementType {</text>
-  <text x="336" y="770" font-size="10" fill="#fca5a5">  RESTOCK, SALE, RETURN,</text>
-  <text x="336" y="786" font-size="10" fill="#fca5a5">  CORRECTION, LOSS, INITIAL }</text>
-  <text x="336" y="804" font-size="10" fill="#ef444490">table: stock_movements</text>
-  <text x="336" y="820" font-size="10" fill="#ef444490">@JsonIgnoreProperties (author, desc…)</text>
+  <rect x="340" y="560" width="280" height="340" rx="10" fill="#fff1f2" stroke="#dc2626" stroke-width="1.8"/>
+  <rect x="340" y="560" width="280" height="32" rx="10" fill="#b91c1c"/>
+  <rect x="340" y="578" width="280" height="14" fill="#b91c1c"/>
+  <text x="480" y="581" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">StockMovement</text>
+  <line x1="340" y1="592" x2="620" y2="592" stroke="#fecaca" stroke-width="1"/>
+  <text x="356" y="610" font-size="10" fill="#7f1d1d">- id : Long</text>
+  <text x="356" y="627" font-size="10" fill="#7f1d1d">- book : Book  @ManyToOne EAGER @JsonIgnoreProperties</text>
+  <text x="356" y="644" font-size="10" fill="#7f1d1d">- type : MovementType  @Enumerated(STRING)</text>
+  <text x="356" y="661" font-size="10" fill="#7f1d1d">- quantity : Integer  {not null}</text>
+  <text x="356" y="678" font-size="10" fill="#7f1d1d">- stockBefore : Integer</text>
+  <text x="356" y="695" font-size="10" fill="#7f1d1d">- stockAfter : Integer</text>
+  <text x="356" y="712" font-size="10" fill="#7f1d1d">- reason : String  @Column(TEXT)</text>
+  <text x="356" y="729" font-size="10" fill="#7f1d1d">- performedBy : String</text>
+  <text x="356" y="746" font-size="10" fill="#7f1d1d">- orderId : Long</text>
+  <text x="356" y="763" font-size="10" fill="#7f1d1d">- createdAt : LocalDateTime  @PrePersist</text>
+  <line x1="340" y1="775" x2="620" y2="775" stroke="#fecaca" stroke-width="1"/>
+  <text x="356" y="793" font-size="10" fill="#b91c1c">enum MovementType {</text>
+  <text x="356" y="810" font-size="10" fill="#b91c1c">  RESTOCK, SALE, RETURN,</text>
+  <text x="356" y="827" font-size="10" fill="#b91c1c">  CORRECTION, LOSS, INITIAL }</text>
+  <text x="356" y="844" font-size="10" fill="#dc2626">table: stock_movements</text>
+  <text x="356" y="861" font-size="10" fill="#dc2626">Créé dans OrderService lors de chaque SALE</text>
+
+  <!-- ══ VERIFICATION CODE ══ -->
+  <rect x="680" y="430" width="270" height="170" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <rect x="680" y="430" width="270" height="32" rx="10" fill="#475569"/>
+  <rect x="680" y="448" width="270" height="14" fill="#475569"/>
+  <text x="815" y="451" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">VerificationCode</text>
+  <line x1="680" y1="462" x2="950" y2="462" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="696" y="480" font-size="10" fill="#334155">- id : Long</text>
+  <text x="696" y="497" font-size="10" fill="#334155">- code : String</text>
+  <text x="696" y="514" font-size="10" fill="#334155">- email : String</text>
+  <text x="696" y="531" font-size="10" fill="#334155">- createdAt : LocalDateTime</text>
+  <text x="696" y="548" font-size="10" fill="#334155">- expiresAt : LocalDateTime</text>
+  <line x1="680" y1="560" x2="950" y2="560" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="696" y="578" font-size="10" fill="#475569">+ isExpired() : boolean</text>
 
   <!-- ══ LEGEND ══ -->
-  <rect x="640" y="430" width="300" height="130" rx="8" fill="#1e293b" stroke="#ffffff20" stroke-width="1"/>
-  <text x="790" y="450" text-anchor="middle" font-size="11" font-weight="bold" fill="#94a3b8">Légende des relations</text>
-  <line x1="660" y1="468" x2="710" y2="468" stroke="#f59e0b" stroke-width="2" marker-end="url(#diamond)"/>
-  <text x="720" y="472" font-size="10" fill="#94a3b8">Composition (@OneToMany)</text>
-  <line x1="660" y1="490" x2="710" y2="490" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
-  <text x="720" y="494" font-size="10" fill="#94a3b8">Association (@ManyToOne)</text>
-  <line x1="660" y1="512" x2="710" y2="512" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arr)"/>
-  <text x="720" y="516" font-size="10" fill="#94a3b8">Référence bidirectionnelle</text>
-  <text x="660" y="540" font-size="10" fill="#64748b">Toutes entités annotées @Entity + Lombok @Data</text>
-  <text x="660" y="556" font-size="10" fill="#64748b">@GeneratedValue(IDENTITY) sur tous les id</text>
+  <rect x="680" y="630" width="590" height="90" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text x="975" y="650" text-anchor="middle" font-size="11" font-weight="bold" fill="#475569">Légende</text>
+  <line x1="700" y1="670" x2="750" y2="670" stroke="#d97706" stroke-width="2" marker-end="url(#diamond)"/>
+  <text x="760" y="674" font-size="10" fill="#334155">Composition @OneToMany (cascade ALL)</text>
+  <line x1="700" y1="692" x2="750" y2="692" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+  <text x="760" y="696" font-size="10" fill="#334155">Association @ManyToOne</text>
+  <line x1="700" y1="714" x2="750" y2="714" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="760" y="718" font-size="10" fill="#334155">Référence bidirectionnelle @JsonIgnore</text>
 
-  <!-- ══ RELATIONS ══ -->
-  <!-- Order -> User (ManyToOne) -->
-  <line x1="640" y1="200" x2="270" y2="200" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
-  <text x="440" y="193" text-anchor="middle" font-size="9" fill="#94a3b8">ManyToOne</text>
-  <text x="440" y="207" text-anchor="middle" font-size="9" fill="#94a3b8">N commandes → 1 user</text>
-
-  <!-- Order -> OrderItem (OneToMany) -->
-  <line x1="900" y1="200" x2="960" y2="200" stroke="#f59e0b" stroke-width="2" marker-end="url(#diamond)"/>
-  <text x="932" y="193" text-anchor="middle" font-size="9" fill="#fbbf24">1:N</text>
-
-  <!-- OrderItem -> Book (ManyToOne) -->
-  <line x1="1070" y1="310" x2="1070" y2="380" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <line x1="1070" y1="380" x2="580" y2="380" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
-  <text x="820" y="373" text-anchor="middle" font-size="9" fill="#94a3b8">ManyToOne (book)</text>
-
-  <!-- Review -> Book (ManyToOne) -->
-  <line x1="270" y1="490" x2="320" y2="350" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
-  <text x="282" y="415" font-size="9" fill="#a78bfa">ManyToOne</text>
-
-  <!-- Review -> User (ManyToOne) -->
-  <line x1="150" y1="400" x2="150" y2="350" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
-  <text x="158" y="378" font-size="9" fill="#a78bfa">ManyToOne</text>
-
-  <!-- StockMovement -> Book -->
-  <line x1="450" y1="530" x2="450" y2="480" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
-  <text x="458" y="506" font-size="9" fill="#fca5a5">ManyToOne</text>
+  <!-- RELATIONS -->
+  <line x1="680" y1="210" x2="280" y2="210" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+  <text x="480" y="203" text-anchor="middle" font-size="9" fill="#475569">@ManyToOne  N:1</text>
+  <line x1="950" y1="190" x2="1020" y2="190" stroke="#d97706" stroke-width="2" marker-end="url(#diamond)"/>
+  <text x="985" y="183" text-anchor="middle" font-size="9" fill="#b45309">1:N</text>
+  <line x1="1145" y1="362" x2="1145" y2="410" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="1145" y1="410" x2="610" y2="410" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+  <text x="878" y="403" text-anchor="middle" font-size="9" fill="#475569">@ManyToOne  N:1  (book)</text>
+  <line x1="280" y1="520" x2="340" y2="380" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+  <text x="295" y="448" font-size="9" fill="#6d28d9">N:1</text>
+  <line x1="155" y1="440" x2="155" y2="354" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+  <text x="163" y="400" font-size="9" fill="#6d28d9">N:1</text>
+  <line x1="480" y1="560" x2="480" y2="522" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+  <text x="490" y="543" font-size="9" fill="#b91c1c">N:1</text>
 </svg>
