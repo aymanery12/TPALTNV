@@ -1,17 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1300 980" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1300 1030" font-family="Segoe UI, Arial, sans-serif">
   <defs>
     <marker id="arr"     markerWidth="10" markerHeight="7" refX="9"  refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#64748b"/></marker>
     <marker id="arr-inc" markerWidth="10" markerHeight="7" refX="9"  refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#2563eb"/></marker>
     <marker id="arr-ext" markerWidth="10" markerHeight="7" refX="9"  refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#b45309"/></marker>
   </defs>
 
-  <rect width="1300" height="980" fill="#f8fafc"/>
+  <rect width="1300" height="1030" fill="#f8fafc"/>
   <text x="650" y="36" text-anchor="middle" font-size="20" font-weight="bold" fill="#0f172a">Diagramme de Cas d'Utilisation — BookStore App</text>
   <text x="650" y="56" text-anchor="middle" font-size="12" fill="#64748b">Acteurs : Visiteur · Client connecté · Administrateur</text>
   <line x1="60" y1="66" x2="1240" y2="66" stroke="#cbd5e1" stroke-width="1.5"/>
 
   <!-- SYSTEM BOUNDARY -->
-  <rect x="170" y="78" width="960" height="880" rx="16" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8,4"/>
+  <rect x="170" y="78" width="960" height="930" rx="16" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8,4"/>
   <text x="650" y="100" text-anchor="middle" font-size="13" font-weight="bold" fill="#475569">Système BookStore</text>
 
   <!-- ACTOR VISITEUR -->
@@ -61,7 +61,7 @@
   <text x="388" y="440" text-anchor="middle" font-size="10" fill="#1e293b">Changer langue (FR/EN) + thème</text>
 
   <!-- ZONE CLIENT -->
-  <rect x="188" y="490" width="400" height="444" rx="12" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.2"/>
+  <rect x="188" y="490" width="400" height="492" rx="12" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.2"/>
   <text x="388" y="510" text-anchor="middle" font-size="10" font-weight="bold" fill="#1d4ed8">Fonctionnalités client connecté</text>
 
   <ellipse cx="388" cy="536" rx="155" ry="20" fill="#fff" stroke="#3b82f6" stroke-width="1.2"/>
@@ -82,9 +82,11 @@
   <text x="388" y="862" text-anchor="middle" font-size="10" fill="#1e3a5f">Utiliser le chatbot (Gemini AI)</text>
   <ellipse cx="388" cy="904" rx="155" ry="20" fill="#fff" stroke="#3b82f6" stroke-width="1.2"/>
   <text x="388" y="908" text-anchor="middle" font-size="10" fill="#1e3a5f">Voir N° suivi Chronopost</text>
+  <ellipse cx="388" cy="950" rx="155" ry="20" fill="#fff" stroke="#3b82f6" stroke-width="1.2"/>
+  <text x="388" y="954" text-anchor="middle" font-size="10" fill="#1e3a5f">Gérer ma liste de souhaits (Wishlist)</text>
 
   <!-- ZONE ADMIN -->
-  <rect x="660" y="112" width="460" height="840" rx="12" fill="#fffbeb" stroke="#fde68a" stroke-width="1.2"/>
+  <rect x="660" y="112" width="460" height="890" rx="12" fill="#fffbeb" stroke="#fde68a" stroke-width="1.2"/>
   <text x="890" y="132" text-anchor="middle" font-size="10" font-weight="bold" fill="#92400e">Fonctionnalités administrateur</text>
 
   <ellipse cx="890" cy="162" rx="175" ry="20" fill="#fff" stroke="#d97706" stroke-width="1.2"/>
@@ -147,6 +149,7 @@
   <line x1="82" y1="652" x2="232" y2="812" stroke="#2563eb" stroke-width="1"/>
   <line x1="82" y1="660" x2="232" y2="858" stroke="#2563eb" stroke-width="1"/>
   <line x1="82" y1="668" x2="232" y2="904" stroke="#2563eb" stroke-width="1"/>
+  <line x1="82" y1="676" x2="232" y2="950" stroke="#2563eb" stroke-width="1"/>
 
   <!-- ACTOR ASSOCIATIONS — Admin -->
   <line x1="1218" y1="505" x2="1065" y2="162" stroke="#b45309" stroke-width="1"/>
@@ -172,11 +175,11 @@
   <text x="16" y="480" font-size="9" fill="#94a3b8" transform="rotate(-90,16,480)">hérite</text>
 
   <!-- LEGEND -->
-  <rect x="188" y="942" width="580" height="30" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
-  <line x1="206" y1="957" x2="240" y2="957" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-inc)"/>
-  <text x="250" y="961" font-size="9" fill="#475569">«include» (obligatoire)</text>
-  <line x1="370" y1="957" x2="404" y2="957" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ext)"/>
-  <text x="414" y="961" font-size="9" fill="#475569">«extend» (conditionnel)</text>
-  <line x1="540" y1="957" x2="574" y2="957" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
-  <text x="584" y="961" font-size="9" fill="#475569">Association</text>
+  <rect x="188" y="990" width="580" height="30" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="206" y1="1005" x2="240" y2="1005" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-inc)"/>
+  <text x="250" y="1009" font-size="9" fill="#475569">«include» (obligatoire)</text>
+  <line x1="370" y1="1005" x2="404" y2="1005" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ext)"/>
+  <text x="414" y="1009" font-size="9" fill="#475569">«extend» (conditionnel)</text>
+  <line x1="540" y1="1005" x2="574" y2="1005" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="584" y="1009" font-size="9" fill="#475569">Association</text>
 </svg>

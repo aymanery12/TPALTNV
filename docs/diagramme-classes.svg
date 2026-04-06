@@ -31,7 +31,7 @@
   <text x="46" y="344" font-size="10" fill="#2563eb">+ getAddresses() : List&lt;String&gt;</text>
 
   <!-- ══ BOOK ══ -->
-  <rect x="340" y="82" width="270" height="440" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.8"/>
+  <rect x="340" y="82" width="270" height="458" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.8"/>
   <rect x="340" y="82" width="270" height="32" rx="10" fill="#15803d"/>
   <rect x="340" y="100" width="270" height="14" fill="#15803d"/>
   <text x="475" y="103" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">Book</text>
@@ -58,7 +58,8 @@
   <text x="356" y="455" font-size="10" fill="#14532d">- finalPrice : Double  (calculé)</text>
   <line x1="340" y1="466" x2="610" y2="466" stroke="#bbf7d0" stroke-width="1"/>
   <text x="356" y="484" font-size="10" fill="#15803d">+ getFinalPrice() : Double</text>
-  <text x="356" y="500" font-size="10" fill="#15803d">enum BookStatus { AVAILABLE, OUT_OF_STOCK }</text>
+  <text x="356" y="500" font-size="10" fill="#15803d">+ isLowStock() : boolean  (qty ≤ stockAlert)</text>
+  <text x="356" y="516" font-size="9" fill="#6b7280">BookStatus: ACTIVE | OUT_OF_STOCK | DISCONTINUED | COMING_SOON</text>
 
   <!-- ══ ORDER ══ -->
   <rect x="680" y="82" width="270" height="320" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="1.8"/>
@@ -144,18 +145,19 @@
   <text x="356" y="861" font-size="10" fill="#dc2626">Créé dans OrderService lors de chaque SALE</text>
 
   <!-- ══ VERIFICATION CODE ══ -->
-  <rect x="680" y="430" width="270" height="170" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <rect x="680" y="430" width="270" height="190" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
   <rect x="680" y="430" width="270" height="32" rx="10" fill="#475569"/>
   <rect x="680" y="448" width="270" height="14" fill="#475569"/>
   <text x="815" y="451" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">VerificationCode</text>
   <line x1="680" y1="462" x2="950" y2="462" stroke="#cbd5e1" stroke-width="1"/>
   <text x="696" y="480" font-size="10" fill="#334155">- id : Long</text>
-  <text x="696" y="497" font-size="10" fill="#334155">- code : String</text>
+  <text x="696" y="497" font-size="10" fill="#334155">- code : String  (6 chiffres)</text>
   <text x="696" y="514" font-size="10" fill="#334155">- email : String</text>
-  <text x="696" y="531" font-size="10" fill="#334155">- createdAt : LocalDateTime</text>
-  <text x="696" y="548" font-size="10" fill="#334155">- expiresAt : LocalDateTime</text>
-  <line x1="680" y1="560" x2="950" y2="560" stroke="#cbd5e1" stroke-width="1"/>
-  <text x="696" y="578" font-size="10" fill="#475569">+ isExpired() : boolean</text>
+  <text x="696" y="531" font-size="10" fill="#334155">- type : String  (signup / reset-password)</text>
+  <text x="696" y="548" font-size="10" fill="#334155">- createdAt : LocalDateTime</text>
+  <text x="696" y="565" font-size="10" fill="#334155">- expiresAt : LocalDateTime  (+15 min)</text>
+  <line x1="680" y1="577" x2="950" y2="577" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="696" y="595" font-size="10" fill="#475569">+ isExpired() : boolean</text>
 
   <!-- ══ LEGEND ══ -->
   <rect x="680" y="630" width="590" height="90" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
