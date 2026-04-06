@@ -110,13 +110,36 @@ public class OrderService {
         return savedOrder;
     }
 
+    @Transactional(readOnly = true)
     public List<Order> getOrdersByUserId(Long userId) {
-        return orderRepository.findByUserId(userId);
+        List<Order> orders = orderRepository.findByUserId(userId);
+        // Force l'initialisation des collections EAGER dans la transaction
+        // (nécessaire avec open-in-view=false)
+        orders.forEach(o -> {
+            if (o.getItems() != null) {
+                o.getItems().forEach(item -> {
+                    if (item.getBook() != null) {
+                        item.getBook().getAuthor().size(); // init ElementCollection
+                    }
+                });
+            }
+        });
+        return orders;
     }
 
+    @Transactional(readOnly = true)
     public Order getOrderById(Long orderId) {
-        return orderRepository.findById(orderId)
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Commande introuvable"));
+        // Force l'initialisation de toutes les collections dans la transaction
+        if (order.getItems() != null) {
+            order.getItems().forEach(item -> {
+                if (item.getBook() != null) {
+                    item.getBook().getAuthor().size();
+                }
+            });
+        }
+        return order;
     }
 
     public Order updateStatus(Long orderId, String newStatus) {

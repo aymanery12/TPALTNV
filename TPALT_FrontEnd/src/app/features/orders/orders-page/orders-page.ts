@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { Navbar } from '../../../layout/navbar/navbar';
 import { Footer } from '../../../layout/footer/footer';
 import { OrderService } from '../../../core/services/order.service';
@@ -51,11 +51,11 @@ import { Order } from '../../../shared/models/order.model';
                   {{ getStatusLabel(order.status) }}
                 </span>
                 <p class="text-amber-400 font-bold text-lg">{{ order.totalAmount | number:'1.2-2' }} €</p>
-                <a [routerLink]="['/orders', order.id, 'tracking']"
-                   class="inline-flex items-center gap-1 mt-2 text-amber-500 hover:text-amber-400 text-xs font-bold transition-colors">
+                <button (click)="goToTracking(order)"
+                        class="inline-flex items-center gap-1 mt-2 text-amber-500 hover:text-amber-400 text-xs font-bold transition-colors">
                   <span class="material-symbols-outlined" style="font-size:14px;">track_changes</span>
                   {{ t('orders.trackOrder') }}
-                </a>
+                </button>
               </div>
             </div>
 
@@ -109,8 +109,15 @@ export class OrdersPage implements OnInit {
   constructor(
     private orderService: OrderService,
     private cdr: ChangeDetectorRef,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private router: Router
   ) {}
+
+  goToTracking(order: Order): void {
+    this.router.navigate(['/orders', order.id, 'tracking'], {
+      state: { order }
+    });
+  }
 
   t(key: string): string {
     return this.languageService.t(key);

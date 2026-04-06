@@ -1,146 +1,105 @@
-<svg width="960" height="620" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 780" font-family="Segoe UI, Arial, sans-serif">
   <defs>
-    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <polygon points="0 0,8 3,0 6" fill="#64748b"/>
-    </marker>
-    <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <polygon points="0 0,8 3,0 6" fill="#3b82f6"/>
-    </marker>
-    <marker id="arr-orange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <polygon points="0 0,8 3,0 6" fill="#ea580c"/>
-    </marker>
-    <marker id="arr-yellow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <polygon points="0 0,8 3,0 6" fill="#d97706"/>
-    </marker>
-    <marker id="arr-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <polygon points="0 0,8 3,0 6" fill="#dc2626"/>
-    </marker>
-    <marker id="arr-purple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <polygon points="0 0,8 3,0 6" fill="#9333ea"/>
-    </marker>
+    <marker id="arr-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#3b82f6"/></marker>
+    <marker id="arr-purple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#8b5cf6"/></marker>
   </defs>
+  <rect width="1100" height="780" fill="#0f1117"/>
+  <text x="550" y="36" text-anchor="middle" font-size="20" font-weight="bold" fill="#f1f5f9">Architecture MVC — BookStore App</text>
+  <text x="550" y="56" text-anchor="middle" font-size="12" fill="#64748b">Angular 21 (Frontend)  ·  Spring Boot 3.2 (Backend)  ·  MySQL 8</text>
+  <line x1="80" y1="66" x2="1020" y2="66" stroke="#ffffff15" stroke-width="1"/>
 
-  <!-- Fond -->
-  <rect width="960" height="620" fill="#f1f5f9" rx="10"/>
+  <!-- FRONTEND -->
+  <rect x="30" y="80" width="470" height="548" rx="14" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="30" y="80" width="470" height="34" rx="14" fill="#1d4ed8"/>
+  <rect x="30" y="100" width="470" height="14" fill="#1d4ed8"/>
+  <text x="265" y="102" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">FRONTEND — Angular 21</text>
+  <rect x="50" y="126" width="430" height="148" rx="8" fill="#0f172a" stroke="#3b82f640" stroke-width="1"/>
+  <text x="265" y="145" text-anchor="middle" font-size="11" font-weight="bold" fill="#93c5fd">VUE  (Templates HTML + Tailwind CSS)</text>
+  <text x="66" y="164" font-size="10" fill="#94a3b8">• home-page · catalog · book-details · cart · checkout</text>
+  <text x="66" y="181" font-size="10" fill="#94a3b8">• orders-page · tracking-page · user-profile</text>
+  <text x="66" y="198" font-size="10" fill="#94a3b8">• admin-dashboard (HTML + SCSS light/dark)</text>
+  <text x="66" y="215" font-size="10" fill="#94a3b8">• navbar · footer · sidebar-filters · custom-dropdown</text>
+  <text x="66" y="232" font-size="10" fill="#94a3b8">• Dark/Light mode — ThemeService + Tailwind dark:</text>
+  <text x="66" y="249" font-size="10" fill="#94a3b8">• i18n FR/EN — LanguageService (t('key'))</text>
+  <text x="66" y="266" font-size="10" fill="#94a3b8">• Stepper suivi commande · Chronopost tracking block</text>
+  <rect x="50" y="286" width="430" height="120" rx="8" fill="#0f172a" stroke="#3b82f640" stroke-width="1"/>
+  <text x="265" y="305" text-anchor="middle" font-size="11" font-weight="bold" fill="#93c5fd">CONTRÔLEUR  (Component TypeScript)</text>
+  <text x="66" y="324" font-size="10" fill="#94a3b8">• HomePageComponent · CatalogComponent · BookDetailsComponent</text>
+  <text x="66" y="341" font-size="10" fill="#94a3b8">• CartComponent · CheckoutComponent · TrackingPageComponent</text>
+  <text x="66" y="358" font-size="10" fill="#94a3b8">• OrdersPageComponent · UserProfileComponent</text>
+  <text x="66" y="375" font-size="10" fill="#94a3b8">• AdminDashboardComponent · AuthGuard · RoleGuard</text>
+  <text x="66" y="392" font-size="10" fill="#94a3b8">• Angular Router · ReactiveFormsModule · ChangeDetectorRef</text>
+  <rect x="50" y="418" width="430" height="116" rx="8" fill="#0f172a" stroke="#3b82f640" stroke-width="1"/>
+  <text x="265" y="437" text-anchor="middle" font-size="11" font-weight="bold" fill="#93c5fd">SERVICES  (Couche données Frontend)</text>
+  <text x="66" y="456" font-size="10" fill="#94a3b8">• AuthService — JWT login / register / storage</text>
+  <text x="66" y="473" font-size="10" fill="#94a3b8">• OrderService — getMyOrders · getOrderById · createOrder</text>
+  <text x="66" y="490" font-size="10" fill="#94a3b8">• CartService — localStorage · BehaviorSubject panier</text>
+  <text x="66" y="507" font-size="10" fill="#94a3b8">• LanguageService (FR/EN) · ThemeService (dark/light)</text>
+  <text x="66" y="524" font-size="10" fill="#94a3b8">• HttpClient + JWT interceptor (Authorization: Bearer)</text>
+  <rect x="50" y="546" width="430" height="70" rx="8" fill="#0f172a" stroke="#3b82f640" stroke-width="1"/>
+  <text x="265" y="565" text-anchor="middle" font-size="11" font-weight="bold" fill="#93c5fd">MODÈLES  (Interfaces TypeScript)</text>
+  <text x="265" y="583" text-anchor="middle" font-size="10" fill="#94a3b8">Order · OrderItem · Book · User · Review</text>
+  <text x="265" y="600" text-anchor="middle" font-size="10" fill="#94a3b8">trackingNumber? · shippingAddress · totalAmount</text>
 
-  <!-- Titre -->
-  <text x="480" y="32" text-anchor="middle" font-size="19" font-weight="bold" fill="#0f172a">Architecture Globale — BookStore IA</text>
+  <!-- BACKEND -->
+  <rect x="600" y="80" width="470" height="548" rx="14" fill="#1a2e1e" stroke="#10b981" stroke-width="1.5"/>
+  <rect x="600" y="80" width="470" height="34" rx="14" fill="#065f46"/>
+  <rect x="600" y="100" width="470" height="14" fill="#065f46"/>
+  <text x="835" y="102" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">BACKEND — Spring Boot 3.2</text>
+  <rect x="620" y="126" width="430" height="130" rx="8" fill="#0a1f0e" stroke="#10b98140" stroke-width="1"/>
+  <text x="835" y="145" text-anchor="middle" font-size="11" font-weight="bold" fill="#6ee7b7">CONTRÔLEUR  (@RestController)</text>
+  <text x="636" y="164" font-size="10" fill="#94a3b8">• BookController     GET/POST/PUT/DELETE /api/books</text>
+  <text x="636" y="181" font-size="10" fill="#94a3b8">• OrderController    POST /api/orders · GET /orders/my</text>
+  <text x="636" y="198" font-size="10" fill="#94a3b8">• AdminController    /api/admin/** (ROLE_ADMIN)</text>
+  <text x="636" y="215" font-size="10" fill="#94a3b8">• AuthController     /api/auth/login · /register</text>
+  <text x="636" y="232" font-size="10" fill="#94a3b8">• ReviewController · ChatController · RecommendationController</text>
+  <text x="636" y="249" font-size="10" fill="#94a3b8">• CORS · @CrossOrigin · Spring Security filter chain</text>
+  <rect x="620" y="268" width="430" height="120" rx="8" fill="#0a1f0e" stroke="#10b98140" stroke-width="1"/>
+  <text x="835" y="287" text-anchor="middle" font-size="11" font-weight="bold" fill="#6ee7b7">SERVICE  (@Service + @Transactional)</text>
+  <text x="636" y="306" font-size="10" fill="#94a3b8">• OrderService — createOrder, getOrderById, updateStatus</text>
+  <text x="636" y="323" font-size="10" fill="#94a3b8">  → décrémente stock · crée StockMovement · envoie email</text>
+  <text x="636" y="340" font-size="10" fill="#94a3b8">• EmailService — sendOrderConfirmation, sendStatusUpdate</text>
+  <text x="636" y="357" font-size="10" fill="#94a3b8">  → HTML email · Chronopost block si statut = EXPEDIEE</text>
+  <text x="636" y="374" font-size="10" fill="#94a3b8">• Génération N° Chronopost : CP{orderId}{random}FR</text>
+  <rect x="620" y="400" width="430" height="100" rx="8" fill="#0a1f0e" stroke="#10b98140" stroke-width="1"/>
+  <text x="835" y="419" text-anchor="middle" font-size="11" font-weight="bold" fill="#6ee7b7">REPOSITORY  (JpaRepository)</text>
+  <text x="636" y="438" font-size="10" fill="#94a3b8">• BookRepository · OrderRepository · UserRepository</text>
+  <text x="636" y="455" font-size="10" fill="#94a3b8">• ReviewRepository · StockMovementRepository</text>
+  <text x="636" y="472" font-size="10" fill="#94a3b8">• @Query natives · decrementStock(bookId, qty)</text>
+  <text x="636" y="489" font-size="10" fill="#94a3b8">• Spring Security · JWT Filter · BCryptPasswordEncoder</text>
+  <rect x="620" y="512" width="430" height="104" rx="8" fill="#0a1f0e" stroke="#10b98140" stroke-width="1"/>
+  <text x="835" y="531" text-anchor="middle" font-size="11" font-weight="bold" fill="#6ee7b7">MODÈLES  (@Entity JPA / Hibernate)</text>
+  <text x="636" y="550" font-size="10" fill="#94a3b8">• Book · User · Order (trackingNumber) · OrderItem</text>
+  <text x="636" y="567" font-size="10" fill="#94a3b8">• Review · StockMovement (SALE/RESTOCK/CORRECTION…)</text>
+  <text x="636" y="584" font-size="10" fill="#94a3b8">• ddl-auto=update · open-in-view=false · FetchType.EAGER</text>
+  <text x="636" y="601" font-size="10" fill="#94a3b8">• @Transactional(readOnly=true) + force init ElementCollection</text>
 
-  <!-- ── Docker Compose ── -->
-  <rect x="15" y="50" width="710" height="550" rx="10" fill="white" stroke="#94a3b8" stroke-width="2" stroke-dasharray="8,4"/>
-  <rect x="25" y="44" width="155" height="18" fill="#f1f5f9"/>
-  <text x="102" y="57" text-anchor="middle" font-size="12" fill="#64748b" font-weight="bold">🐳 Docker Compose</text>
+  <!-- DATABASE -->
+  <rect x="330" y="652" width="440" height="100" rx="14" fill="#1e1b2e" stroke="#8b5cf6" stroke-width="1.5"/>
+  <rect x="330" y="652" width="440" height="32" rx="14" fill="#4c1d95"/>
+  <rect x="330" y="670" width="440" height="14" fill="#4c1d95"/>
+  <text x="550" y="673" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">MySQL 8 — bookstore_db</text>
+  <text x="550" y="702" text-anchor="middle" font-size="10" fill="#c4b5fd">book · orders · order_item · users · review · stock_movements</text>
+  <text x="550" y="718" text-anchor="middle" font-size="10" fill="#c4b5fd">book_author · user_addresses · verification_codes</text>
+  <text x="550" y="734" text-anchor="middle" font-size="10" fill="#7c3aed">Docker Compose · Port 3306 · utf8mb4_unicode_ci</text>
 
-  <!-- ── Angular ── -->
-  <rect x="35" y="75" width="200" height="220" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
-  <line x1="35" y1="103" x2="235" y2="103" stroke="#3b82f6" stroke-width="2"/>
-  <text x="135" y="94" text-anchor="middle" font-size="13" font-weight="bold" fill="#1d4ed8">Angular 21</text>
-  <text x="135" y="122" text-anchor="middle" font-size="11" fill="#1e40af" font-weight="bold">Frontend</text>
-  <text x="55" y="145" font-size="11" fill="#374151">• Components (NgModules)</text>
-  <text x="55" y="163" font-size="11" fill="#374151">• Services HTTP</text>
-  <text x="55" y="181" font-size="11" fill="#374151">• Guards (Auth)</text>
-  <text x="55" y="199" font-size="11" fill="#374151">• Interceptors JWT</text>
-  <text x="55" y="217" font-size="11" fill="#374151">• Lazy Loading Routes</text>
-  <text x="135" y="282" text-anchor="middle" font-size="11" fill="#64748b">🌐 localhost:4200</text>
+  <!-- External Services -->
+  <rect x="30" y="660" width="260" height="82" rx="10" fill="#1c1a10" stroke="#f59e0b" stroke-width="1.2"/>
+  <text x="160" y="679" text-anchor="middle" font-size="11" font-weight="bold" fill="#fbbf24">Services Externes</text>
+  <text x="160" y="697" text-anchor="middle" font-size="10" fill="#94a3b8">✉  SMTP Gmail — confirmation + statut commande</text>
+  <text x="160" y="713" text-anchor="middle" font-size="10" fill="#94a3b8">📦  Chronopost — suivi colis N° CP…FR</text>
+  <text x="160" y="729" text-anchor="middle" font-size="10" fill="#94a3b8">🤖  IA — recommandations livres</text>
+  <rect x="810" y="660" width="260" height="82" rx="10" fill="#1c1a10" stroke="#f59e0b" stroke-width="1.2"/>
+  <text x="940" y="679" text-anchor="middle" font-size="11" font-weight="bold" fill="#fbbf24">Infrastructure</text>
+  <text x="940" y="697" text-anchor="middle" font-size="10" fill="#94a3b8">🐳  Docker · Port 8080 (API) · 4200 (Front)</text>
+  <text x="940" y="713" text-anchor="middle" font-size="10" fill="#94a3b8">🔐  JWT Bearer · .env Spring-dotenv</text>
+  <text x="940" y="729" text-anchor="middle" font-size="10" fill="#94a3b8">🛡  CORS · ROLE_USER / ROLE_ADMIN</text>
 
-  <!-- ── Spring Boot ── -->
-  <rect x="295" y="62" width="250" height="335" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
-  <line x1="295" y1="90" x2="545" y2="90" stroke="#16a34a" stroke-width="2"/>
-  <text x="420" y="81" text-anchor="middle" font-size="13" font-weight="bold" fill="#15803d">Spring Boot 3.2</text>
-
-  <rect x="310" y="100" width="220" height="48" rx="5" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
-  <text x="420" y="119" text-anchor="middle" font-size="11" fill="#14532d" font-weight="bold">Controllers (REST API)</text>
-  <text x="420" y="138" text-anchor="middle" font-size="10" fill="#166534">Auth · Book · Order · Admin · Chat</text>
-
-  <rect x="310" y="155" width="220" height="48" rx="5" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
-  <text x="420" y="174" text-anchor="middle" font-size="11" fill="#14532d" font-weight="bold">Services (Business Logic)</text>
-  <text x="420" y="193" text-anchor="middle" font-size="10" fill="#166534">Order · Email · Gemini · Stock</text>
-
-  <rect x="310" y="210" width="220" height="48" rx="5" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
-  <text x="420" y="229" text-anchor="middle" font-size="11" fill="#14532d" font-weight="bold">Security / JWT</text>
-  <text x="420" y="248" text-anchor="middle" font-size="10" fill="#166534">JwtFilter · JwtUtil · SecurityConfig</text>
-
-  <rect x="310" y="265" width="220" height="48" rx="5" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
-  <text x="420" y="284" text-anchor="middle" font-size="11" fill="#14532d" font-weight="bold">Repositories (JPA)</text>
-  <text x="420" y="303" text-anchor="middle" font-size="10" fill="#166534">Book · User · Order · Review</text>
-
-  <rect x="310" y="320" width="220" height="48" rx="5" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
-  <text x="420" y="339" text-anchor="middle" font-size="11" fill="#14532d" font-weight="bold">LangChain4j (Gemini)</text>
-  <text x="420" y="358" text-anchor="middle" font-size="10" fill="#166534">ChatModel · RecommendationService</text>
-
-  <text x="420" y="382" text-anchor="middle" font-size="11" fill="#64748b">🚀 localhost:8080</text>
-
-  <!-- ── MySQL ── -->
-  <rect x="295" y="445" width="250" height="130" rx="8" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
-  <line x1="295" y1="473" x2="545" y2="473" stroke="#ea580c" stroke-width="2"/>
-  <text x="420" y="464" text-anchor="middle" font-size="13" font-weight="bold" fill="#c2410c">MySQL 8.0</text>
-  <text x="420" y="493" text-anchor="middle" font-size="11" fill="#374151" font-weight="bold">Base de données</text>
-  <text x="420" y="513" text-anchor="middle" font-size="11" fill="#374151">bookstore_db</text>
-  <text x="420" y="533" text-anchor="middle" font-size="11" fill="#64748b">🗄️ localhost:3306</text>
-  <text x="420" y="552" text-anchor="middle" font-size="10" fill="#9ca3af">Initialisée via bookstore_db.sql</text>
-
-  <!-- ── phpMyAdmin ── -->
-  <rect x="35" y="370" width="200" height="110" rx="8" fill="#fdf4ff" stroke="#9333ea" stroke-width="2"/>
-  <line x1="35" y1="398" x2="235" y2="398" stroke="#9333ea" stroke-width="2"/>
-  <text x="135" y="389" text-anchor="middle" font-size="13" font-weight="bold" fill="#7e22ce">phpMyAdmin</text>
-  <text x="135" y="418" text-anchor="middle" font-size="11" fill="#374151">Interface admin base</text>
-  <text x="135" y="458" text-anchor="middle" font-size="11" fill="#64748b">localhost:8081</text>
-
-  <!-- ── Gemini API ── -->
-  <rect x="750" y="80" width="185" height="130" rx="8" fill="#fefce8" stroke="#ca8a04" stroke-width="2"/>
-  <line x1="750" y1="108" x2="935" y2="108" stroke="#ca8a04" stroke-width="2"/>
-  <text x="837" y="99" text-anchor="middle" font-size="13" font-weight="bold" fill="#92400e">Google Gemini AI</text>
-  <text x="837" y="128" text-anchor="middle" font-size="11" fill="#374151">Chatbot IA</text>
-  <text x="837" y="147" text-anchor="middle" font-size="11" fill="#374151">Recommandations livres</text>
-  <text x="837" y="166" text-anchor="middle" font-size="11" fill="#374151">Résumés automatiques</text>
-  <text x="837" y="198" text-anchor="middle" font-size="10" fill="#64748b">☁️ API externe (HTTPS)</text>
-
-  <!-- ── Gmail SMTP ── -->
-  <rect x="750" y="255" width="185" height="130" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
-  <line x1="750" y1="283" x2="935" y2="283" stroke="#dc2626" stroke-width="2"/>
-  <text x="837" y="274" text-anchor="middle" font-size="13" font-weight="bold" fill="#991b1b">Gmail SMTP</text>
-  <text x="837" y="303" text-anchor="middle" font-size="11" fill="#374151">Emails transactionnels</text>
-  <text x="837" y="322" text-anchor="middle" font-size="11" fill="#374151">Codes de vérification</text>
-  <text x="837" y="341" text-anchor="middle" font-size="11" fill="#374151">smtp.gmail.com:587</text>
-  <text x="837" y="374" text-anchor="middle" font-size="10" fill="#64748b">☁️ Service externe (STARTTLS)</text>
-
-  <!-- ── Légende ── -->
-  <rect x="750" y="430" width="185" height="165" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1"/>
-  <line x1="750" y1="452" x2="935" y2="452" stroke="#e2e8f0" stroke-width="1"/>
-  <text x="837" y="446" text-anchor="middle" font-size="12" font-weight="bold" fill="#0f172a">Légende</text>
-  <line x1="762" y1="471" x2="792" y2="471" stroke="#3b82f6" stroke-width="2" marker-end="url(#arr-blue)"/>
-  <text x="800" y="475" font-size="10" fill="#374151">HTTP / REST</text>
-  <line x1="762" y1="493" x2="792" y2="493" stroke="#ea580c" stroke-width="2" marker-end="url(#arr-orange)"/>
-  <text x="800" y="497" font-size="10" fill="#374151">JDBC (Base données)</text>
-  <line x1="762" y1="515" x2="792" y2="515" stroke="#d97706" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-yellow)"/>
-  <text x="800" y="519" font-size="10" fill="#374151">API externe HTTPS</text>
-  <line x1="762" y1="537" x2="792" y2="537" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-red)"/>
-  <text x="800" y="541" font-size="10" fill="#374151">SMTP (emails)</text>
-  <line x1="762" y1="559" x2="792" y2="559" stroke="#9333ea" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-purple)"/>
-  <text x="800" y="563" font-size="10" fill="#374151">Admin BDD</text>
-  <line x1="762" y1="581" x2="792" y2="581" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="8,4"/>
-  <text x="800" y="585" font-size="10" fill="#374151">Docker Compose</text>
-
-  <!-- ── Flèches ── -->
-  <!-- Angular ↔ Spring Boot -->
-  <line x1="236" y1="188" x2="293" y2="188" stroke="#3b82f6" stroke-width="2" marker-end="url(#arr-blue)"/>
-  <line x1="295" y1="204" x2="238" y2="204" stroke="#3b82f6" stroke-width="2" marker-end="url(#arr-blue)"/>
-  <text x="264" y="181" text-anchor="middle" font-size="10" fill="#3b82f6">HTTP/REST</text>
-  <text x="264" y="220" text-anchor="middle" font-size="10" fill="#3b82f6">+ JWT Token</text>
-
-  <!-- Spring Boot → MySQL -->
-  <line x1="420" y1="397" x2="420" y2="443" stroke="#ea580c" stroke-width="2" marker-end="url(#arr-orange)"/>
-  <text x="438" y="424" font-size="10" fill="#ea580c">JDBC</text>
-
-  <!-- phpMyAdmin → MySQL -->
-  <polyline points="135,480 135,520 295,510" stroke="#9333ea" stroke-width="1.5" stroke-dasharray="5,3" fill="none" marker-end="url(#arr-purple)"/>
-
-  <!-- Spring Boot → Gemini API -->
-  <line x1="545" y1="160" x2="748" y2="160" stroke="#d97706" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arr-yellow)"/>
-  <text x="645" y="153" text-anchor="middle" font-size="10" fill="#d97706">HTTPS API</text>
-
-  <!-- Spring Boot → Gmail SMTP -->
-  <line x1="545" y1="280" x2="748" y2="320" stroke="#dc2626" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arr-red)"/>
-  <text x="652" y="295" text-anchor="middle" font-size="10" fill="#dc2626">STARTTLS</text>
-
+  <!-- Arrows -->
+  <line x1="500" y1="354" x2="600" y2="354" stroke="#3b82f6" stroke-width="2" marker-end="url(#arr-blue)" stroke-dasharray="6,3"/>
+  <text x="550" y="345" text-anchor="middle" font-size="9" fill="#60a5fa">HTTP REST · JSON</text>
+  <text x="550" y="357" text-anchor="middle" font-size="9" fill="#60a5fa">Authorization: Bearer JWT</text>
+  <line x1="835" y1="628" x2="700" y2="652" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arr-purple)"/>
+  <text x="792" y="643" font-size="9" fill="#a78bfa">JPA/Hibernate</text>
+  <line x1="265" y1="628" x2="382" y2="652" stroke="#8b5cf660" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-purple)"/>
 </svg>

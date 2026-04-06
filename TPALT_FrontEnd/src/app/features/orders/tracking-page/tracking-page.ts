@@ -123,16 +123,7 @@ interface TrackStep {
                     <!-- Active -->
                     <div *ngIf="getStepState(i) === 'active'"
                          class="w-11 h-11 rounded-full flex items-center justify-center shadow-lg"
-                      [class.bg-green-500]="isFullyDelivered"
-                      [class.dark:bg-green-500]="isFullyDelivered"
-                      [class.shadow-green-500/30]="isFullyDelivered"
-                         [class.ring-0]="isFullyDelivered"
-                         [class.animate-none]="isFullyDelivered"
-                      [class.bg-amber-500]="!isFullyDelivered"
-                      [class.dark:bg-amber-400]="!isFullyDelivered"
-                      [class.shadow-amber-400/40]="!isFullyDelivered"
-                         [class.ring-4]="!isFullyDelivered"
-                      [class.ring-amber-400/20]="!isFullyDelivered">
+                         [ngClass]="getActiveCircleClass()">
                       <span class="material-symbols-outlined text-white text-xl">{{ isFullyDelivered ? 'check' : step.icon }}</span>
                     </div>
                     <!-- Pending -->
@@ -144,15 +135,7 @@ interface TrackStep {
 
                   <!-- Label -->
                   <div class="md:text-center">
-                    <p class="font-bold text-sm"
-                       [class.text-green-600]="getStepState(i) === 'completed'"
-                       [class.dark:text-green-400]="getStepState(i) === 'completed'"
-                       [class.text-green-600]="isActiveDelivered(i)"
-                       [class.dark:text-green-400]="isActiveDelivered(i)"
-                       [class.text-amber-600]="getStepState(i) === 'active' && !isFullyDelivered"
-                       [class.dark:text-amber-400]="getStepState(i) === 'active' && !isFullyDelivered"
-                       [class.text-slate-400]="getStepState(i) === 'pending'"
-                       [class.dark:text-slate-500]="getStepState(i) === 'pending'">
+                    <p class="font-bold text-sm" [ngClass]="getStepLabelClass(i)">
                       {{ getStepLabel(step.key) }}
                     </p>
                     <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5 md:max-w-[120px]">{{ getStepDescription(step.key) }}</p>
@@ -321,6 +304,32 @@ export class TrackingPage implements OnInit {
 
   isActiveDelivered(index: number): boolean {
     return this.getStepState(index) === 'active' && this.isFullyDelivered;
+  }
+
+  getActiveCircleClass(): Record<string, boolean> {
+    const d = this.isFullyDelivered;
+    return {
+      'bg-green-500': d,
+      'bg-amber-500': !d,
+      'dark:bg-amber-400': !d,
+      'ring-4': !d,
+      'animate-pulse': !d,
+    };
+  }
+
+  getStepLabelClass(i: number): Record<string, boolean> {
+    const state = this.getStepState(i);
+    const green = state === 'completed' || this.isActiveDelivered(i);
+    const amber = state === 'active' && !this.isFullyDelivered;
+    const muted = state === 'pending';
+    return {
+      'text-green-600': green,
+      'dark:text-green-400': green,
+      'text-amber-600': amber,
+      'dark:text-amber-400': amber,
+      'text-slate-400': muted,
+      'dark:text-slate-500': muted,
+    };
   }
 
   /**

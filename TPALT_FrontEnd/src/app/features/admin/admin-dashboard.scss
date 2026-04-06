@@ -1008,7 +1008,7 @@ $light-muted:   #64748b;
     .nav-item {
       color: $light-muted;
       &:hover { background: $light-surface2; color: $light-text; }
-      &.active { background: rgba($accent, 0.10); color: darken($accent, 10%); }
+      &.active { background: rgba($accent, 0.10); color: color.adjust($accent, $lightness: -10%); }
     }
 
     .sidebar-footer {
@@ -1040,7 +1040,7 @@ $light-muted:   #64748b;
     &:hover {
       background: rgba($accent, 0.08);
       border-color: rgba($accent, 0.5);
-      color: darken($accent, 8%);
+      color: color.adjust($accent, $lightness: -8%);
     }
   }
 
