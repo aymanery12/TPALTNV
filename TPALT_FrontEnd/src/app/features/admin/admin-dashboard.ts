@@ -8,6 +8,7 @@ import { takeUntil, catchError } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { environment } from '../../../environments/environment';
+import { CustomDropdownComponent, DropdownOption } from '../../shared/components/custom-dropdown/custom-dropdown';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -97,7 +98,7 @@ export interface StockMovement {
 @Component({
     selector: 'app-admin-dashboard',
     standalone: true,
-    imports: [CommonModule, RouterModule, DatePipe, FormsModule],
+    imports: [CommonModule, RouterModule, DatePipe, FormsModule, CustomDropdownComponent],
     templateUrl: './admin-dashboard.html',
     styleUrl: './admin-dashboard.scss'
 })
@@ -136,6 +137,47 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     editingBook: Book | null = null;
     bookForm: Partial<Book> = this.emptyBook();
     authorInput = '';   // champ texte libre, converti en string[] à la sauvegarde
+
+    readonly bookStatusFilterOptions: DropdownOption[] = [
+        { value: '', label: 'Tous statuts' },
+        { value: 'ACTIVE', label: 'Actif' },
+        { value: 'OUT_OF_STOCK', label: 'Rupture' },
+        { value: 'DISCONTINUED', label: 'Arrete' },
+        { value: 'COMING_SOON', label: 'A paraitre' }
+    ];
+
+    readonly orderFilterOptions: DropdownOption[] = [
+        { value: '', label: 'Tous les statuts' },
+        { value: 'EN_PREPARATION', label: 'En preparation' },
+        { value: 'EXPEDIEE', label: 'Expediee' },
+        { value: 'LIVREE', label: 'Livree' },
+        { value: 'ANNULEE', label: 'Annulee' }
+    ];
+
+    readonly orderStatusOptions: DropdownOption[] = [
+        { value: 'EN_PREPARATION', label: 'En preparation' },
+        { value: 'EXPEDIEE', label: 'Expediee' },
+        { value: 'LIVREE', label: 'Livree' },
+        { value: 'ANNULEE', label: 'Annulee' }
+    ];
+
+    readonly userRoleOptions: DropdownOption[] = [
+        { value: 'CLIENT', label: 'Client' },
+        { value: 'ADMIN', label: 'Admin' }
+    ];
+
+    readonly bookFormStatusOptions: DropdownOption[] = [
+        { value: 'ACTIVE', label: 'Actif' },
+        { value: 'COMING_SOON', label: 'A paraitre' },
+        { value: 'DISCONTINUED', label: 'Arrete' }
+    ];
+
+    readonly stockMovementTypeOptions: DropdownOption[] = [
+        { value: 'RESTOCK', label: 'Reapprovisionnement' },
+        { value: 'RETURN', label: 'Retour client' },
+        { value: 'CORRECTION', label: 'Correction manuelle' },
+        { value: 'LOSS', label: 'Perte / Casse' }
+    ];
 
     // ── Stock ────────────────────────────────────────────────────────────────
     lowStockBooks: Book[] = [];
@@ -317,6 +359,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
     get uniqueCategories(): string[] {
         return [...new Set(this.books.map(b => b.category).filter(Boolean))];
+    }
+
+    get categoryFilterOptions(): DropdownOption[] {
+        return [
+            { value: '', label: 'Toutes categories' },
+            ...this.uniqueCategories.map(category => ({ value: category, label: category }))
+        ];
     }
 
     private emptyBook(): Partial<Book> {
@@ -693,8 +742,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             EXPEDIEE:       'Expédiée',
             LIVREE:         'Livrée',
             ANNULEE:        'Annulée',
-            // anciens alias conservés pour données historiques
-            PREPARATION:    'En préparation',
             LIVRAISON:      'Expédiée',
         };
         return map[s] ?? s;
@@ -705,7 +752,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             EXPEDIEE:       'shipping',
             LIVREE:         'delivered',
             ANNULEE:        'cancelled',
-            PREPARATION:    'preparing',
             LIVRAISON:      'shipping',
         };
         return map[s] ?? '';

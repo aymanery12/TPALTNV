@@ -187,6 +187,17 @@ $sidebar-collapsed: 64px;
   padding: 0.75rem 1.5rem;
   font-size: 0.875rem;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  line-height: 1.2;
+
+  .material-symbols-outlined {
+    font-size: 18px;
+    line-height: 1;
+    vertical-align: middle;
+  }
+
   &.success { background: rgba($green, 0.15); color: $green; border-left: 3px solid $green; }
   &.error   { background: rgba($red, 0.15);   color: $red;   border-left: 3px solid $red;   }
 }
@@ -474,20 +485,45 @@ $sidebar-collapsed: 64px;
   border: 1px solid $border;
   color: $text;
   border-radius: 8px;
-  padding: 0.5rem 0.75rem;
+  height: 42px;
+  padding: 0 2.15rem 0 0.75rem;
   font-size: 0.85rem;
   cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, $muted 50%),
+    linear-gradient(135deg, $muted 50%, transparent 50%);
+  background-position:
+    calc(100% - 16px) calc(50% - 2px),
+    calc(100% - 11px) calc(50% - 2px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
   &:focus { outline: none; border-color: $accent; }
 }
 
 .status-select {
-  background: $surface2;
+  background: $surface;
   border: 1px solid $border;
   color: $text;
-  border-radius: 6px;
-  padding: 3px 6px;
-  font-size: 0.8rem;
+  border-radius: 8px;
+  height: 42px;
+  padding: 0 2.15rem 0 0.75rem;
+  font-size: 0.85rem;
   cursor: pointer;
+  min-width: 140px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, $muted 50%),
+    linear-gradient(135deg, $muted 50%, transparent 50%);
+  background-position:
+    calc(100% - 16px) calc(50% - 2px),
+    calc(100% - 11px) calc(50% - 2px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
   &:focus { outline: none; border-color: $accent; }
 }
 
@@ -752,6 +788,14 @@ $sidebar-collapsed: 64px;
   text-align: center;
   color: $muted;
   font-size: 0.875rem;
+
+  &.stock-empty-state {
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+  }
 }
 
 .promo-info {
@@ -957,7 +1001,7 @@ $light-muted:   #64748b;
 
   // Select status
   .status-select {
-    background: $light-surface2;
+    background: $light-surface;
     border-color: $light-border;
     color: $light-text;
   }

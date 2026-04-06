@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -14,7 +14,7 @@ import { LanguageService } from '../../core/services/language.service';
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
 })
-export class Navbar implements OnInit {
+export class Navbar implements OnInit, OnDestroy {
   isLoggedIn = false;
   isAdmin = false;
   searchQuery = '';
@@ -26,6 +26,17 @@ export class Navbar implements OnInit {
   currentLang: 'fr' | 'en' = 'fr';
   @ViewChild('guestMenuWrapper') guestMenuWrapper?: ElementRef<HTMLDivElement>;
   @ViewChild('userMenuWrapper') userMenuWrapper?: ElementRef<HTMLDivElement>;
+  private readonly onDocumentClickCapture = (event: Event): void => {
+    const target = event.target as Node | null;
+
+    if (this.showUserMenu && this.userMenuWrapper?.nativeElement && target && !this.userMenuWrapper.nativeElement.contains(target)) {
+      this.showUserMenu = false;
+    }
+
+    if (this.showGuestMenu && this.guestMenuWrapper?.nativeElement && target && !this.guestMenuWrapper.nativeElement.contains(target)) {
+      this.showGuestMenu = false;
+    }
+  };
 
   toggleSidebar(): void { this.sidebarOpen = !this.sidebarOpen; }
 
@@ -38,6 +49,8 @@ export class Navbar implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    document.addEventListener('click', this.onDocumentClickCapture, true);
+
     this.currentLang = this.languageService.currentLanguage;
     this.authService.isLoggedIn().subscribe(status => {
       this.isLoggedIn = status;
@@ -55,6 +68,10 @@ export class Navbar implements OnInit {
     this.cartService.getItemCount().subscribe(count => {
       this.cartCount = count;
     });
+  }
+
+  ngOnDestroy(): void {
+    document.removeEventListener('click', this.onDocumentClickCapture, true);
   }
 
   get greetingLabel(): string {
@@ -109,19 +126,6 @@ export class Navbar implements OnInit {
 
   closeGuestMenu(): void {
     this.showGuestMenu = false;
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    const target = event.target as Node | null;
-
-    if (this.showUserMenu && this.userMenuWrapper?.nativeElement && target && !this.userMenuWrapper.nativeElement.contains(target)) {
-      this.showUserMenu = false;
-    }
-
-    if (this.showGuestMenu && this.guestMenuWrapper?.nativeElement && target && !this.guestMenuWrapper.nativeElement.contains(target)) {
-      this.showGuestMenu = false;
-    }
   }
 
   @HostListener('window:scroll')

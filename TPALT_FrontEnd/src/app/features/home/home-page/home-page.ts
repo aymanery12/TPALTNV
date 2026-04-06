@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { Navbar } from "../../../layout/navbar/navbar";
@@ -32,7 +32,7 @@ import { Order } from "../../../shared/models/order.model";
   templateUrl: "./home-page.html",
   styleUrl: "./home-page.scss",
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
   readonly offersCategoryValue = '__offers__';
   readonly pageSize = 14;
 
@@ -105,6 +105,9 @@ export class HomePage implements OnInit {
   toastMessage = '';
   toastVisible = false;
   private toastTimer: any;
+  private readonly closeSortMenuOnCaptureClick = (): void => {
+    this.sortMenuOpen = false;
+  };
 
   constructor(
     private bookService: BookService,
@@ -119,6 +122,7 @@ export class HomePage implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    document.addEventListener('click', this.closeSortMenuOnCaptureClick, true);
     this.currentLang = this.languageService.currentLanguage;
     this.isLoggedIn = this.authService.isLoggedInSnapshot();
     this.username = this.authService.getUsername() ?? '';
@@ -182,6 +186,10 @@ export class HomePage implements OnInit {
       }
     });
 
+  }
+
+  ngOnDestroy(): void {
+    document.removeEventListener('click', this.closeSortMenuOnCaptureClick, true);
   }
 
   private computeAverageRatingFromBooks(books: Book[]): number {
@@ -252,11 +260,6 @@ export class HomePage implements OnInit {
   selectSort(sort: string): void {
     this.selectedSort = sort;
     this.sortBooks();
-    this.sortMenuOpen = false;
-  }
-
-  @HostListener('document:click')
-  closeSortMenu(): void {
     this.sortMenuOpen = false;
   }
 

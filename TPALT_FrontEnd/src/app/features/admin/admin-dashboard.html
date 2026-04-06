@@ -232,17 +232,18 @@
                         <input class="search-input" [(ngModel)]="bookSearch" (ngModelChange)="applyBookFilters()"
                                placeholder="Rechercher un livre..." />
                     </div>
-                    <select class="filter-select" [(ngModel)]="bookCategoryFilter" (ngModelChange)="applyBookFilters()">
-                        <option value="">Toutes catégories</option>
-                        <option *ngFor="let cat of uniqueCategories" [value]="cat">{{ cat }}</option>
-                    </select>
-                    <select class="filter-select" [(ngModel)]="bookStatusFilter" (ngModelChange)="applyBookFilters()">
-                        <option value="">Tous statuts</option>
-                        <option value="ACTIVE">Actif</option>
-                        <option value="OUT_OF_STOCK">Rupture</option>
-                        <option value="DISCONTINUED">Arrêté</option>
-                        <option value="COMING_SOON">À paraître</option>
-                    </select>
+                    <app-custom-dropdown
+                        [options]="categoryFilterOptions"
+                        [value]="bookCategoryFilter"
+                        [minWidth]="'180px'"
+                        (valueChange)="bookCategoryFilter = $event; applyBookFilters()">
+                    </app-custom-dropdown>
+                    <app-custom-dropdown
+                        [options]="bookStatusFilterOptions"
+                        [value]="bookStatusFilter"
+                        [minWidth]="'170px'"
+                        (valueChange)="bookStatusFilter = $event; applyBookFilters()">
+                    </app-custom-dropdown>
                 </div>
                 <button class="btn-primary" (click)="openAddBook()">
                     <span class="material-symbols-outlined">add</span> Ajouter un livre
@@ -334,7 +335,7 @@
                             Stock critique ({{ lowStockBooks.length }})
                         </span>
                     </div>
-                    <div *ngIf="lowStockBooks.length === 0" class="empty-state">
+                    <div *ngIf="lowStockBooks.length === 0" class="empty-state stock-empty-state">
                         <span class="material-symbols-outlined" style="color:#10b981">check_circle</span>
                         Tous les stocks sont suffisants
                     </div>
@@ -364,7 +365,7 @@
                             Rupture de stock ({{ outOfStockBooks.length }})
                         </span>
                     </div>
-                    <div *ngIf="outOfStockBooks.length === 0" class="empty-state">
+                    <div *ngIf="outOfStockBooks.length === 0" class="empty-state stock-empty-state">
                         <span class="material-symbols-outlined" style="color:#10b981">check_circle</span>
                         Aucune rupture
                     </div>
@@ -422,13 +423,12 @@
 
             <div class="toolbar">
                 <div class="toolbar-left">
-                    <select class="filter-select" [(ngModel)]="orderFilter" (ngModelChange)="loadOrders()">
-                        <option value="">Tous les statuts</option>
-                        <option value="EN_PREPARATION">En préparation</option>
-                        <option value="EXPEDIEE">Expédiée</option>
-                        <option value="LIVREE">Livrée</option>
-                        <option value="ANNULEE">Annulée</option>
-                    </select>
+                    <app-custom-dropdown
+                        [options]="orderFilterOptions"
+                        [value]="orderFilter"
+                        [minWidth]="'180px'"
+                        (valueChange)="orderFilter = $event; loadOrders()">
+                    </app-custom-dropdown>
                 </div>
                 <span class="results-count">{{ orders.length }} commande(s)</span>
             </div>
@@ -446,12 +446,12 @@
                         <td class="bold">{{ formatCurrency(order.totalAmount) }}</td>
                         <td class="muted">{{ order.orderDate | date:'dd/MM/yy HH:mm' }}</td>
                         <td>
-                            <select class="status-select" [value]="order.status" (change)="updateOrderStatus(order, $any($event.target).value)">
-                                <option value="EN_PREPARATION">En préparation</option>
-                                <option value="EXPEDIEE">Expédiée</option>
-                                <option value="LIVREE">Livrée</option>
-                                <option value="ANNULEE">Annulée</option>
-                            </select>
+                            <app-custom-dropdown
+                                [options]="orderStatusOptions"
+                                [value]="order.status"
+                                [minWidth]="'150px'"
+                                (valueChange)="updateOrderStatus(order, $event)">
+                            </app-custom-dropdown>
                         </td>
                         <td class="tracking-cell">
                             <ng-container *ngIf="order.trackingNumber; else noTracking">
@@ -507,10 +507,12 @@
                         <td class="bold">{{ user.username }}</td>
                         <td class="muted">{{ user.email }}</td>
                         <td>
-                            <select class="status-select" [value]="user.role" (change)="updateUserRole(user, $any($event.target).value)">
-                                <option value="CLIENT">Client</option>
-                                <option value="ADMIN">Admin</option>
-                            </select>
+                            <app-custom-dropdown
+                                [options]="userRoleOptions"
+                                [value]="user.role"
+                                [minWidth]="'130px'"
+                                (valueChange)="updateUserRole(user, $event)">
+                            </app-custom-dropdown>
                         </td>
                         <td>
                             <button class="icon-btn delete" (click)="deleteUser(user)" title="Supprimer">
@@ -638,11 +640,12 @@
                 </div>
                 <div class="form-group">
                     <label>Statut</label>
-                    <select [(ngModel)]="bookForm.status">
-                        <option value="ACTIVE">Actif</option>
-                        <option value="COMING_SOON">À paraître</option>
-                        <option value="DISCONTINUED">Arrêté</option>
-                    </select>
+                    <app-custom-dropdown
+                        [options]="bookFormStatusOptions"
+                        [value]="bookForm.status || 'ACTIVE'"
+                        [fullWidth]="true"
+                        (valueChange)="bookForm.status = $any($event)">
+                    </app-custom-dropdown>
                 </div>
                 <div class="form-group">
                     <label>Remise (%)</label>
@@ -677,12 +680,12 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label>Type de mouvement</label>
-                    <select [(ngModel)]="stockAdjustForm.type">
-                        <option value="RESTOCK">Réapprovisionnement</option>
-                        <option value="RETURN">Retour client</option>
-                        <option value="CORRECTION">Correction manuelle</option>
-                        <option value="LOSS">Perte / Casse</option>
-                    </select>
+                    <app-custom-dropdown
+                        [options]="stockMovementTypeOptions"
+                        [value]="stockAdjustForm.type"
+                        [fullWidth]="true"
+                        (valueChange)="stockAdjustForm.type = $event">
+                    </app-custom-dropdown>
                 </div>
                 <div class="form-group">
                     <label>Quantité</label>

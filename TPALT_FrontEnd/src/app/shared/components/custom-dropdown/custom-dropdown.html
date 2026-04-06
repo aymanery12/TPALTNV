@@ -1,0 +1,26 @@
+<div
+  class="custom-dropdown"
+  [class.open]="open"
+  [class.full-width]="fullWidth"
+  [style.min-width]="minWidth"
+  (click)="$event.stopPropagation()">
+  <button
+    type="button"
+    class="dropdown-trigger"
+    [disabled]="disabled"
+    (click)="toggle()">
+    {{ selectedLabel }}
+    <span class="material-symbols-outlined dropdown-icon">expand_more</span>
+  </button>
+
+  <div *ngIf="open" class="dropdown-menu">
+    <button
+      *ngFor="let option of options"
+      type="button"
+      class="dropdown-option"
+      [class.active]="option.value === value"
+      (click)="selectOption(option.value)">
+      {{ option.label }}
+    </button>
+  </div>
+</div>

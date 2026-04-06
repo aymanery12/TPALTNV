@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -182,6 +182,10 @@ export class BookList implements OnInit, OnDestroy {
   toastVisible = false;
   private toastTimer: any;
   private wishlistSub?: Subscription;
+  private readonly closeMenusOnCaptureClick = (): void => {
+    this.categoryMenuOpen = false;
+    this.sortMenuOpen = false;
+  };
 
   constructor(
       private bookService: BookService,
@@ -194,6 +198,8 @@ export class BookList implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    document.addEventListener('click', this.closeMenusOnCaptureClick, true);
+
     this.wishlistSub = this.wishlistService.getIds().subscribe(ids => {
       this.wishlistIds = ids;
     });
@@ -221,6 +227,7 @@ export class BookList implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    document.removeEventListener('click', this.closeMenusOnCaptureClick, true);
     this.wishlistSub?.unsubscribe();
   }
 
@@ -349,12 +356,6 @@ export class BookList implements OnInit, OnDestroy {
     this.selectedSort = sort;
     this.currentPage = 1;
     this.applyFilters();
-    this.sortMenuOpen = false;
-  }
-
-  @HostListener('document:click')
-  closeSortMenu(): void {
-    this.categoryMenuOpen = false;
     this.sortMenuOpen = false;
   }
 

@@ -100,7 +100,11 @@ interface TrackStep {
               <div class="hidden md:block absolute top-[22px] left-[calc(16.66%+22px)] right-[calc(16.66%+22px)] h-0.5 bg-slate-200 dark:bg-white/10"></div>
 
               <!-- Progress line overlay (completed portion) -->
-              <div class="hidden md:block absolute top-[22px] h-0.5 bg-amber-400 transition-all duration-700"
+                      <div class="hidden md:block absolute top-[22px] h-0.5 transition-all duration-700"
+                        [class.bg-green-400]="isFullyDelivered"
+                        [class.bg-gradient-to-r]="!isFullyDelivered"
+                        [class.from-green-400]="!isFullyDelivered"
+                        [class.to-amber-400]="!isFullyDelivered"
                    [style.left]="'calc(16.66% + 22px)'"
                    [style.width]="progressWidth"></div>
 
@@ -118,8 +122,18 @@ interface TrackStep {
                     </div>
                     <!-- Active -->
                     <div *ngIf="getStepState(i) === 'active'"
-                         class="w-11 h-11 rounded-full bg-amber-500 dark:bg-amber-400 flex items-center justify-center shadow-lg shadow-amber-400/40 ring-4 ring-amber-400/20 animate-pulse">
-                      <span class="material-symbols-outlined text-white dark:text-slate-900 text-xl">{{ step.icon }}</span>
+                         class="w-11 h-11 rounded-full flex items-center justify-center shadow-lg"
+                      [class.bg-green-500]="isFullyDelivered"
+                      [class.dark:bg-green-500]="isFullyDelivered"
+                      [class.shadow-green-500/30]="isFullyDelivered"
+                         [class.ring-0]="isFullyDelivered"
+                         [class.animate-none]="isFullyDelivered"
+                      [class.bg-amber-500]="!isFullyDelivered"
+                      [class.dark:bg-amber-400]="!isFullyDelivered"
+                      [class.shadow-amber-400/40]="!isFullyDelivered"
+                         [class.ring-4]="!isFullyDelivered"
+                      [class.ring-amber-400/20]="!isFullyDelivered">
+                      <span class="material-symbols-outlined text-white text-xl">{{ isFullyDelivered ? 'check' : step.icon }}</span>
                     </div>
                     <!-- Pending -->
                     <div *ngIf="getStepState(i) === 'pending'"
@@ -133,8 +147,10 @@ interface TrackStep {
                     <p class="font-bold text-sm"
                        [class.text-green-600]="getStepState(i) === 'completed'"
                        [class.dark:text-green-400]="getStepState(i) === 'completed'"
-                       [class.text-amber-600]="getStepState(i) === 'active'"
-                       [class.dark:text-amber-400]="getStepState(i) === 'active'"
+                       [class.text-green-600]="isActiveDelivered(i)"
+                       [class.dark:text-green-400]="isActiveDelivered(i)"
+                       [class.text-amber-600]="getStepState(i) === 'active' && !isFullyDelivered"
+                       [class.dark:text-amber-400]="getStepState(i) === 'active' && !isFullyDelivered"
                        [class.text-slate-400]="getStepState(i) === 'pending'"
                        [class.dark:text-slate-500]="getStepState(i) === 'pending'">
                       {{ getStepLabel(step.key) }}
@@ -299,10 +315,25 @@ export class TrackingPage implements OnInit {
     return 'pending';
   }
 
-  /** Width of the amber progress bar between step circles (desktop) */
+  get isFullyDelivered(): boolean {
+    return this.currentStepIndex === this.steps.length - 1;
+  }
+
+  isActiveDelivered(index: number): boolean {
+    return this.getStepState(index) === 'active' && this.isFullyDelivered;
+  }
+
+  /**
+   * Progress width for desktop overlay line.
+   * The line starts at the right edge of the first circle (left offset includes +22px),
+   * so width must be capped to the current step center minus that radius.
+   */
   get progressWidth(): string {
-    const pct = (this.currentStepIndex / (this.steps.length - 1)) * 100;
-    return `${pct}%`;
+    const i = this.currentStepIndex;
+    if (i <= 0) return '0px';
+
+    const pct = (i * 100) / this.steps.length;
+    return `calc(${pct}% - 22px)`;
   }
 
   get chronopostUrl(): string {

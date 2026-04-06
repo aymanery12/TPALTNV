@@ -1,11 +1,11 @@
-error id: file://<WORKSPACE>/TPALT_Backend/src/main/java/com/bookstore/Controller/ReviewController.java:_empty_/`<any>`#average#
+error id: file://<WORKSPACE>/TPALT_Backend/src/main/java/com/bookstore/Controller/ReviewController.java:java/lang/Math#
 file://<WORKSPACE>/TPALT_Backend/src/main/java/com/bookstore/Controller/ReviewController.java
-empty definition using pc, found symbol in pc: _empty_/`<any>`#average#
+empty definition using pc, found symbol in pc: java/lang/Math#
 empty definition using semanticdb
 empty definition using fallback
 non-local guesses:
 
-offset: 2319
+offset: 2703
 uri: file://<WORKSPACE>/TPALT_Backend/src/main/java/com/bookstore/Controller/ReviewController.java
 text:
 ```scala
@@ -60,15 +60,23 @@ public class ReviewController {
         User user = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur introuvable"));
 
+        if (review.getRating() < 1 || review.getRating() > 5) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La note doit etre comprise entre 1 et 5");
+        }
+
         review.setBook(book);
         review.setUser(user);
         Review saved = reviewRepository.save(review);
 
         // Recalculer la note moyenne et le nombre d'avis du livre
         List<Review> allReviews = reviewRepository.findByBookId(bookId);
-        double avg = allReviews.stream().mapToInt(Review::getRating).@@average().orElse(0.0);
-        book.setRating(Math.round(avg * 10.0) / 10.0);
-        book.setReviewCount(allReviews.size());
+        List<Review> validReviews = allReviews.stream()
+            .filter(r -> r.getRating() >= 1 && r.getRating() <= 5)
+            .toList();
+
+        double avg = validReviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
+        book.setRating(@@Math.round(avg * 10.0) / 10.0);
+        book.setReviewCount(validReviews.size());
         bookRepository.save(book);
 
         return saved;
@@ -79,4 +87,4 @@ public class ReviewController {
 
 #### Short summary: 
 
-empty definition using pc, found symbol in pc: _empty_/`<any>`#average#
+empty definition using pc, found symbol in pc: java/lang/Math#
