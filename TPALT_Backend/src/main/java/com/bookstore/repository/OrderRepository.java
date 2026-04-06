@@ -29,7 +29,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                             o.shipping_address,
                             o.payment_method,
                             u.username,
-                            COALESCE((SELECT COUNT(*) FROM order_item oi WHERE oi.order_id = o.id), 0) AS items_count
+                            COALESCE((SELECT COUNT(*) FROM order_item oi WHERE oi.order_id = o.id), 0) AS items_count,
+                            o.tracking_number
                         FROM orders o
                         LEFT JOIN `user` u ON u.id = o.user_id
                         ORDER BY o.order_date DESC
@@ -45,7 +46,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                             o.shipping_address,
                             o.payment_method,
                             u.username,
-                            COALESCE((SELECT COUNT(*) FROM order_item oi WHERE oi.order_id = o.id), 0) AS items_count
+                            COALESCE((SELECT COUNT(*) FROM order_item oi WHERE oi.order_id = o.id), 0) AS items_count,
+                            o.tracking_number
                         FROM orders o
                         LEFT JOIN `user` u ON u.id = o.user_id
                         WHERE UPPER(o.status) = UPPER(:status)

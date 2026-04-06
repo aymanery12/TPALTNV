@@ -7,6 +7,11 @@ const routes: Routes = [
     path: '',
     canActivate: [authGuard],
     loadComponent: () => import('./orders-page/orders-page').then(m => m.OrdersPage)
+  },
+  {
+    path: ':id/tracking',
+    canActivate: [authGuard],
+    loadComponent: () => import('./tracking-page/tracking-page').then(m => m.TrackingPage)
   }
 ];
 

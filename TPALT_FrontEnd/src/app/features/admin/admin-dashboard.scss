@@ -836,6 +836,167 @@ $sidebar-collapsed: 64px;
   }
 }
 
+// ─── Light Mode ───────────────────────────────────────────────────────────────
+$light-bg:      #f1f5f9;
+$light-surface: #ffffff;
+$light-surface2:#f8fafc;
+$light-border:  #e2e8f0;
+$light-text:    #1e293b;
+$light-muted:   #64748b;
+
+:host-context(.light) {
+
+  .admin-shell {
+    background: $light-bg;
+    color: $light-text;
+  }
+
+  // Sidebar
+  .sidebar {
+    background: $light-surface;
+    border-right-color: $light-border;
+
+    .sidebar-header { border-bottom-color: $light-border; }
+
+    .logo { color: $light-text; }
+
+    .collapse-btn {
+      border-color: $light-border;
+      color: $light-muted;
+      &:hover { border-color: $accent; color: $accent; }
+    }
+
+    .nav-item {
+      color: $light-muted;
+      &:hover { background: $light-surface2; color: $light-text; }
+      &.active { background: rgba($accent, 0.10); color: darken($accent, 10%); }
+    }
+
+    .sidebar-footer {
+      border-top-color: $light-border;
+      .back-btn { color: $light-muted; }
+    }
+  }
+
+  // Topbar
+  .topbar {
+    background: $light-surface;
+    border-bottom-color: $light-border;
+
+    .view-title { color: $light-text; }
+    .today      { color: $light-muted; }
+
+    .avatar-chip {
+      background: $light-surface2;
+      border: 1px solid $light-border;
+      .avatar-label { color: $light-text; }
+    }
+  }
+
+  // Export buttons
+  .export-btn {
+    background: $light-surface2;
+    border-color: $light-border;
+    color: $light-muted;
+    &:hover {
+      background: rgba($accent, 0.08);
+      border-color: rgba($accent, 0.5);
+      color: darken($accent, 8%);
+    }
+  }
+
+  // Theme toggle
+  .theme-toggle-btn {
+    background: $light-surface2;
+    border-color: $light-border;
+    color: $light-muted;
+    &:hover {
+      background: rgba($accent, 0.08);
+      border-color: rgba($accent, 0.3);
+      color: $accent;
+    }
+  }
+
+  // Cards
+  .card {
+    background: $light-surface;
+    border-color: $light-border;
+  }
+  .card-header { border-bottom-color: $light-border; }
+  .card-title  { color: $light-text; }
+
+  // KPI
+  .kpi {
+    background: $light-surface;
+    border-color: $light-border;
+    .kpi-label { color: $light-muted; }
+    .kpi-value { color: $light-text; }
+  }
+
+  // Tables
+  .data-table {
+    th { background: $light-surface2; color: $light-muted; border-bottom-color: $light-border; }
+    td { border-bottom-color: $light-border; color: $light-text; }
+    tr:hover td { background: $light-surface2; }
+    .muted  { color: $light-muted; }
+    .bold   { color: $light-text; font-weight: 600; }
+    .mono   { color: $light-muted; }
+  }
+
+  // Toolbar
+  .toolbar {
+    background: transparent;
+    .filter-select {
+      background: $light-surface;
+      border-color: $light-border;
+      color: $light-text;
+      &:focus { border-color: $accent; }
+    }
+    .results-count { color: $light-muted; }
+  }
+
+  // Select status
+  .status-select {
+    background: $light-surface2;
+    border-color: $light-border;
+    color: $light-text;
+  }
+
+  // Icon buttons
+  .icon-btn {
+    color: $light-muted;
+    &:hover { color: $accent; background: rgba($accent, 0.08); }
+    &.delete:hover { color: $red; background: rgba($red, 0.08); }
+  }
+
+  // btn-sm
+  .btn-sm {
+    background: $light-surface2;
+    border-color: $light-border;
+    color: $light-muted;
+    &:hover { background: rgba($accent, 0.08); border-color: rgba($accent, 0.4); color: $accent; }
+  }
+
+  // Charts legend
+  .legend-grid .leg {
+    color: $light-muted;
+    strong { color: $light-text; }
+  }
+
+  // Movements list
+  .movement-row {
+    border-bottom-color: $light-border;
+    .mv-title  { color: $light-text; }
+    .mv-after  { color: $light-muted; }
+  }
+
+  // View content
+  .view-content { background: $light-bg; }
+
+  // Tracking
+  .tracking-link { color: $blue; }
+}
+
 // ─── Responsive ───────────────────────────────────────────────────────────────
 @media (max-width: 1200px) {
   .charts-row  { grid-template-columns: 1fr; }

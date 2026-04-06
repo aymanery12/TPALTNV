@@ -374,6 +374,7 @@ public class AdminController {
             dto.put("paymentMethod", row[5]);
             dto.put("username", row[6]);
             dto.put("itemsCount", row[7]);
+            dto.put("trackingNumber", row.length > 8 ? row[8] : null);
             return dto;
         }).collect(Collectors.toList());
 
