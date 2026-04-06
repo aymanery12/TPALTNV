@@ -832,6 +832,12 @@ $sidebar-collapsed: 64px;
   select { cursor: pointer; }
 }
 
+.field-error {
+  color: $red;
+  font-size: 0.75rem;
+  margin-top: -0.15rem;
+}
+
 // ─── Misc ─────────────────────────────────────────────────────────────────────
 .empty-state {
   padding: 2rem;

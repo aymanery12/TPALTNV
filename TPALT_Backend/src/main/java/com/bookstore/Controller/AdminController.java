@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.Year;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -120,6 +120,9 @@ public class AdminController {
     @PostMapping("/books")
     public ResponseEntity<Book> createBook(@RequestBody Book book) {
         book.setId(null);
+        if (book.getPublishedYear() != null && book.getPublishedYear() > Year.now().getValue()) {
+            return ResponseEntity.badRequest().build();
+        }
         if (book.getStatus()     == null) book.setStatus(Book.BookStatus.ACTIVE);
         if (book.getQuantity()   == null) book.setQuantity(0);
         if (book.getStockAlert() == null) book.setStockAlert(5);
@@ -138,6 +141,9 @@ public class AdminController {
 
     @PutMapping("/books/{id}")
     public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookData) {
+        if (bookData.getPublishedYear() != null && bookData.getPublishedYear() > Year.now().getValue()) {
+            return ResponseEntity.badRequest().build();
+        }
         return bookRepository.findById(id).map(existing -> {
             existing.setTitle(bookData.getTitle());
             existing.setAuthor(bookData.getAuthor());

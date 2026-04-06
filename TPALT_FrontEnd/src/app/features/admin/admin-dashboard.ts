@@ -138,6 +138,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     editingBook: Book | null = null;
     bookForm: Partial<Book> = this.emptyBook();
     authorInput = '';   // champ texte libre, converti en string[] à la sauvegarde
+    publishedYearError = '';
 
     readonly bookStatusFilterOptions: DropdownOption[] = [
         { value: '', label: 'Tous statuts' },
@@ -239,6 +240,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             this.stopOrdersAutoRefresh();
             this.ordersRetryAttempts = 0;
         }
+        this.cdr.detectChanges();
         switch (view) {
             case 'dashboard':   this.loadDashboard(); break;
             case 'books':       this.loadBooks(); break;
@@ -301,6 +303,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         this.editingBook = null;
         this.bookForm = this.emptyBook();
         this.authorInput = '';
+        this.publishedYearError = '';
         this.showBookForm = true;
     }
 
@@ -308,12 +311,29 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         this.editingBook = book;
         this.bookForm = { ...book };
         this.authorInput = (book.author || []).join(', ');
+        this.publishedYearError = '';
         this.showBookForm = true;
+    }
+
+    onPublishedYearChange(value: number | string | null): void {
+        const year = value === null || value === '' ? null : Number(value);
+        this.bookForm.publishedYear = year ?? undefined;
+
+        if (year != null && !Number.isNaN(year) && year > this.currentYear) {
+            this.publishedYearError = `L'année doit être inférieure ou égale à ${this.currentYear}.`;
+            return;
+        }
+
+        this.publishedYearError = '';
     }
 
     saveBook(): void {
         if (!this.bookForm.title || !this.bookForm.price) {
             this.errorMsg = 'Titre et prix sont obligatoires.';
+            return;
+        }
+        if (this.bookForm.publishedYear != null && this.bookForm.publishedYear > this.currentYear) {
+            this.errorMsg = `L'année doit être inférieure ou égale à ${this.currentYear}.`;
             return;
         }
         this.bookForm.author = this.authorInput

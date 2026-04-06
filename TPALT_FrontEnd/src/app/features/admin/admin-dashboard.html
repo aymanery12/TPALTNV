@@ -14,29 +14,29 @@
         </div>
 
         <nav class="sidebar-nav">
-            <button class="nav-item" [class.active]="activeView === 'dashboard'" (click)="loadView('dashboard')">
+            <button type="button" class="nav-item" [class.active]="activeView === 'dashboard'" (click)="loadView('dashboard')">
                 <span class="material-symbols-outlined nav-icon">dashboard</span>
                 <span class="nav-label" *ngIf="!sidebarCollapsed">Dashboard</span>
             </button>
-            <button class="nav-item" [class.active]="activeView === 'books'" (click)="loadView('books')">
+            <button type="button" class="nav-item" [class.active]="activeView === 'books'" (click)="loadView('books')">
                 <span class="material-symbols-outlined nav-icon">auto_stories</span>
                 <span class="nav-label" *ngIf="!sidebarCollapsed">Catalogue</span>
             </button>
-            <button class="nav-item" [class.active]="activeView === 'stock'" (click)="loadView('stock')">
+            <button type="button" class="nav-item" [class.active]="activeView === 'stock'" (click)="loadView('stock')">
                 <span class="material-symbols-outlined nav-icon">inventory_2</span>
                 <span class="nav-label" *ngIf="!sidebarCollapsed">Stock</span>
                 <span class="badge-alert" *ngIf="stats.lowStockCount > 0 && !sidebarCollapsed">{{ stats.lowStockCount }}</span>
             </button>
-            <button class="nav-item" [class.active]="activeView === 'orders'" (click)="loadView('orders')">
+            <button type="button" class="nav-item" [class.active]="activeView === 'orders'" (click)="loadView('orders')">
                 <span class="material-symbols-outlined nav-icon">shopping_cart</span>
                 <span class="nav-label" *ngIf="!sidebarCollapsed">Commandes</span>
                 <span class="badge-alert" *ngIf="stats.enPreparation > 0 && !sidebarCollapsed">{{ stats.enPreparation }}</span>
             </button>
-            <button class="nav-item" [class.active]="activeView === 'users'" (click)="loadView('users')">
+            <button type="button" class="nav-item" [class.active]="activeView === 'users'" (click)="loadView('users')">
                 <span class="material-symbols-outlined nav-icon">group</span>
                 <span class="nav-label" *ngIf="!sidebarCollapsed">Utilisateurs</span>
             </button>
-            <button class="nav-item" [class.active]="activeView === 'promotions'" (click)="loadView('promotions')">
+            <button type="button" class="nav-item" [class.active]="activeView === 'promotions'" (click)="loadView('promotions')">
                 <span class="material-symbols-outlined nav-icon">sell</span>
                 <span class="nav-label" *ngIf="!sidebarCollapsed">Promotions</span>
             </button>
@@ -184,7 +184,7 @@
                 <div class="card">
                     <div class="card-header">
                         <span class="card-title">Dernières commandes</span>
-                        <button class="btn-sm" (click)="loadView('orders')">Voir tout →</button>
+                        <button type="button" class="btn-sm" (click)="loadView('orders')">Voir tout →</button>
                     </div>
                     <table class="data-table">
                         <thead><tr><th>#</th><th>Client</th><th>Montant</th><th>Date</th><th>Statut</th></tr></thead>
@@ -203,7 +203,7 @@
                 <div class="card">
                     <div class="card-header">
                         <span class="card-title">Mouvements de stock récents</span>
-                        <button class="btn-sm" (click)="loadView('stock')">Voir tout →</button>
+                        <button type="button" class="btn-sm" (click)="loadView('stock')">Voir tout →</button>
                     </div>
                     <div class="movements-list">
                         <div *ngFor="let mv of recentMovements.slice(0,8)" class="movement-row">
@@ -640,7 +640,8 @@
                 </div>
                 <div class="form-group">
                     <label>Année</label>
-                    <input type="number" [(ngModel)]="bookForm.publishedYear" />
+                    <input type="number" [(ngModel)]="bookForm.publishedYear" [max]="currentYear" (ngModelChange)="onPublishedYearChange($event)" />
+                    <small *ngIf="publishedYearError" class="field-error">{{ publishedYearError }}</small>
                 </div>
                 <div class="form-group">
                     <label>Pages</label>
