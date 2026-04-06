@@ -139,6 +139,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     bookForm: Partial<Book> = this.emptyBook();
     authorInput = '';   // champ texte libre, converti en string[] à la sauvegarde
     publishedYearError = '';
+    showDeleteBookModal = false;
+    bookToDelete: Book | null = null;
 
     readonly bookStatusFilterOptions: DropdownOption[] = [
         { value: '', label: 'Tous statuts' },
@@ -204,6 +206,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     users: AppUser[] = [];
     filteredUsers: AppUser[] = [];
     userSearch = '';
+    showDeleteUserModal = false;
+    userToDelete: AppUser | null = null;
 
     constructor(
         private http: HttpClient,
@@ -241,14 +245,16 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             this.ordersRetryAttempts = 0;
         }
         this.cdr.detectChanges();
-        switch (view) {
-            case 'dashboard':   this.loadDashboard(); break;
-            case 'books':       this.loadBooks(); break;
-            case 'stock':       this.loadStock(); break;
-            case 'orders':      this.loadOrders(); break;
-            case 'users':       this.loadUsers(); break;
-            case 'promotions':  this.loadBooks(); break;
-        }
+        setTimeout(() => {
+            switch (view) {
+                case 'dashboard':   this.loadDashboard(); break;
+                case 'books':       this.loadBooks(); break;
+                case 'stock':       this.loadStock(); break;
+                case 'orders':      this.loadOrders(); break;
+                case 'users':       this.loadUsers(); break;
+                case 'promotions':  this.loadBooks(); break;
+            }
+        }, 0);
     }
 
     // ── DASHBOARD ─────────────────────────────────────────────────────────────
@@ -355,12 +361,32 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     }
 
     deleteBook(book: Book): void {
-        if (!confirm(`Supprimer "${book.title}" ?`)) return;
+        this.bookToDelete = book;
+        this.showDeleteBookModal = true;
+    }
+
+    confirmDeleteBook(): void {
+        const book = this.bookToDelete;
+        if (!book) return;
         this.http.delete(`${this.base}/books/${book.id}`, { headers: this.headers() })
             .pipe(takeUntil(this.destroy$)).subscribe({
-            next: () => { this.successMsg = 'Livre supprimé.'; this.loadBooks(); },
-            error: () => { this.errorMsg = 'Erreur lors de la suppression.'; }
+            next: () => {
+                this.successMsg = 'Livre supprimé.';
+                this.showDeleteBookModal = false;
+                this.bookToDelete = null;
+                this.loadBooks();
+            },
+            error: () => {
+                this.errorMsg = 'Erreur lors de la suppression.';
+                this.showDeleteBookModal = false;
+                this.bookToDelete = null;
+            }
         });
+    }
+
+    dismissDeleteBookModal(): void {
+        this.showDeleteBookModal = false;
+        this.bookToDelete = null;
     }
 
     toggleFeatured(book: Book): void {
@@ -592,12 +618,32 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     }
 
     deleteUser(user: AppUser): void {
-        if (!confirm(`Supprimer l'utilisateur "${user.username}" ?`)) return;
+        this.userToDelete = user;
+        this.showDeleteUserModal = true;
+    }
+
+    confirmDeleteUser(): void {
+        const user = this.userToDelete;
+        if (!user) return;
         this.http.delete(`${this.base}/users/${user.id}`, { headers: this.headers() })
             .pipe(takeUntil(this.destroy$)).subscribe({
-            next: () => { this.successMsg = 'Utilisateur supprimé.'; this.loadUsers(); },
-            error: () => { this.errorMsg = 'Erreur lors de la suppression.'; }
+            next: () => {
+                this.successMsg = 'Utilisateur supprimé.';
+                this.showDeleteUserModal = false;
+                this.userToDelete = null;
+                this.loadUsers();
+            },
+            error: () => {
+                this.errorMsg = 'Erreur lors de la suppression.';
+                this.showDeleteUserModal = false;
+                this.userToDelete = null;
+            }
         });
+    }
+
+    dismissDeleteUserModal(): void {
+        this.showDeleteUserModal = false;
+        this.userToDelete = null;
     }
 
     // ── EXPORT ────────────────────────────────────────────────────────────────

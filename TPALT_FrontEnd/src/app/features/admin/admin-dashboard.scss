@@ -616,6 +616,21 @@ $sidebar-collapsed: 64px;
   &:hover { border-color: $muted; }
 }
 
+.btn-danger {
+  background: rgba($red, 0.12);
+  color: $red;
+  border: 1px solid rgba($red, 0.4);
+  border-radius: 8px;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  &:hover { background: rgba($red, 0.18); border-color: rgba($red, 0.6); }
+}
+
+.delete-modal {
+  max-width: 420px;
+}
+
 .btn-sm {
   background: none;
   border: 1px solid $border;

@@ -308,7 +308,7 @@
                                 <button class="icon-btn stock" (click)="openStockModal(book)" title="Ajuster stock">
                                     <span class="material-symbols-outlined">inventory</span>
                                 </button>
-                                <button class="icon-btn delete" (click)="deleteBook(book)" title="Supprimer">
+                                <button type="button" class="icon-btn delete" (click)="deleteBook(book)" title="Supprimer">
                                     <span class="material-symbols-outlined">delete</span>
                                 </button>
                             </div>
@@ -492,7 +492,7 @@
                         <span class="material-symbols-outlined" style="vertical-align:middle;margin-right:4px">group</span>
                         {{ filteredUsers.length }} utilisateur(s)
                     </span>
-                    <button class="btn-sm" (click)="loadUsers()">
+                    <button type="button" class="btn-sm" (click)="loadUsers()">
                         <span class="material-symbols-outlined" style="font-size:15px;vertical-align:middle">refresh</span>
                         Rafraîchir
                     </button>
@@ -529,7 +529,7 @@
                             </app-custom-dropdown>
                         </td>
                         <td>
-                            <button class="icon-btn delete" (click)="deleteUser(user)" title="Supprimer">
+                            <button type="button" class="icon-btn delete" (click)="deleteUser(user)" title="Supprimer">
                                 <span class="material-symbols-outlined">delete</span>
                             </button>
                         </td>
@@ -791,6 +791,52 @@
         </div>
         <div class="modal-footer">
             <button class="btn-secondary" (click)="dismissModal()">Fermer</button>
+        </div>
+    </div>
+</div>
+
+<!-- ══ MODAL : Confirmation suppression livre ══ -->
+<div *ngIf="showDeleteBookModal && bookToDelete" class="modal-overlay" (click)="dismissDeleteBookModal()">
+    <div class="modal modal-sm delete-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>
+                <span class="material-symbols-outlined" style="vertical-align:middle;margin-right:6px;color:#ef4444">warning</span>
+                Supprimer le livre
+            </h3>
+            <button class="close-btn" (click)="dismissDeleteBookModal()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Voulez-vous vraiment supprimer <strong>{{ bookToDelete.title }}</strong> ?</p>
+            <p class="muted">Cette action est définitive.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="dismissDeleteBookModal()">Annuler</button>
+            <button type="button" class="btn-danger" (click)="confirmDeleteBook()">Supprimer</button>
+        </div>
+    </div>
+</div>
+
+<!-- ══ MODAL : Confirmation suppression utilisateur ══ -->
+<div *ngIf="showDeleteUserModal && userToDelete" class="modal-overlay" (click)="dismissDeleteUserModal()">
+    <div class="modal modal-sm delete-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>
+                <span class="material-symbols-outlined" style="vertical-align:middle;margin-right:6px;color:#ef4444">warning</span>
+                Supprimer l'utilisateur
+            </h3>
+            <button type="button" class="close-btn" (click)="dismissDeleteUserModal()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Voulez-vous vraiment supprimer <strong>{{ userToDelete.username }}</strong> ?</p>
+            <p class="muted">Cette action est définitive.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="dismissDeleteUserModal()">Annuler</button>
+            <button type="button" class="btn-danger" (click)="confirmDeleteUser()">Supprimer</button>
         </div>
     </div>
 </div>
