@@ -390,10 +390,19 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     }
 
     toggleFeatured(book: Book): void {
+        const previous = !!book.featured;
+        book.featured = !previous;
+
         this.http.patch<Book>(`${this.base}/books/${book.id}/featured`, {}, { headers: this.headers() })
             .pipe(takeUntil(this.destroy$)).subscribe({
-            next: updated => { book.featured = updated.featured; this.successMsg = 'Mis en avant modifié.'; },
-            error: () => { this.errorMsg = 'Erreur.'; }
+            next: updated => {
+                book.featured = updated?.featured ?? book.featured;
+                this.successMsg = 'Mis en avant modifié.';
+            },
+            error: () => {
+                book.featured = previous;
+                this.errorMsg = 'Erreur.';
+            }
         });
     }
 

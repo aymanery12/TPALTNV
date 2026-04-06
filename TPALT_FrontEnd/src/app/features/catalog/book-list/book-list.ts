@@ -306,6 +306,17 @@ export class BookList implements OnInit, OnDestroy {
 
     // Tri
     switch (this.selectedSort) {
+      case 'featured':
+        result.sort((a, b) => {
+          const featuredDelta = Number(!!b.featured) - Number(!!a.featured);
+          if (featuredDelta !== 0) return featuredDelta;
+
+          const ratingDelta = (b.rating ?? 0) - (a.rating ?? 0);
+          if (ratingDelta !== 0) return ratingDelta;
+
+          return (b.id ?? 0) - (a.id ?? 0);
+        });
+        break;
       case 'price-asc':  result.sort((a, b) => a.price - b.price); break;
       case 'price-desc': result.sort((a, b) => b.price - a.price); break;
       case 'rating':     result.sort((a, b) => b.rating - a.rating); break;

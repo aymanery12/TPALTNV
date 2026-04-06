@@ -386,7 +386,7 @@ export class LanguageService {
       'home.title.line1': 'Discover your',
       'home.title.line2': 'next book',
       'home.heroText1': 'Thousands of books delivered to your door.',
-      'home.heroText2': 'Cash on delivery available.',
+      'home.heroText2': 'Cash on delivery.',
       'home.explore': 'Browse catalog',
       'home.browse': 'Browse',
       'home.clearFilters': 'Clear',

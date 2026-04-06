@@ -414,6 +414,8 @@ $sidebar-collapsed: 64px;
 .discount-input.wide { width: 72px; }
 
 .action-btns { display: flex; gap: 4px; }
+.text-amber { color: $accent !important; }
+
 .icon-btn {
   background: none;
   border: 1px solid $border;

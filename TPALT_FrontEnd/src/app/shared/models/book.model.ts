@@ -17,6 +17,7 @@ export interface Book {
   discount?: number;
   inStock?: boolean;
   soldCount?: number;
+  featured?: boolean;
 }
 
 export interface BookReview {
