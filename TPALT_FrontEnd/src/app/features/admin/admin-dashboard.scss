@@ -269,20 +269,65 @@ $sidebar-collapsed: 64px;
   canvas { width: 100% !important; }
 }
 
-.legend-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-  padding: 1rem;
-  .leg {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.8rem;
-    color: $muted;
-    strong { color: $text; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.charts-row--single {
+  grid-template-columns: 1fr;
+  justify-content: stretch;
+
+  .chart-card {
+    width: 100%;
+    margin-left: 0;
   }
+
+  .card-header {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+}
+
+.status-line {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid $border;
+}
+
+.status-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 110px;
+  padding: 0.85rem 0.5rem;
+  text-align: center;
+  border-right: 1px solid $border;
+
+  &:last-child {
+    border-right: none;
+  }
+
+  .status-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $muted;
+  }
+
+  .status-value {
+    font-size: 1.55rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  &.preparing .status-value { color: $accent; }
+  &.shipping .status-value { color: $blue; }
+  &.delivered .status-value { color: $green; }
+  &.cancelled .status-value { color: $red; }
 }
 
 .bottom-row {
@@ -1021,10 +1066,14 @@ $light-muted:   #64748b;
     &:hover { background: rgba($accent, 0.08); border-color: rgba($accent, 0.4); color: $accent; }
   }
 
-  // Charts legend
-  .legend-grid .leg {
-    color: $light-muted;
-    strong { color: $light-text; }
+  .status-line {
+    border-top-color: $light-border;
+  }
+
+  .status-col {
+    border-right-color: $light-border;
+
+    .status-name { color: $light-muted; }
   }
 
   // Movements list
@@ -1052,4 +1101,20 @@ $light-muted:   #64748b;
   .sidebar { width: $sidebar-collapsed; }
   .nav-label, .logo-text, .sidebar-footer, .badge-alert { display: none; }
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .status-line {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .status-col {
+    min-height: 88px;
+
+    .status-value {
+      font-size: 1.25rem;
+    }
+
+    .status-name {
+      font-size: 0.73rem;
+    }
+  }
 }

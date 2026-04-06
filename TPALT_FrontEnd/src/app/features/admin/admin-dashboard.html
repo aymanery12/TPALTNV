@@ -145,13 +145,6 @@
                         <div class="kpi-value">{{ formatNumber(stats.totalUsers) }}</div>
                     </div>
                 </div>
-                <div class="kpi orange">
-                    <div class="kpi-icon"><span class="material-symbols-outlined">local_shipping</span></div>
-                    <div class="kpi-body">
-                        <div class="kpi-label">En livraison</div>
-                        <div class="kpi-value">{{ stats.enLivraison }}</div>
-                    </div>
-                </div>
                 <div class="kpi indigo">
                     <div class="kpi-icon"><span class="material-symbols-outlined">store</span></div>
                     <div class="kpi-body">
@@ -162,21 +155,26 @@
             </div>
 
             <!-- Charts row -->
-            <div class="charts-row">
-                <div class="card chart-card">
-                    <div class="card-header">
-                        <span class="card-title">Revenus {{ currentYear }}</span>
-                    </div>
-                    <div style="height:220px"><canvas id="revenueChart"></canvas></div>
-                </div>
+            <div class="charts-row charts-row--single">
                 <div class="card chart-card">
                     <div class="card-header"><span class="card-title">Commandes par statut</span></div>
-                    <div style="height:160px"><canvas id="donutChart"></canvas></div>
-                    <div class="legend-grid">
-                        <div class="leg"><span class="dot" style="background:#10b981"></span>Livrées <strong>{{ deliveredCount }}</strong></div>
-                        <div class="leg"><span class="dot" style="background:#3b82f6"></span>En livraison <strong>{{ stats.enLivraison }}</strong></div>
-                        <div class="leg"><span class="dot" style="background:#f59e0b"></span>Préparation <strong>{{ stats.enPreparation }}</strong></div>
-                        <div class="leg"><span class="dot" style="background:#ef4444"></span>Annulées <strong>{{ cancelledCount }}</strong></div>
+                    <div class="status-line">
+                        <div class="status-col preparing">
+                            <span class="status-name">Preparation</span>
+                            <strong class="status-value">{{ stats.enPreparation }}</strong>
+                        </div>
+                        <div class="status-col shipping">
+                            <span class="status-name">En livraison</span>
+                            <strong class="status-value">{{ stats.enLivraison }}</strong>
+                        </div>
+                        <div class="status-col delivered">
+                            <span class="status-name">Livrees</span>
+                            <strong class="status-value">{{ stats.livrees }}</strong>
+                        </div>
+                        <div class="status-col cancelled">
+                            <span class="status-name">Annulees</span>
+                            <strong class="status-value">{{ stats.annulees }}</strong>
+                        </div>
                     </div>
                 </div>
             </div>
