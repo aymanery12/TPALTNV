@@ -602,7 +602,12 @@
                 </div>
                 <div class="form-group">
                     <label>Catégorie</label>
-                    <input type="text" [(ngModel)]="bookForm.category" placeholder="Roman, SF, Histoire..." />
+                    <app-custom-dropdown
+                        [options]="bookFormCategoryOptions"
+                        [value]="bookForm.category || ''"
+                        [minWidth]="'100%'"
+                        (valueChange)="bookForm.category = $event">
+                    </app-custom-dropdown>
                 </div>
                 <div class="form-group">
                     <label>Éditeur</label>

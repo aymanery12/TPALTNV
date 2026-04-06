@@ -9,6 +9,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { environment } from '../../../environments/environment';
 import { CustomDropdownComponent, DropdownOption } from '../../shared/components/custom-dropdown/custom-dropdown';
+import { isCategoryEqual, getUniqueCategoriesFromBooks } from '../../shared/utils/category-utils';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -288,7 +289,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             const matchSearch = !this.bookSearch ||
                 b.title.toLowerCase().includes(this.bookSearch.toLowerCase()) ||
                 (b.author || []).join(' ').toLowerCase().includes(this.bookSearch.toLowerCase());
-            const matchCat = !this.bookCategoryFilter || b.category === this.bookCategoryFilter;
+            const matchCat = !this.bookCategoryFilter || isCategoryEqual(b.category, this.bookCategoryFilter);
             const matchStatus = !this.bookStatusFilter || b.status === this.bookStatusFilter;
             return matchSearch && matchCat && matchStatus;
         });
@@ -358,12 +359,19 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     }
 
     get uniqueCategories(): string[] {
-        return [...new Set(this.books.map(b => b.category).filter(Boolean))];
+        return getUniqueCategoriesFromBooks(this.books);
     }
 
     get categoryFilterOptions(): DropdownOption[] {
         return [
             { value: '', label: 'Toutes categories' },
+            ...this.uniqueCategories.map(category => ({ value: category, label: category }))
+        ];
+    }
+
+    get bookFormCategoryOptions(): DropdownOption[] {
+        return [
+            { value: '', label: 'Sélectionner une catégorie' },
             ...this.uniqueCategories.map(category => ({ value: category, label: category }))
         ];
     }

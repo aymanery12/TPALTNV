@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { LanguageService } from '../../core/services/language.service';
+import { isCategoryEqual } from '../../shared/utils/category-utils';
 
 export interface PriceRange { min?: number; max?: number; label: string; }
 
@@ -52,6 +53,10 @@ export class SidebarFilters implements OnInit {
 
   translateCategory(cat: string): string {
     return this.languageService.categoryLabel(cat);
+  }
+
+  isCategoryEqual(cat1: string, cat2: string): boolean {
+    return isCategoryEqual(cat1, cat2);
   }
 
   translatePriceRange(range: PriceRange): string {

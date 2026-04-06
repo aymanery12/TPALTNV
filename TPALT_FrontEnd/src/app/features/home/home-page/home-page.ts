@@ -16,6 +16,7 @@ import { LanguageService } from "../../../core/services/language.service";
 import { OrderService } from "../../../core/services/order.service";
 import { Router } from "@angular/router";
 import { Order } from "../../../shared/models/order.model";
+import { isCategoryEqual } from "../../../shared/utils/category-utils";
 
 @Component({
   selector: "app-home-page",
@@ -235,7 +236,7 @@ export class HomePage implements OnInit, OnDestroy {
       if (this.activeCategory === this.offersCategoryValue) {
         result = result.filter(b => (b.discount ?? 0) > 0);
       } else {
-        result = result.filter(b => b.category === this.activeCategory);
+        result = result.filter(b => isCategoryEqual(b.category, this.activeCategory));
       }
     }
     if (this.activePrice) {

@@ -4,14 +4,14 @@
     <li *ngFor="let cat of categories">
       <button
         class="transition-colors text-left w-full px-2 py-1 rounded-lg"
-        [class.text-amber-400]="activeCategory === cat && cat !== offersCategoryValue"
+        [class.text-amber-400]="isCategoryEqual(activeCategory, cat) && cat !== offersCategoryValue"
         [class.text-red-400]="cat === offersCategoryValue"
-        [class.font-semibold]="activeCategory === cat"
-        [class.bg-amber-400]="activeCategory === cat && cat !== offersCategoryValue"
-        [class.bg-red-500]="activeCategory === cat && cat === offersCategoryValue"
-        [class.bg-opacity-10]="activeCategory === cat"
-        [class.hover:text-amber-400]="activeCategory !== cat && cat !== offersCategoryValue"
-        [class.hover:text-red-300]="activeCategory !== cat && cat === offersCategoryValue"
+        [class.font-semibold]="isCategoryEqual(activeCategory, cat)"
+        [class.bg-amber-400]="isCategoryEqual(activeCategory, cat) && cat !== offersCategoryValue"
+        [class.bg-red-500]="isCategoryEqual(activeCategory, cat) && cat === offersCategoryValue"
+        [class.bg-opacity-10]="isCategoryEqual(activeCategory, cat)"
+        [class.hover:text-amber-400]="!isCategoryEqual(activeCategory, cat) && cat !== offersCategoryValue"
+        [class.hover:text-red-300]="!isCategoryEqual(activeCategory, cat) && cat === offersCategoryValue"
         (click)="selectCategory(cat)">
         {{ translateCategory(cat) }}
       </button>

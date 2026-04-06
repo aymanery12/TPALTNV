@@ -12,6 +12,7 @@ import { Footer } from '../../../layout/footer/footer';
 import { BookGridComponent } from '../../../shared/components/book-grid/book-grid';
 import { Pagination } from '../../../shared/pagination/pagination';
 import { LanguageService } from '../../../core/services/language.service';
+import { isCategoryEqual, getUniqueCategoriesFromBooks } from '../../../shared/utils/category-utils';
 
 @Component({
   selector: 'app-book-list',
@@ -244,7 +245,7 @@ export class BookList implements OnInit, OnDestroy {
         }));
 
         // Extraire les catégories uniques
-        this.categories = [...new Set(this.allBooks.map(b => b.category).filter(Boolean))].sort();
+        this.categories = getUniqueCategoriesFromBooks(this.allBooks).sort();
 
         this.applyFilters();
         this.isLoading = false;
@@ -286,7 +287,7 @@ export class BookList implements OnInit, OnDestroy {
       if (this.selectedCategory === this.offersCategoryValue) {
         result = result.filter(b => (b.discount ?? 0) > 0);
       } else {
-        result = result.filter(b => b.category === this.selectedCategory);
+        result = result.filter(b => isCategoryEqual(b.category, this.selectedCategory));
       }
     }
 
