@@ -1,0 +1,4 @@
+{
+  "outputDirectory": "dist/TPALT_FrontEnd/browser",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
