@@ -1,0 +1,7 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "TPALT_Backend/Dockerfile"
+buildContext = "TPALT_Backend"
+
+[deploy]
+restartPolicyType = "on_failure"
