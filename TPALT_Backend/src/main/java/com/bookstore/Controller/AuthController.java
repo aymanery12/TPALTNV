@@ -14,6 +14,7 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 // ─── DTOs ────────────────────────────────────────────────────────────────────
 
@@ -144,11 +145,10 @@ public class AuthController {
         String code = generateCode();
         saveCode(email, null, code, "signup");
 
-        try {
-            emailService.sendVerificationCode(email, code, "signup");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Échec d'envoi de l'email : " + e.getMessage()));
-        }
+        String emailFinal = email;
+        CompletableFuture.runAsync(() -> {
+            try { emailService.sendVerificationCode(emailFinal, code, "signup"); } catch (Exception ignored) {}
+        });
 
         return ResponseEntity.ok(Map.of("message", "Code envoyé à " + maskEmail(email)));
     }
@@ -228,11 +228,10 @@ public class AuthController {
         String code = generateCode();
         saveCode(email, null, code, "reset-password");
 
-        try {
-            emailService.sendVerificationCode(email, code, "reset-password");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Échec d'envoi de l'email : " + e.getMessage()));
-        }
+        String emailFinal = email;
+        CompletableFuture.runAsync(() -> {
+            try { emailService.sendVerificationCode(emailFinal, code, "reset-password"); } catch (Exception ignored) {}
+        });
 
         return ResponseEntity.ok(Map.of("message", "Code envoyé à " + maskEmail(email)));
     }
