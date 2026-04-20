@@ -1,50 +1,79 @@
 package com.bookstore.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.*;
 
 import com.bookstore.model.Book;
 import com.bookstore.model.Order;
 import com.bookstore.repository.BookRepository;
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    private static final Logger log = Logger.getLogger(EmailService.class.getName());
+
     private final BookRepository bookRepository;
+    private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${spring.mail.username}")
-    private String fromEmail;
+    @Value("${RESEND_API_KEY:}")
+    private String resendApiKey;
 
-    public EmailService(JavaMailSender mailSender, BookRepository bookRepository) {
-        this.mailSender = mailSender;
+    private static final String FROM_EMAIL = "BookStore <onboarding@resend.dev>";
+
+    public EmailService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
+    }
+
+    private void sendViaResend(String to, String subject, String htmlContent) {
+        if (resendApiKey == null || resendApiKey.isBlank()) {
+            log.warning("RESEND_API_KEY not set — email skipped");
+            return;
+        }
+        String body = String.format(
+            "{\"from\":\"%s\",\"to\":[\"%s\"],\"subject\":\"%s\",\"html\":%s}",
+            FROM_EMAIL, to, subject, escapeJson(htmlContent)
+        );
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + resendApiKey);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        try {
+            restTemplate.exchange(
+                "https://api.resend.com/emails",
+                HttpMethod.POST,
+                new HttpEntity<>(body, headers),
+                String.class
+            );
+            log.info("Email sent via Resend to: " + to);
+        } catch (Exception e) {
+            log.warning("Resend API error: " + e.getMessage());
+        }
+    }
+
+    private String escapeJson(String html) {
+        return "\"" + html.replace("\\", "\\\\").replace("\"", "\\\"")
+                          .replace("\n", "\\n").replace("\r", "") + "\"";
     }
 
     // ── Confirmation de commande ──────────────────────────────────────────────
 
     public void sendOrderConfirmation(Order order) {
         if (order.getUser() == null || order.getUser().getEmail() == null) return;
-        String toEmail = order.getUser().getEmail().trim();
-
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom(fromEmail);
-            helper.setTo(toEmail);
-            helper.setSubject("BookStore – Confirmation de votre commande #" + order.getId());
-            helper.setText(buildOrderConfirmationBody(order), true);
-            mailSender.send(message);
+            sendViaResend(
+                order.getUser().getEmail().trim(),
+                "BookStore – Confirmation de votre commande #" + order.getId(),
+                buildOrderConfirmationBody(order)
+            );
         } catch (Exception e) {
-            // On logge sans faire échouer la commande
+            // silencieux
         }
     }
 
