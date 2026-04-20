@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Logger;
+import org.springframework.context.annotation.Lazy;
 
 @Service
 public class EmailService {
@@ -216,15 +217,11 @@ public class EmailService {
         String toEmail = order.getUser().getEmail().trim();
 
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom(fromEmail);
-            helper.setTo(toEmail);
-            helper.setSubject("BookStore – Mise à jour de votre commande #" + order.getId());
-            helper.setText(buildStatusUpdateBody(order, newStatus), true);
-            mailSender.send(message);
+            sendViaResend(toEmail,
+                "BookStore – Mise à jour de votre commande #" + order.getId(),
+                buildStatusUpdateBody(order, newStatus));
         } catch (Exception e) {
-            // On logge sans faire échouer la mise à jour
+            // silencieux
         }
     }
 
@@ -377,12 +374,6 @@ public class EmailService {
     }
 
     public void sendVerificationCode(String toEmail, String code, String type) throws MessagingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-        helper.setFrom(fromEmail);
-        helper.setTo(toEmail);
-
         String subject;
         String body;
 
@@ -400,9 +391,7 @@ public class EmailService {
                     "Une tentative de connexion a été détectée sur votre compte BookStore.");
         }
 
-        helper.setSubject(subject);
-        helper.setText(body, true);
-        mailSender.send(message);
+        sendViaResend(toEmail, subject, body);
     }
 
     private String buildEmailBody(String code, String title, String description) {
