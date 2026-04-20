@@ -24,37 +24,38 @@ public class EmailService {
     private final BookRepository bookRepository;
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${RESEND_API_KEY:}")
-    private String resendApiKey;
+    @Value("${BREVO_API_KEY:}")
+    private String brevoApiKey;
 
-    private static final String FROM_EMAIL = "BookStore <onboarding@resend.dev>";
+    private static final String FROM_NAME  = "BookStore";
+    private static final String FROM_EMAIL = "bookstoreiatpalt@gmail.com";
 
     public EmailService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
-    private void sendViaResend(String to, String subject, String htmlContent) {
-        if (resendApiKey == null || resendApiKey.isBlank()) {
-            log.warning("RESEND_API_KEY not set — email skipped");
+    private void sendViaBrevo(String to, String subject, String htmlContent) {
+        if (brevoApiKey == null || brevoApiKey.isBlank()) {
+            log.warning("BREVO_API_KEY not set — email skipped");
             return;
         }
         String body = String.format(
-            "{\"from\":\"%s\",\"to\":[\"%s\"],\"subject\":\"%s\",\"html\":%s}",
-            FROM_EMAIL, to, subject, escapeJson(htmlContent)
+            "{\"sender\":{\"name\":\"%s\",\"email\":\"%s\"},\"to\":[{\"email\":\"%s\"}],\"subject\":\"%s\",\"htmlContent\":%s}",
+            FROM_NAME, FROM_EMAIL, to, subject, escapeJson(htmlContent)
         );
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + resendApiKey);
+        headers.set("api-key", brevoApiKey);
         headers.setContentType(MediaType.APPLICATION_JSON);
         try {
             restTemplate.exchange(
-                "https://api.resend.com/emails",
+                "https://api.brevo.com/v3/smtp/email",
                 HttpMethod.POST,
                 new HttpEntity<>(body, headers),
                 String.class
             );
-            log.info("Email sent via Resend to: " + to);
+            log.info("Email sent via Brevo to: " + to);
         } catch (Exception e) {
-            log.warning("Resend API error: " + e.getMessage());
+            log.warning("Brevo API error: " + e.getMessage());
         }
     }
 
@@ -68,7 +69,7 @@ public class EmailService {
     public void sendOrderConfirmation(Order order) {
         if (order.getUser() == null || order.getUser().getEmail() == null) return;
         try {
-            sendViaResend(
+            sendViaBrevo(
                 order.getUser().getEmail().trim(),
                 "BookStore – Confirmation de votre commande #" + order.getId(),
                 buildOrderConfirmationBody(order)
@@ -217,7 +218,7 @@ public class EmailService {
         String toEmail = order.getUser().getEmail().trim();
 
         try {
-            sendViaResend(toEmail,
+            sendViaBrevo(toEmail,
                 "BookStore – Mise à jour de votre commande #" + order.getId(),
                 buildStatusUpdateBody(order, newStatus));
         } catch (Exception e) {
@@ -391,7 +392,7 @@ public class EmailService {
                     "Une tentative de connexion a été détectée sur votre compte BookStore.");
         }
 
-        sendViaResend(toEmail, subject, body);
+        sendViaBrevo(toEmail, subject, body);
     }
 
     private String buildEmailBody(String code, String title, String description) {
